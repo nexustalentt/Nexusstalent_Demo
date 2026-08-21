@@ -23,7 +23,10 @@ export const adminJobsQuery = queryOptions({
 export const adminJobQuery = (id: string) =>
   queryOptions({
     queryKey: ["admin", "job", id],
-    queryFn: async () => unwrap(await supabase.from("jobs").select("*").eq("id", id).maybeSingle()),
+    queryFn: async () =>
+      unwrap<JobRow | null>(
+        await supabase.from("jobs").select("*").eq("id", id).maybeSingle(),
+      ),
   });
 
 export const adminApplicationsQuery = queryOptions({
@@ -67,7 +70,8 @@ export const adminFormsQuery = queryOptions({
 
 export const adminSettingsQuery = queryOptions({
   queryKey: ["admin", "settings"],
-  queryFn: async () => unwrap(await supabase.from("site_settings").select("*").maybeSingle()),
+  queryFn: async () =>
+    unwrap<SettingsRow | null>(await supabase.from("site_settings").select("*").maybeSingle()),
 });
 
 export const auditLogsQuery = queryOptions({

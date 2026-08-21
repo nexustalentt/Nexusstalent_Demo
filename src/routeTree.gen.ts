@@ -21,7 +21,11 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminApplicationsIndexRouteImport } from './routes/_authenticated/admin.applications.index'
+import { Route as AuthenticatedAdminApplicationsIdRouteImport } from './routes/_authenticated/admin.applications.$id'
 import { Route as AuthenticatedAdminJobsIndexRouteImport } from './routes/_authenticated/admin.jobs.index'
+import { Route as AuthenticatedAdminJobsIdRouteImport } from './routes/_authenticated/admin.jobs.$id'
+import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as ApiPublicApplicationsIntakeRouteImport } from './routes/api/public/applications/intake'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,10 +87,34 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminApplicationsIndexRoute =
+  AuthenticatedAdminApplicationsIndexRouteImport.update({
+    id: '/admin/applications/',
+    path: '/admin/applications/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminApplicationsIdRoute =
+  AuthenticatedAdminApplicationsIdRouteImport.update({
+    id: '/admin/applications/$id',
+    path: '/admin/applications/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminJobsIndexRoute =
   AuthenticatedAdminJobsIndexRouteImport.update({
     id: '/admin/jobs/',
     path: '/admin/jobs/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminJobsIdRoute =
+  AuthenticatedAdminJobsIdRouteImport.update({
+    id: '/admin/jobs/$id',
+    path: '/admin/jobs/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminJobsNewRoute =
+  AuthenticatedAdminJobsNewRouteImport.update({
+    id: '/admin/jobs/new',
+    path: '/admin/jobs/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicApplicationsIntakeRoute =
@@ -108,7 +136,11 @@ export interface FileRoutesByFullPath {
   '/careers/$slug': typeof CareersSlugRoute
   '/careers/': typeof CareersIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
+  '/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
+  '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
+  '/admin/applications/': typeof AuthenticatedAdminApplicationsIndexRoute
   '/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -123,7 +155,11 @@ export interface FileRoutesByTo {
   '/careers/$slug': typeof CareersSlugRoute
   '/careers': typeof CareersIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
+  '/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
+  '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
+  '/admin/applications': typeof AuthenticatedAdminApplicationsIndexRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsIndexRoute
 }
 export interface FileRoutesById {
@@ -140,7 +176,11 @@ export interface FileRoutesById {
   '/careers/$slug': typeof CareersSlugRoute
   '/careers/': typeof CareersIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
+  '/_authenticated/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
+  '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
+  '/_authenticated/admin/applications/': typeof AuthenticatedAdminApplicationsIndexRoute
   '/_authenticated/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
 }
 export interface FileRouteTypes {
@@ -157,7 +197,11 @@ export interface FileRouteTypes {
     | '/careers/$slug'
     | '/careers/'
     | '/admin/'
+    | '/admin/applications/$id'
+    | '/admin/jobs/$id'
+    | '/admin/jobs/new'
     | '/api/public/applications/intake'
+    | '/admin/applications/'
     | '/admin/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,7 +216,11 @@ export interface FileRouteTypes {
     | '/careers/$slug'
     | '/careers'
     | '/admin'
+    | '/admin/applications/$id'
+    | '/admin/jobs/$id'
+    | '/admin/jobs/new'
     | '/api/public/applications/intake'
+    | '/admin/applications'
     | '/admin/jobs'
   id:
     | '__root__'
@@ -188,7 +236,11 @@ export interface FileRouteTypes {
     | '/careers/$slug'
     | '/careers/'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/applications/$id'
+    | '/_authenticated/admin/jobs/$id'
+    | '/_authenticated/admin/jobs/new'
     | '/api/public/applications/intake'
+    | '/_authenticated/admin/applications/'
     | '/_authenticated/admin/jobs/'
   fileRoutesById: FileRoutesById
 }
@@ -293,11 +345,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/applications/': {
+      id: '/_authenticated/admin/applications/'
+      path: '/admin/applications'
+      fullPath: '/admin/applications/'
+      preLoaderRoute: typeof AuthenticatedAdminApplicationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/applications/$id': {
+      id: '/_authenticated/admin/applications/$id'
+      path: '/admin/applications/$id'
+      fullPath: '/admin/applications/$id'
+      preLoaderRoute: typeof AuthenticatedAdminApplicationsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/jobs/': {
       id: '/_authenticated/admin/jobs/'
       path: '/admin/jobs'
       fullPath: '/admin/jobs/'
       preLoaderRoute: typeof AuthenticatedAdminJobsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/jobs/$id': {
+      id: '/_authenticated/admin/jobs/$id'
+      path: '/admin/jobs/$id'
+      fullPath: '/admin/jobs/$id'
+      preLoaderRoute: typeof AuthenticatedAdminJobsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/jobs/new': {
+      id: '/_authenticated/admin/jobs/new'
+      path: '/admin/jobs/new'
+      fullPath: '/admin/jobs/new'
+      preLoaderRoute: typeof AuthenticatedAdminJobsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/applications/intake': {
@@ -312,11 +392,20 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminApplicationsIdRoute: typeof AuthenticatedAdminApplicationsIdRoute
+  AuthenticatedAdminJobsIdRoute: typeof AuthenticatedAdminJobsIdRoute
+  AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
+  AuthenticatedAdminApplicationsIndexRoute: typeof AuthenticatedAdminApplicationsIndexRoute
   AuthenticatedAdminJobsIndexRoute: typeof AuthenticatedAdminJobsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminApplicationsIdRoute: AuthenticatedAdminApplicationsIdRoute,
+  AuthenticatedAdminJobsIdRoute: AuthenticatedAdminJobsIdRoute,
+  AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
+  AuthenticatedAdminApplicationsIndexRoute:
+    AuthenticatedAdminApplicationsIndexRoute,
   AuthenticatedAdminJobsIndexRoute: AuthenticatedAdminJobsIndexRoute,
 }
 

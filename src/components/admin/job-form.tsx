@@ -108,6 +108,8 @@ export function JobForm({
       preferred_qualifications: data.preferred_qualifications || null,
       benefits: data.benefits || null,
       google_form_url: data.google_form_url || null,
+      employment_type: data.employment_type || null,
+      work_mode: data.work_mode || null,
       application_method: "google_form",
     });
   }
