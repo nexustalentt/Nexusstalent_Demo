@@ -49,9 +49,10 @@ export const createFirstAdmin = createServerFn({ method: "POST" })
       .from("profiles")
       .upsert({ id: created.user.id, email: data.email, name: data.fullName });
 
+    // A signup trigger may already have granted a role, so upsert instead of insert.
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: created.user.id, role: "admin" });
+      .upsert({ user_id: created.user.id, role: "admin" }, { onConflict: "user_id,role" });
     if (roleError) throw new Error(roleError.message);
 
     return { ok: true };
