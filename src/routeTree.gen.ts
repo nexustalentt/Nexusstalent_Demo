@@ -10,33 +10,168 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as IndustriesRouteImport } from './routes/industries'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as CareersIndexRouteImport } from './routes/careers.index'
+import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
+import { Route as ApiPublicApplicationsIntakeRouteImport } from './routes/api/public/applications/intake'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndustriesRoute = IndustriesRouteImport.update({
+  id: '/industries',
+  path: '/industries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersIndexRoute = CareersIndexRouteImport.update({
+  id: '/careers/',
+  path: '/careers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersSlugRoute = CareersSlugRouteImport.update({
+  id: '/careers/$slug',
+  path: '/careers/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicApplicationsIntakeRoute =
+  ApiPublicApplicationsIntakeRouteImport.update({
+    id: '/api/public/applications/intake',
+    path: '/api/public/applications/intake',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
+  '/terms': typeof TermsRoute
+  '/careers/$slug': typeof CareersSlugRoute
+  '/careers/': typeof CareersIndexRoute
+  '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
+  '/terms': typeof TermsRoute
+  '/careers/$slug': typeof CareersSlugRoute
+  '/careers': typeof CareersIndexRoute
+  '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
+  '/terms': typeof TermsRoute
+  '/careers/$slug': typeof CareersSlugRoute
+  '/careers/': typeof CareersIndexRoute
+  '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/contact'
+    | '/industries'
+    | '/privacy'
+    | '/services'
+    | '/terms'
+    | '/careers/$slug'
+    | '/careers/'
+    | '/api/public/applications/intake'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/contact'
+    | '/industries'
+    | '/privacy'
+    | '/services'
+    | '/terms'
+    | '/careers/$slug'
+    | '/careers'
+    | '/api/public/applications/intake'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/contact'
+    | '/industries'
+    | '/privacy'
+    | '/services'
+    | '/terms'
+    | '/careers/$slug'
+    | '/careers/'
+    | '/api/public/applications/intake'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
+  IndustriesRoute: typeof IndustriesRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ServicesRoute: typeof ServicesRoute
+  TermsRoute: typeof TermsRoute
+  CareersSlugRoute: typeof CareersSlugRoute
+  CareersIndexRoute: typeof CareersIndexRoute
+  ApiPublicApplicationsIntakeRoute: typeof ApiPublicApplicationsIntakeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +183,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/industries': {
+      id: '/industries'
+      path: '/industries'
+      fullPath: '/industries'
+      preLoaderRoute: typeof IndustriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/': {
+      id: '/careers/'
+      path: '/careers'
+      fullPath: '/careers/'
+      preLoaderRoute: typeof CareersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/$slug': {
+      id: '/careers/$slug'
+      path: '/careers/$slug'
+      fullPath: '/careers/$slug'
+      preLoaderRoute: typeof CareersSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/applications/intake': {
+      id: '/api/public/applications/intake'
+      path: '/api/public/applications/intake'
+      fullPath: '/api/public/applications/intake'
+      preLoaderRoute: typeof ApiPublicApplicationsIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
+  IndustriesRoute: IndustriesRoute,
+  PrivacyRoute: PrivacyRoute,
+  ServicesRoute: ServicesRoute,
+  TermsRoute: TermsRoute,
+  CareersSlugRoute: CareersSlugRoute,
+  CareersIndexRoute: CareersIndexRoute,
+  ApiPublicApplicationsIntakeRoute: ApiPublicApplicationsIntakeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
