@@ -91,7 +91,7 @@ export async function recordAudit(
     entity_id: entityId,
     actor_id: data.user?.id ?? null,
     actor_email: data.user?.email ?? null,
-    details: details ?? null,
+    details: (details ?? null) as never,
   });
 }
 
