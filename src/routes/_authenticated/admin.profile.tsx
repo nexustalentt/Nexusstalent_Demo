@@ -31,14 +31,14 @@ function ProfilePage() {
       if (!user) throw new Error("Not signed in");
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("name")
         .eq("id", user.id)
         .maybeSingle();
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
       return {
         id: user.id,
         email: user.email ?? "",
-        fullName: profile?.full_name ?? "",
+        fullName: profile?.name ?? "",
         roles: (roles ?? []).map((row) => row.role),
       };
     },
@@ -54,7 +54,7 @@ function ProfilePage() {
       if (!parsed.success) throw new Error("Enter your full name");
       const { error } = await supabase
         .from("profiles")
-        .update({ full_name: parsed.data })
+        .update({ name: parsed.data })
         .eq("id", account.data!.id);
       if (error) throw new Error(error.message);
     },
