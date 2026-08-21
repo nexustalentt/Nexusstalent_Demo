@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLogo } from "@/components/site/site-header";
+import { adminSetupStatus, createFirstAdmin } from "@/lib/bootstrap.functions";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
