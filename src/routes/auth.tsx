@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLogo } from "@/components/site/site-header";
+import { adminSetupStatus, createFirstAdmin } from "@/lib/bootstrap.functions";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -29,15 +30,39 @@ function AuthPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<"signin" | "reset">("signin");
+  const [mode, setMode] = useState<"signin" | "reset" | "setup">("signin");
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/admin", replace: true });
     });
+    adminSetupStatus().then((result) => setNeedsSetup(result.needsSetup));
   }, [navigate]);
+
+  async function handleSetup(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+    setPending(true);
+    try {
+      await createFirstAdmin({ data: { fullName, email: email.trim(), password } });
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (signInError) throw new Error(signInError.message);
+      toast.success("Administrator account created");
+      navigate({ to: "/admin", replace: true });
+    } catch (setupError) {
+      setError(setupError instanceof Error ? setupError.message : "Could not create the account");
+    } finally {
+      setPending(false);
+    }
+  }
+
 
   async function handleSignIn(event: React.FormEvent) {
     event.preventDefault();
@@ -103,19 +128,42 @@ function AuthPage() {
             <ShieldCheck className="size-5" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-primary">
-            {mode === "signin" ? "Administrator sign in" : "Reset your password"}
+            {mode === "signin"
+              ? "Administrator sign in"
+              : mode === "reset"
+                ? "Reset your password"
+                : "Create the first administrator"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {mode === "signin"
               ? "This portal is for authorised Nexus Talent administrators only."
-              : "We'll email you a secure link to set a new password."}
+              : mode === "reset"
+                ? "We'll email you a secure link to set a new password."
+                : "This one-time setup is only available until the first administrator exists."}
           </p>
 
           <form
-            onSubmit={mode === "signin" ? handleSignIn : handleReset}
+            onSubmit={
+              mode === "signin" ? handleSignIn : mode === "reset" ? handleReset : handleSetup
+            }
             noValidate
             className="mt-8 space-y-5"
           >
+            {mode === "setup" ? (
+              <div>
+                <label className={labelClass} htmlFor="full-name">
+                  Full name
+                </label>
+                <input
+                  id="full-name"
+                  value={fullName}
+                  maxLength={120}
+                  onChange={(event) => setFullName(event.target.value)}
+                  className={fieldClass}
+                />
+              </div>
+            ) : null}
+
             <div>
               <label className={labelClass} htmlFor="email">
                 Email
@@ -131,7 +179,7 @@ function AuthPage() {
               />
             </div>
 
-            {mode === "signin" ? (
+            {mode !== "reset" ? (
               <div>
                 <label className={labelClass} htmlFor="password">
                   Password
@@ -139,7 +187,7 @@ function AuthPage() {
                 <input
                   id="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete={mode === "setup" ? "new-password" : "current-password"}
                   value={password}
                   maxLength={72}
                   onChange={(event) => setPassword(event.target.value)}
@@ -160,19 +208,38 @@ function AuthPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
             >
               {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-              {mode === "signin" ? "Sign In" : "Send reset link"}
+              {mode === "signin"
+                ? "Sign In"
+                : mode === "reset"
+                  ? "Send reset link"
+                  : "Create administrator"}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setMode(mode === "signin" ? "reset" : "signin");
-                setError(null);
-              }}
-              className="w-full text-sm font-semibold text-accent"
-            >
-              {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
-            </button>
+            <div className="space-y-2 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === "signin" ? "reset" : "signin");
+                  setError(null);
+                }}
+                className="w-full text-sm font-semibold text-accent"
+              >
+                {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
+              </button>
+
+              {needsSetup && mode !== "setup" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("setup");
+                    setError(null);
+                  }}
+                  className="w-full text-xs font-semibold text-muted-foreground hover:text-accent"
+                >
+                  No administrator yet — run first-time setup
+                </button>
+              ) : null}
+            </div>
           </form>
         </div>
       </main>
