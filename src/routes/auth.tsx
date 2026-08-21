@@ -179,7 +179,7 @@ function AuthPage() {
               />
             </div>
 
-            {mode === "signin" ? (
+            {mode !== "reset" ? (
               <div>
                 <label className={labelClass} htmlFor="password">
                   Password
@@ -187,7 +187,7 @@ function AuthPage() {
                 <input
                   id="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete={mode === "setup" ? "new-password" : "current-password"}
                   value={password}
                   maxLength={72}
                   onChange={(event) => setPassword(event.target.value)}
@@ -208,19 +208,38 @@ function AuthPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
             >
               {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-              {mode === "signin" ? "Sign In" : "Send reset link"}
+              {mode === "signin"
+                ? "Sign In"
+                : mode === "reset"
+                  ? "Send reset link"
+                  : "Create administrator"}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setMode(mode === "signin" ? "reset" : "signin");
-                setError(null);
-              }}
-              className="w-full text-sm font-semibold text-accent"
-            >
-              {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
-            </button>
+            <div className="space-y-2 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === "signin" ? "reset" : "signin");
+                  setError(null);
+                }}
+                className="w-full text-sm font-semibold text-accent"
+              >
+                {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
+              </button>
+
+              {needsSetup && mode !== "setup" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("setup");
+                    setError(null);
+                  }}
+                  className="w-full text-xs font-semibold text-muted-foreground hover:text-accent"
+                >
+                  No administrator yet — run first-time setup
+                </button>
+              ) : null}
+            </div>
           </form>
         </div>
       </main>
