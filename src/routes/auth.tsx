@@ -29,15 +29,39 @@ function AuthPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<"signin" | "reset">("signin");
+  const [mode, setMode] = useState<"signin" | "reset" | "setup">("signin");
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/admin", replace: true });
     });
+    adminSetupStatus().then((result) => setNeedsSetup(result.needsSetup));
   }, [navigate]);
+
+  async function handleSetup(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+    setPending(true);
+    try {
+      await createFirstAdmin({ data: { fullName, email: email.trim(), password } });
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (signInError) throw new Error(signInError.message);
+      toast.success("Administrator account created");
+      navigate({ to: "/admin", replace: true });
+    } catch (setupError) {
+      setError(setupError instanceof Error ? setupError.message : "Could not create the account");
+    } finally {
+      setPending(false);
+    }
+  }
+
 
   async function handleSignIn(event: React.FormEvent) {
     event.preventDefault();
