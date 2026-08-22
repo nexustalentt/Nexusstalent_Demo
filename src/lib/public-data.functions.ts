@@ -36,22 +36,6 @@ const LIST_COLUMNS =
 
 const DETAIL_COLUMNS = `${LIST_COLUMNS}, description, responsibilities, requirements, preferred_qualifications, benefits, application_method, google_form_url, updated_at`;
 
-function publicClient() {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: {
-      fetch: (input, init) => {
-        const headers = new Headers(init?.headers);
-        if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
-          headers.delete("Authorization");
-        }
-        headers.set("apikey", key);
-        return fetch(input, { ...init, headers });
-      },
-    },
-  });
-}
 
 export const listActiveJobs = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient()
