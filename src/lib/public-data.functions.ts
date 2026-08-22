@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+import { publicClient } from "@/lib/supabase-public.server";
 
 export type PublicJob = {
   id: string;
