@@ -1766,3 +1766,32 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Deploying to Vercel
+
+Before deploying to Vercel, add the following environment variables in **Project Settings → Environment Variables**. Missing these is the most common cause of a blank page or the "Something went wrong" error.
+
+### Required Environment Variables Checklist
+
+| Variable | Value | Where to find it | Why it matters |
+| --- | --- | --- | --- |
+| `SUPABASE_SERVICE_ROLE_KEY` | `service_role_...` | Lovable Cloud → Backend → API settings | Server functions (contact form, admin portal, application intake API) need this to bypass RLS. Without it, pages that fetch data server-side render blank between the header and footer. |
+| `RESEND_API_KEY` | `re_...` | Resend dashboard → API Keys | Sends email notifications for new applications and inquiries. If omitted, emails are silently logged to the console instead of sent. |
+
+### Optional but recommended
+
+| Variable | Value | Notes |
+| --- | --- | --- |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co` | Backend URL. Usually set automatically; only override if different from the publishable URL. |
+| `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_...` | Public client key. The build also inlines `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from the repo, so this is mainly needed if you run server functions in a separate environment. |
+| `APPLICATION_INTAKE_TOKEN` | A strong random string | Used to verify Google Forms application submissions to `/api/public/applications/intake`. If not set, the endpoint rejects submissions. |
+
+### Verification steps
+
+1. Go to **Vercel → Your project → Settings → Environment Variables**.
+2. Add `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` with the exact values shown above.
+3. Confirm all variables are added to **Production** (and **Preview** if you deploy preview builds).
+4. Redeploy the project.
+5. Open the live URL and visit `/careers`. If the job list renders, the backend is connected correctly.
+
+> **Note:** Publishing on Lovable instead of Vercel wires these variables up automatically. If you self-host on Vercel, you must add them manually.
