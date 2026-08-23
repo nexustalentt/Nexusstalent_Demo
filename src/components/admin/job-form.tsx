@@ -391,6 +391,39 @@ export function JobForm({
               ))}
             </select>
           </div>
+          <div>
+            <label className={label} htmlFor="published_at">
+              Published date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="published_at"
+                  variant="outline"
+                  className={cn(
+                    "mt-2 w-full justify-start rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-left text-sm font-normal text-primary hover:bg-background hover:text-primary",
+                    !values.published_at && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {values.published_at ? (
+                    format(values.published_at, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={values.published_at ?? undefined}
+                  onSelect={(date) => set("published_at", date ?? null)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       </section>
 
