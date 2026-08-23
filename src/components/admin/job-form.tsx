@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { Loader2, CalendarIcon } from "lucide-react";
 import type { JobInsert, JobRow, FormRow } from "@/lib/admin-api";
 import { jobStatuses, slugify, type JobStatus } from "@/lib/job-utils";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const jobSchema = z.object({
   title: z.string().trim().min(3, "Title must be at least 3 characters").max(140),
