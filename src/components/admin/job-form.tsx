@@ -432,6 +432,39 @@ export function JobForm({
               </PopoverContent>
             </Popover>
           </div>
+          <div>
+            <label className={label} htmlFor="updated_at">
+              Last updated date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="updated_at"
+                  variant="outline"
+                  className={cn(
+                    "mt-2 w-full justify-start rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-left text-sm font-normal text-primary hover:bg-background hover:text-primary",
+                    !values.updated_at && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {values.updated_at ? (
+                    format(values.updated_at, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={values.updated_at ?? undefined}
+                  onSelect={(date) => set("updated_at", date ?? null)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       </section>
 
