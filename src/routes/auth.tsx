@@ -144,7 +144,7 @@ function AuthPage() {
                 <input
                   id="password"
                   type="password"
-                  autoComplete={mode === "setup" ? "new-password" : "current-password"}
+                  autoComplete="current-password"
                   value={password}
                   maxLength={72}
                   onChange={(event) => setPassword(event.target.value)}
