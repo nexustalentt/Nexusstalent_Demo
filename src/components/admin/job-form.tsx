@@ -30,6 +30,7 @@ const jobSchema = z.object({
   google_form_url: z.string().trim().url("Enter a valid URL").max(500).optional().or(z.literal("")),
   form_id: z.string().uuid().nullable(),
   status: z.enum(["draft", "active", "closed", "archived"]),
+  published_at: z.date().nullable(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
