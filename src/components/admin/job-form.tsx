@@ -104,14 +104,15 @@ export function JobForm({
     }
     setErrors({});
     const data = parsed.data;
-    const publishedAtIso = data.published_at
-      ? `${format(data.published_at, "yyyy-MM-dd")}T00:00:00.000Z`
+    const { published_at, updated_at, ...dataWithoutDates } = data;
+    const publishedAtIso = published_at
+      ? `${format(published_at, "yyyy-MM-dd")}T00:00:00.000Z`
       : null;
-    const updatedAtIso = data.updated_at
-      ? `${format(data.updated_at, "yyyy-MM-dd")}T00:00:00.000Z`
+    const updatedAtIso = updated_at
+      ? `${format(updated_at, "yyyy-MM-dd")}T00:00:00.000Z`
       : null;
     const payload: JobInsert = {
-      ...data,
+      ...dataWithoutDates,
       job_code: data.job_code || null,
       department: data.department || null,
       location: data.location || null,
