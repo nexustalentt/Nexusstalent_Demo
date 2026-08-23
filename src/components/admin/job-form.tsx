@@ -70,6 +70,7 @@ export function JobForm({
     google_form_url: job?.google_form_url ?? "",
     form_id: job?.form_id ?? null,
     status: (job?.status as JobStatus) ?? "draft",
+    published_at: job?.published_at ? new Date(job?.published_at) : null,
   });
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
