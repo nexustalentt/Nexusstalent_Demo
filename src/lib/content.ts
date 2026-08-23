@@ -124,3 +124,20 @@ export const experienceBands = [
   { label: "5 – 8 Years", min: 5, max: 8 },
   { label: "8+ Years", min: 8, max: 99 },
 ];
+
+export type ClientLogo = {
+  name: string;
+  mark: string;
+  note: string;
+};
+
+export const clients: ClientLogo[] = [
+  { name: "SAP", mark: "SAP", note: "Enterprise Software" },
+  { name: "LTIMindtree", mark: "LTI", note: "IT Services" },
+  { name: "Wipro", mark: "WP", note: "Technology Consulting" },
+  { name: "Accenture", mark: "ACN", note: "Global Consulting" },
+  { name: "Capgemini", mark: "CG", note: "Digital Engineering" },
+  { name: "Banz", mark: "BZ", note: "Financial Services" },
+  { name: "Yuva Pay", mark: "YP", note: "Fintech Startup" },
+  { name: "Entity Data", mark: "ED", note: "Data & Analytics" },
+];
