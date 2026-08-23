@@ -32,7 +32,9 @@ function NewJobPage() {
           ...values,
           created_by: userData.user?.id ?? null,
           updated_by: userData.user?.id ?? null,
-          published_at: values.status === "active" ? new Date().toISOString() : null,
+          published_at:
+            values.published_at ??
+            (values.status === "active" ? new Date().toISOString() : null),
         })
         .select("id, title")
         .single();

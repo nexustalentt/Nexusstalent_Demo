@@ -31,6 +31,7 @@ const jobSchema = z.object({
   form_id: z.string().uuid().nullable(),
   status: z.enum(["draft", "active", "closed", "archived"]),
   published_at: z.date().nullable(),
+  updated_at: z.date().nullable(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -71,6 +72,7 @@ export function JobForm({
     form_id: job?.form_id ?? null,
     status: (job?.status as JobStatus) ?? "draft",
     published_at: job?.published_at ? new Date(job?.published_at) : null,
+    updated_at: job?.updated_at ? new Date(job?.updated_at) : null,
   });
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -102,11 +104,15 @@ export function JobForm({
     }
     setErrors({});
     const data = parsed.data;
-    const publishedAtIso = data.published_at
-      ? `${format(data.published_at, "yyyy-MM-dd")}T00:00:00.000Z`
+    const { published_at, updated_at, ...dataWithoutDates } = data;
+    const publishedAtIso = published_at
+      ? `${format(published_at, "yyyy-MM-dd")}T00:00:00.000Z`
       : null;
-    onSubmit({
-      ...data,
+    const updatedAtIso = updated_at
+      ? `${format(updated_at, "yyyy-MM-dd")}T00:00:00.000Z`
+      : null;
+    const payload: JobInsert = {
+      ...dataWithoutDates,
       job_code: data.job_code || null,
       department: data.department || null,
       location: data.location || null,
@@ -122,7 +128,9 @@ export function JobForm({
       work_mode: data.work_mode || null,
       application_method: "google_form",
       published_at: publishedAtIso,
-    });
+      ...(updatedAtIso ? { updated_at: updatedAtIso } : {}),
+    };
+    onSubmit(payload);
   }
 
   const field =
@@ -418,6 +426,39 @@ export function JobForm({
                   mode="single"
                   selected={values.published_at ?? undefined}
                   onSelect={(date) => set("published_at", date ?? null)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div>
+            <label className={label} htmlFor="updated_at">
+              Last updated date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="updated_at"
+                  variant="outline"
+                  className={cn(
+                    "mt-2 w-full justify-start rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-left text-sm font-normal text-primary hover:bg-background hover:text-primary",
+                    !values.updated_at && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {values.updated_at ? (
+                    format(values.updated_at, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={values.updated_at ?? undefined}
+                  onSelect={(date) => set("updated_at", date ?? null)}
                   initialFocus
                   className={cn("p-3 pointer-events-auto")}
                 />

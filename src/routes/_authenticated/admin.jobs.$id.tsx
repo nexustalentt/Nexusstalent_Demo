@@ -34,9 +34,8 @@ function EditJobPage() {
           ...values,
           updated_by: userData.user?.id ?? null,
           published_at:
-            values.status === "active"
-              ? (job.data?.published_at ?? new Date().toISOString())
-              : (job.data?.published_at ?? null),
+            values.published_at ??
+            (values.status === "active" ? new Date().toISOString() : null),
         })
         .eq("id", id);
       if (error) throw new Error(error.message);
