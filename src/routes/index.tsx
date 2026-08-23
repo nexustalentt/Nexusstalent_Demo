@@ -5,7 +5,7 @@ import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
 import { JobCard } from "@/components/site/job-card";
 import { activeJobsQuery, siteSettingsQuery } from "@/lib/queries";
-import { services, industries, whyChooseUs, hiringProcess } from "@/lib/content";
+import { services, industries, whyChooseUs, hiringProcess, clients } from "@/lib/content";
 
 export const Route = createFileRoute("/")({
   head: () => ({
