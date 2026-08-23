@@ -107,6 +107,9 @@ export function JobForm({
     const publishedAtIso = data.published_at
       ? `${format(data.published_at, "yyyy-MM-dd")}T00:00:00.000Z`
       : null;
+    const updatedAtIso = data.updated_at
+      ? `${format(data.updated_at, "yyyy-MM-dd")}T00:00:00.000Z`
+      : null;
     onSubmit({
       ...data,
       job_code: data.job_code || null,
@@ -124,6 +127,7 @@ export function JobForm({
       work_mode: data.work_mode || null,
       application_method: "google_form",
       published_at: publishedAtIso,
+      updated_at: updatedAtIso,
     });
   }
 
