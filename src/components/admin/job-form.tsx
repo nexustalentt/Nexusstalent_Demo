@@ -31,6 +31,7 @@ const jobSchema = z.object({
   form_id: z.string().uuid().nullable(),
   status: z.enum(["draft", "active", "closed", "archived"]),
   published_at: z.date().nullable(),
+  updated_at: z.date().nullable(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
