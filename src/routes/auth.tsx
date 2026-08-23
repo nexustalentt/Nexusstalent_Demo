@@ -106,41 +106,20 @@ function AuthPage() {
             <ShieldCheck className="size-5" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-primary">
-            {mode === "signin"
-              ? "Administrator sign in"
-              : mode === "reset"
-                ? "Reset your password"
-                : "Create the first administrator"}
+            {mode === "signin" ? "Administrator sign in" : "Reset your password"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {mode === "signin"
               ? "This portal is for authorised Nexus Talent administrators only."
-              : mode === "reset"
-                ? "We'll email you a secure link to set a new password."
-                : "This one-time setup is only available until the first administrator exists."}
+              : "We'll email you a secure link to set a new password."}
           </p>
 
           <form
-            onSubmit={
-              mode === "signin" ? handleSignIn : mode === "reset" ? handleReset : handleSetup
-            }
+            onSubmit={mode === "signin" ? handleSignIn : handleReset}
             noValidate
             className="mt-8 space-y-5"
           >
-            {mode === "setup" ? (
-              <div>
-                <label className={labelClass} htmlFor="full-name">
-                  Full name
-                </label>
-                <input
-                  id="full-name"
-                  value={fullName}
-                  maxLength={120}
-                  onChange={(event) => setFullName(event.target.value)}
-                  className={fieldClass}
-                />
-              </div>
-            ) : null}
+
 
             <div>
               <label className={labelClass} htmlFor="email">
