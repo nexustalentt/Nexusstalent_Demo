@@ -72,6 +72,7 @@ export function JobForm({
     form_id: job?.form_id ?? null,
     status: (job?.status as JobStatus) ?? "draft",
     published_at: job?.published_at ? new Date(job?.published_at) : null,
+    updated_at: job?.updated_at ? new Date(job?.updated_at) : null,
   });
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
