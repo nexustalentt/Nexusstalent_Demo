@@ -190,6 +190,8 @@ function ExamBuilder() {
     );
   }
 
+  const examRow = exam.data;
+
   return (
     <AdminShell
       title={exam.data.title}
@@ -435,7 +437,7 @@ function ExamBuilder() {
                 <button
                   type="button"
                   disabled={list.length === 0 || statusMutation.isPending}
-                  onClick={() => statusMutation.mutate({ target: exam.data, status: "published" })}
+                  onClick={() => statusMutation.mutate({ target: examRow, status: "published" })}
                   className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent disabled:opacity-60"
                 >
                   Publish
@@ -443,7 +445,7 @@ function ExamBuilder() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => statusMutation.mutate({ target: exam.data, status: "closed" })}
+                  onClick={() => statusMutation.mutate({ target: examRow, status: "closed" })}
                   className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-destructive hover:text-destructive"
                 >
                   Close exam
@@ -452,7 +454,7 @@ function ExamBuilder() {
               {exam.data.status === "closed" ? (
                 <button
                   type="button"
-                  onClick={() => statusMutation.mutate({ target: exam.data, status: "draft" })}
+                  onClick={() => statusMutation.mutate({ target: examRow, status: "draft" })}
                   className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-accent hover:text-accent"
                 >
                   Back to draft

@@ -87,7 +87,7 @@ function ExamsAdmin() {
                   <td className="px-5 py-4">
                     <div className="flex flex-wrap items-center justify-end gap-3">
                       <Link
-                        to="/admin/exams/$examId/submissions"
+                        to="/admin/exams/submissions/$examId"
                         params={{ examId: exam.id }}
                         className="text-sm font-semibold text-accent hover:underline"
                       >
