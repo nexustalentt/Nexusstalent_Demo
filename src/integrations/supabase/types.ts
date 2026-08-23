@@ -144,6 +144,262 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_answers: {
+        Row: {
+          answer: Json | null
+          attempt_id: string
+          awarded_marks: number | null
+          created_at: string
+          feedback: string | null
+          graded: boolean
+          id: string
+          question_id: string
+          updated_at: string
+        }
+        Insert: {
+          answer?: Json | null
+          attempt_id: string
+          awarded_marks?: number | null
+          created_at?: string
+          feedback?: string | null
+          graded?: boolean
+          id?: string
+          question_id: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: Json | null
+          attempt_id?: string
+          awarded_marks?: number | null
+          created_at?: string
+          feedback?: string | null
+          graded?: boolean
+          id?: string
+          question_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "exam_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "exam_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_attempts: {
+        Row: {
+          auto_score: number
+          candidate_id: string
+          created_at: string
+          exam_id: string
+          expires_at: string
+          id: string
+          manual_score: number
+          passed: boolean | null
+          percentage: number | null
+          session_token: string
+          started_at: string
+          status: string
+          submitted_at: string | null
+          total_marks: number
+          total_score: number
+          updated_at: string
+        }
+        Insert: {
+          auto_score?: number
+          candidate_id: string
+          created_at?: string
+          exam_id: string
+          expires_at: string
+          id?: string
+          manual_score?: number
+          passed?: boolean | null
+          percentage?: number | null
+          session_token: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          total_marks?: number
+          total_score?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_score?: number
+          candidate_id?: string
+          created_at?: string
+          exam_id?: string
+          expires_at?: string
+          id?: string
+          manual_score?: number
+          passed?: boolean | null
+          percentage?: number | null
+          session_token?: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          total_marks?: number
+          total_score?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_attempts_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "exam_candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_attempts_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_candidates: {
+        Row: {
+          created_at: string
+          email: string | null
+          exam_id: string
+          full_name: string | null
+          id: string
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          exam_id: string
+          full_name?: string | null
+          id?: string
+          password_hash: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          exam_id?: string
+          full_name?: string | null
+          id?: string
+          password_hash?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_candidates_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_questions: {
+        Row: {
+          correct_options: Json
+          created_at: string
+          exam_id: string
+          expected_answer: string | null
+          id: string
+          marks: number
+          options: Json
+          position: number
+          prompt: string
+          question_type: string
+          updated_at: string
+        }
+        Insert: {
+          correct_options?: Json
+          created_at?: string
+          exam_id: string
+          expected_answer?: string | null
+          id?: string
+          marks?: number
+          options?: Json
+          position?: number
+          prompt: string
+          question_type: string
+          updated_at?: string
+        }
+        Update: {
+          correct_options?: Json
+          created_at?: string
+          exam_id?: string
+          expected_answer?: string | null
+          id?: string
+          marks?: number
+          options?: Json
+          position?: number
+          prompt?: string
+          question_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_minutes: number
+          id: string
+          instructions: string | null
+          passing_percentage: number
+          public_token: string
+          published_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          instructions?: string | null
+          passing_percentage?: number
+          public_token?: string
+          published_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          instructions?: string | null
+          passing_percentage?: number
+          public_token?: string
+          published_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       forms: {
         Row: {
           created_at: string
