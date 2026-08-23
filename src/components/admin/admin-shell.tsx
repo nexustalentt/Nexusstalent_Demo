@@ -17,6 +17,7 @@ const navItems = [
   { label: "Dashboard", to: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Jobs", to: "/admin/jobs", icon: Briefcase, exact: false },
   { label: "Applications", to: "/admin/applications", icon: Users, exact: false },
+  { label: "Exams", to: "/admin/exams", icon: ClipboardList, exact: false },
   { label: "Forms", to: "/admin/forms", icon: FileText, exact: false },
   { label: "Settings", to: "/admin/settings", icon: Settings, exact: false },
   { label: "Profile", to: "/admin/profile", icon: UserRound, exact: false },

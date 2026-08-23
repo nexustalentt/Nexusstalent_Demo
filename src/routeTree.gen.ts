@@ -20,6 +20,7 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
+import { Route as ExamTokenRouteImport } from './routes/exam.$token'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
@@ -88,6 +89,11 @@ const CareersIndexRoute = CareersIndexRouteImport.update({
 const CareersSlugRoute = CareersSlugRouteImport.update({
   id: '/careers/$slug',
   path: '/careers/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamTokenRoute = ExamTokenRouteImport.update({
+  id: '/exam/$token',
+  path: '/exam/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
+  '/exam/$token': typeof ExamTokenRoute
   '/careers/': typeof CareersIndexRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
+  '/exam/$token': typeof ExamTokenRoute
   '/careers': typeof CareersIndexRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
+  '/exam/$token': typeof ExamTokenRoute
   '/careers/': typeof CareersIndexRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/terms'
     | '/careers/$slug'
+    | '/exam/$token'
     | '/careers/'
     | '/admin/forms'
     | '/admin/profile'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/terms'
     | '/careers/$slug'
+    | '/exam/$token'
     | '/careers'
     | '/admin/forms'
     | '/admin/profile'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/terms'
     | '/careers/$slug'
+    | '/exam/$token'
     | '/careers/'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/profile'
@@ -358,6 +370,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
   CareersSlugRoute: typeof CareersSlugRoute
+  ExamTokenRoute: typeof ExamTokenRoute
   CareersIndexRoute: typeof CareersIndexRoute
   ApiPublicApplicationsIntakeRoute: typeof ApiPublicApplicationsIntakeRoute
 }
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       path: '/careers/$slug'
       fullPath: '/careers/$slug'
       preLoaderRoute: typeof CareersSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exam/$token': {
+      id: '/exam/$token'
+      path: '/exam/$token'
+      fullPath: '/exam/$token'
+      preLoaderRoute: typeof ExamTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -600,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
   CareersSlugRoute: CareersSlugRoute,
+  ExamTokenRoute: ExamTokenRoute,
   CareersIndexRoute: CareersIndexRoute,
   ApiPublicApplicationsIntakeRoute: ApiPublicApplicationsIntakeRoute,
 }
