@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { Loader2, CalendarIcon } from "lucide-react";
 import type { JobInsert, JobRow, FormRow } from "@/lib/admin-api";
 import { jobStatuses, slugify, type JobStatus } from "@/lib/job-utils";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const jobSchema = z.object({
   title: z.string().trim().min(3, "Title must be at least 3 characters").max(140),
@@ -25,6 +30,7 @@ const jobSchema = z.object({
   google_form_url: z.string().trim().url("Enter a valid URL").max(500).optional().or(z.literal("")),
   form_id: z.string().uuid().nullable(),
   status: z.enum(["draft", "active", "closed", "archived"]),
+  published_at: z.date().nullable(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -64,6 +70,7 @@ export function JobForm({
     google_form_url: job?.google_form_url ?? "",
     form_id: job?.form_id ?? null,
     status: (job?.status as JobStatus) ?? "draft",
+    published_at: job?.published_at ? new Date(job?.published_at) : null,
   });
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -95,6 +102,9 @@ export function JobForm({
     }
     setErrors({});
     const data = parsed.data;
+    const publishedAtIso = data.published_at
+      ? `${format(data.published_at, "yyyy-MM-dd")}T00:00:00.000Z`
+      : null;
     onSubmit({
       ...data,
       job_code: data.job_code || null,
@@ -111,6 +121,7 @@ export function JobForm({
       employment_type: data.employment_type || null,
       work_mode: data.work_mode || null,
       application_method: "google_form",
+      published_at: publishedAtIso,
     });
   }
 
@@ -379,6 +390,39 @@ export function JobForm({
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className={label} htmlFor="published_at">
+              Published date
+            </label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="published_at"
+                  variant="outline"
+                  className={cn(
+                    "mt-2 w-full justify-start rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-left text-sm font-normal text-primary hover:bg-background hover:text-primary",
+                    !values.published_at && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {values.published_at ? (
+                    format(values.published_at, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={values.published_at ?? undefined}
+                  onSelect={(date) => set("published_at", date ?? null)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </section>
