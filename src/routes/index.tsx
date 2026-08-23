@@ -302,13 +302,21 @@ function HomePage() {
           <p className="text-center text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground">
             Trusted By Leading Organizations
           </p>
-          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, index) => (
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {clients.map((client) => (
               <div
-                key={index}
-                className="flex h-16 items-center justify-center rounded-xl border border-dashed border-primary/15 bg-card text-[10px] font-semibold tracking-widest uppercase text-muted-foreground"
+                key={client.name}
+                className="group flex items-center gap-4 rounded-2xl border border-primary/5 bg-card px-5 py-4 shadow-card transition-all hover:border-accent/40 hover:shadow-elegant"
               >
-                Client Logo
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/5 text-xs font-bold tracking-tight text-primary transition-colors group-hover:bg-accent/10 group-hover:text-accent">
+                  {client.mark}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-primary">{client.name}</p>
+                  <p className="truncate text-[11px] tracking-wide uppercase text-muted-foreground">
+                    {client.note}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
