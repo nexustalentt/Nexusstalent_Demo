@@ -102,6 +102,9 @@ export function JobForm({
     }
     setErrors({});
     const data = parsed.data;
+    const publishedAtIso = data.published_at
+      ? `${format(data.published_at, "yyyy-MM-dd")}T00:00:00.000Z`
+      : null;
     onSubmit({
       ...data,
       job_code: data.job_code || null,
@@ -118,6 +121,7 @@ export function JobForm({
       employment_type: data.employment_type || null,
       work_mode: data.work_mode || null,
       application_method: "google_form",
+      published_at: publishedAtIso,
     });
   }
 
