@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import {
   Briefcase,
+  ClipboardList,
   FileText,
   LayoutDashboard,
   LogOut,
