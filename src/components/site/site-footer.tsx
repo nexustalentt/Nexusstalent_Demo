@@ -18,7 +18,7 @@ export function SiteFooter() {
           </Link>
         </div>
         <div className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Nexus Talent Group. All rights reserved.
+          © 2016 Nexus Talent Group. All rights reserved.
         </div>
       </div>
     </footer>
