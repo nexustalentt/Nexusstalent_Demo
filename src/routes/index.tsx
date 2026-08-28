@@ -82,12 +82,6 @@ function HomePage() {
                 >
                   Partner With Us
                 </Link>
-                <Link
-                  to="/exam"
-                  className="rounded-full border border-accent/40 px-8 py-4 text-sm font-bold text-accent transition-colors hover:bg-accent/5"
-                >
-                  Exam
-                </Link>
 
               </div>
             </div>
