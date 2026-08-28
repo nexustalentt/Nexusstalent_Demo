@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { candidateAccessSchema, candidateLoginSchema } from "./exam-schemas";
+import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
 
 export const getExamIntro = createServerFn({ method: "GET" })
   .inputValidator((data: { token: string }) => ({ token: String(data.token).slice(0, 120) }))
@@ -86,4 +86,11 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
     );
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const candidateLoginGlobal = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => globalLoginSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { loginByUsername } = await import("./exam-attempt.server");
+    return loginByUsername(data);
   });

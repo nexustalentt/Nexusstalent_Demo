@@ -64,3 +64,8 @@ export const candidateLoginSchema = z.object({
   username: z.string().trim().min(1).max(60),
   password: z.string().min(1).max(100),
 });
+
+export const globalLoginSchema = z.object({
+  username: z.string().trim().min(1, "Enter your username").max(60),
+  password: z.string().min(1, "Enter your password").max(100),
+});
