@@ -58,6 +58,9 @@ function ExamBuilder() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [accessError, setAccessError] = useState<string | null>(null);
+  const [accessStart, setAccessStart] = useState("");
+  const [accessEnd, setAccessEnd] = useState("");
+  const [candidateDuration, setCandidateDuration] = useState("");
 
   useEffect(() => {
     if (exam.data && !details) {
@@ -152,7 +155,14 @@ function ExamBuilder() {
 
   const accessMutation = useMutation({
     mutationFn: async () => {
-      const parsed = candidateAccessSchema.safeParse({ username, password, full_name: fullName });
+      const parsed = candidateAccessSchema.safeParse({
+        username,
+        password,
+        full_name: fullName,
+        access_start_at: accessStart,
+        access_end_at: accessEnd,
+        duration_minutes: candidateDuration === "" ? "" : candidateDuration,
+      });
       if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Check credentials");
       await createCandidateAccess({ data: { examId, credentials: parsed.data } });
     },
@@ -161,6 +171,9 @@ function ExamBuilder() {
       setUsername("");
       setPassword("");
       setFullName("");
+      setAccessStart("");
+      setAccessEnd("");
+      setCandidateDuration("");
       setAccessError(null);
       invalidate();
     },
