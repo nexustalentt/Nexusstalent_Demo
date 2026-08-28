@@ -125,19 +125,27 @@ export const experienceBands = [
   { label: "8+ Years", min: 8, max: 99 },
 ];
 
+import sapLogo from "@/assets/logos/sap.svg";
+import ltiLogo from "@/assets/logos/ltimindtree.svg";
+import wiproLogo from "@/assets/logos/wipro.svg";
+import accentureLogo from "@/assets/logos/accenture.svg";
+import capgeminiLogo from "@/assets/logos/capgemini.svg";
+
 export type ClientLogo = {
   name: string;
   mark: string;
   note: string;
+  logo?: string;
 };
 
 export const clients: ClientLogo[] = [
-  { name: "SAP", mark: "SAP", note: "Enterprise Software" },
-  { name: "LTIMindtree", mark: "LTI", note: "IT Services" },
-  { name: "Wipro", mark: "WP", note: "Technology Consulting" },
-  { name: "Accenture", mark: "ACN", note: "Global Consulting" },
-  { name: "Capgemini", mark: "CG", note: "Digital Engineering" },
+  { name: "SAP", mark: "SAP", note: "Enterprise Software", logo: sapLogo },
+  { name: "LTIMindtree", mark: "LTI", note: "IT Services", logo: ltiLogo },
+  { name: "Wipro", mark: "WP", note: "Technology Consulting", logo: wiproLogo },
+  { name: "Accenture", mark: "ACN", note: "Global Consulting", logo: accentureLogo },
+  { name: "Capgemini", mark: "CG", note: "Digital Engineering", logo: capgeminiLogo },
   { name: "Banz", mark: "BZ", note: "Financial Services" },
   { name: "Yuva Pay", mark: "YP", note: "Fintech Startup" },
   { name: "Entity Data", mark: "ED", note: "Data & Analytics" },
 ];
+

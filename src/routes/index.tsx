@@ -309,9 +309,19 @@ function HomePage() {
                 key={client.name}
                 className="group flex items-center gap-4 rounded-2xl border border-primary/5 bg-card px-5 py-4 shadow-card transition-all hover:border-accent/40 hover:shadow-elegant"
               >
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/5 text-xs font-bold tracking-tight text-primary transition-colors group-hover:bg-accent/10 group-hover:text-accent">
-                  {client.mark}
+                <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-xl bg-primary/5 px-2 text-xs font-bold tracking-tight text-primary transition-colors group-hover:bg-accent/10 group-hover:text-accent">
+                  {client.logo ? (
+                    <img
+                      src={client.logo}
+                      alt={`${client.name} logo`}
+                      loading="lazy"
+                      className="max-h-6 w-full object-contain"
+                    />
+                  ) : (
+                    client.mark
+                  )}
                 </div>
+
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-primary">{client.name}</p>
                   <p className="truncate text-[11px] tracking-wide uppercase text-muted-foreground">
