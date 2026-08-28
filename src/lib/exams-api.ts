@@ -26,14 +26,18 @@ export const examsQuery = queryOptions({
       unwrap(await supabase.from("exam_candidates").select("id, exam_id")),
       unwrap(await supabase.from("exam_attempts").select("id, exam_id, status")),
     ]);
-    return exams.map((exam) => ({
-      ...exam,
-      question_count: questions.filter((row) => row.exam_id === exam.id).length,
-      candidate_count: candidates.filter((row) => row.exam_id === exam.id).length,
-      submission_count: attempts.filter(
-        (row) => row.exam_id === exam.id && row.status !== "in_progress",
-      ).length,
-    }));
+    return exams.map((exam) => {
+      const examAttempts = attempts.filter((row) => row.exam_id === exam.id);
+      return {
+        ...exam,
+        question_count: questions.filter((row) => row.exam_id === exam.id).length,
+        candidate_count: candidates.filter((row) => row.exam_id === exam.id).length,
+        submission_count: examAttempts.filter((row) => row.status !== "in_progress").length,
+        pending_count: examAttempts.filter((row) => row.status === "in_progress").length,
+        completed_count: examAttempts.filter((row) => row.status === "evaluated").length,
+      };
+    });
+
   },
 });
 

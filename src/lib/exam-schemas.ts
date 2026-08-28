@@ -57,10 +57,20 @@ export const candidateAccessSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(100),
   full_name: z.string().trim().max(120).optional().or(z.literal("")),
   email: z.string().trim().email("Enter a valid email").max(200).optional().or(z.literal("")),
+  access_start_at: z.string().trim().max(40).optional().or(z.literal("")),
+  access_end_at: z.string().trim().max(40).optional().or(z.literal("")),
+  duration_minutes: z
+    .union([z.coerce.number().int().min(1).max(600), z.literal("")])
+    .optional(),
 });
 
 export const candidateLoginSchema = z.object({
   token: z.string().trim().min(6).max(120),
   username: z.string().trim().min(1).max(60),
   password: z.string().min(1).max(100),
+});
+
+export const globalLoginSchema = z.object({
+  username: z.string().trim().min(1, "Enter your username").max(60),
+  password: z.string().min(1, "Enter your password").max(100),
 });

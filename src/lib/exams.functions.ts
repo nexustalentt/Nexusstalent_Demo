@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { candidateAccessSchema, candidateLoginSchema } from "./exam-schemas";
+import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
 
 export const getExamIntro = createServerFn({ method: "GET" })
   .inputValidator((data: { token: string }) => ({ token: String(data.token).slice(0, 120) }))
@@ -81,9 +81,26 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
         password_hash,
         full_name: data.credentials.full_name || null,
         email: data.credentials.email || null,
+        access_start_at: data.credentials.access_start_at
+          ? new Date(data.credentials.access_start_at).toISOString()
+          : null,
+        access_end_at: data.credentials.access_end_at
+          ? new Date(data.credentials.access_end_at).toISOString()
+          : null,
+        duration_minutes:
+          typeof data.credentials.duration_minutes === "number"
+            ? data.credentials.duration_minutes
+            : null,
       },
       { onConflict: "exam_id,username" },
     );
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const candidateLoginGlobal = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => globalLoginSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { loginByUsername } = await import("./exam-attempt.server");
+    return loginByUsername(data);
   });

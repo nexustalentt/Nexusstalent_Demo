@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/job-utils";
 export const Route = createFileRoute("/_authenticated/admin/exams/")({
   head: () => ({
     meta: [
-      { title: "Exams — Nexus Talent Admin" },
+      { title: "Exam Creator — Nexus Talent Admin" },
       { name: "description", content: "Create assessments and review candidate submissions." },
       { name: "robots", content: "noindex" },
     ],
@@ -33,14 +33,14 @@ function ExamsAdmin() {
 
   return (
     <AdminShell
-      title="Exams"
-      description="Assessments, questions and candidate submissions"
+      title="Exam Creator"
+      description="Assessments, assigned users and candidate submissions"
       actions={
         <Link
           to="/admin/exams/new"
           className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
         >
-          <Plus className="size-4" aria-hidden="true" /> Create
+          <Plus className="size-4" aria-hidden="true" /> Add Exam
         </Link>
       }
     >
@@ -50,7 +50,7 @@ function ExamsAdmin() {
       ) : null}
 
       {exams.data && exams.data.length === 0 ? (
-        <EmptyState title="No exams yet" hint="Click Create to build your first assessment." />
+        <EmptyState title="No exams yet" hint="Click Add Exam to build your first assessment." />
       ) : null}
 
       {exams.data && exams.data.length > 0 ? (
@@ -60,8 +60,9 @@ function ExamsAdmin() {
               <tr>
                 <th className="px-5 py-4">Exam name</th>
                 <th className="px-5 py-4">Questions</th>
-                <th className="px-5 py-4">Candidates</th>
+                <th className="px-5 py-4">Assigned users</th>
                 <th className="px-5 py-4">Submissions</th>
+                <th className="px-5 py-4">In progress</th>
                 <th className="px-5 py-4">Status</th>
                 <th className="px-5 py-4">Created</th>
                 <th className="px-5 py-4 text-right">Actions</th>
@@ -79,6 +80,7 @@ function ExamsAdmin() {
                   <td className="px-5 py-4">{exam.question_count}</td>
                   <td className="px-5 py-4">{exam.candidate_count}</td>
                   <td className="px-5 py-4">{exam.submission_count}</td>
+                  <td className="px-5 py-4">{exam.pending_count}</td>
                   <td className="px-5 py-4">
                     <StatusPill status={exam.status} />
                     <span className="sr-only">{examStatusLabels[exam.status]}</span>

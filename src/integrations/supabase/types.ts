@@ -269,7 +269,11 @@ export type Database = {
       }
       exam_candidates: {
         Row: {
+          access_enabled: boolean
+          access_end_at: string | null
+          access_start_at: string | null
           created_at: string
+          duration_minutes: number | null
           email: string | null
           exam_id: string
           full_name: string | null
@@ -278,7 +282,11 @@ export type Database = {
           username: string
         }
         Insert: {
+          access_enabled?: boolean
+          access_end_at?: string | null
+          access_start_at?: string | null
           created_at?: string
+          duration_minutes?: number | null
           email?: string | null
           exam_id: string
           full_name?: string | null
@@ -287,7 +295,11 @@ export type Database = {
           username: string
         }
         Update: {
+          access_enabled?: boolean
+          access_end_at?: string | null
+          access_start_at?: string | null
           created_at?: string
+          duration_minutes?: number | null
           email?: string | null
           exam_id?: string
           full_name?: string | null
