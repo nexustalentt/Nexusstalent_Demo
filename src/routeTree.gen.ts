@@ -17,6 +17,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
@@ -75,6 +76,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
     | '/industries'
     | '/privacy'
     | '/services'
+    | '/sitemap.xml'
     | '/terms'
     | '/careers/$slug'
     | '/exam/$token'
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/industries'
     | '/privacy'
     | '/services'
+    | '/sitemap.xml'
     | '/terms'
     | '/careers/$slug'
     | '/exam/$token'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/industries'
     | '/privacy'
     | '/services'
+    | '/sitemap.xml'
     | '/terms'
     | '/careers/$slug'
     | '/exam/$token'
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   IndustriesRoute: typeof IndustriesRoute
   PrivacyRoute: typeof PrivacyRoute
   ServicesRoute: typeof ServicesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   CareersSlugRoute: typeof CareersSlugRoute
   ExamTokenRoute: typeof ExamTokenRoute
@@ -444,6 +457,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustriesRoute: IndustriesRoute,
   PrivacyRoute: PrivacyRoute,
   ServicesRoute: ServicesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   CareersSlugRoute: CareersSlugRoute,
   ExamTokenRoute: ExamTokenRoute,
