@@ -81,6 +81,16 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
         password_hash,
         full_name: data.credentials.full_name || null,
         email: data.credentials.email || null,
+        access_start_at: data.credentials.access_start_at
+          ? new Date(data.credentials.access_start_at).toISOString()
+          : null,
+        access_end_at: data.credentials.access_end_at
+          ? new Date(data.credentials.access_end_at).toISOString()
+          : null,
+        duration_minutes:
+          typeof data.credentials.duration_minutes === "number"
+            ? data.credentials.duration_minutes
+            : null,
       },
       { onConflict: "exam_id,username" },
     );
