@@ -33,24 +33,49 @@ export async function examIntro(token: string) {
   return { title: data.title, description: data.description };
 }
 
-export async function login(input: { token: string; username: string; password: string }) {
+const CANDIDATE_COLUMNS =
+  "id, exam_id, password_hash, access_enabled, access_start_at, access_end_at, duration_minutes";
+
+type CandidateRecord = {
+  id: string;
+  exam_id: string;
+  password_hash: string;
+  access_enabled: boolean;
+  access_start_at: string | null;
+  access_end_at: string | null;
+  duration_minutes: number | null;
+};
+
+const INVALID = "Invalid username or password.";
+export const ALREADY_TAKEN = "You already took an exam. Thank you!";
+
+function formatWindow(value: string) {
+  return new Date(value).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+}
+
+/** Shared credential + access-window validation, then attempt start/resume. */
+async function authorize(candidate: CandidateRecord, password: string) {
+  if (!(await verifyPassword(password, candidate.password_hash))) throw new Error(INVALID);
+
   const { data: exam, error: examError } = await supabaseAdmin
     .from("exams")
     .select("id, status, duration_minutes")
-    .eq("public_token", input.token)
+    .eq("id", candidate.exam_id)
     .maybeSingle();
   if (examError) throw new Error(examError.message);
-  if (!exam || exam.status !== "published") throw new Error("Invalid username or password.");
-
-  const { data: candidate, error: candidateError } = await supabaseAdmin
-    .from("exam_candidates")
-    .select("id, password_hash")
-    .eq("exam_id", exam.id)
-    .eq("username", input.username)
-    .maybeSingle();
-  if (candidateError) throw new Error(candidateError.message);
-  if (!candidate || !(await verifyPassword(input.password, candidate.password_hash))) {
-    throw new Error("Invalid username or password.");
+  if (!exam) throw new Error(INVALID);
+  if (exam.status !== "published") {
+    throw new Error("This exam is not active right now. Please contact the recruitment team.");
+  }
+  if (!candidate.access_enabled) {
+    throw new Error("Your exam access has been disabled. Please contact the recruitment team.");
+  }
+  const now = Date.now();
+  if (candidate.access_start_at && new Date(candidate.access_start_at).getTime() > now) {
+    throw new Error(`This exam opens on ${formatWindow(candidate.access_start_at)}.`);
+  }
+  if (candidate.access_end_at && new Date(candidate.access_end_at).getTime() < now) {
+    throw new Error("The access window for this exam has closed.");
   }
 
   const { data: existing } = await supabaseAdmin
@@ -58,26 +83,71 @@ export async function login(input: { token: string; username: string; password: 
     .select("session_token, status")
     .eq("exam_id", exam.id)
     .eq("candidate_id", candidate.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
     .maybeSingle();
 
   if (existing) {
-    if (existing.status !== "in_progress") throw new Error("You have already submitted this exam.");
+    if (existing.status !== "in_progress") throw new Error(ALREADY_TAKEN);
     return { sessionToken: existing.session_token };
   }
 
+  const minutes = candidate.duration_minutes ?? exam.duration_minutes;
   const sessionToken = randomToken(24);
-  const expiresAt = new Date(Date.now() + exam.duration_minutes * 60_000).toISOString();
+  const expiresAt = new Date(Date.now() + minutes * 60_000).toISOString();
   const { error: insertError } = await supabaseAdmin.from("exam_attempts").insert({
     exam_id: exam.id,
     candidate_id: candidate.id,
     session_token: sessionToken,
     expires_at: expiresAt,
   });
-  if (insertError) throw new Error(insertError.message);
+
+  if (insertError) {
+    // Unique (exam_id, candidate_id) index blocks a second attempt: reuse the existing one.
+    const { data: raced } = await supabaseAdmin
+      .from("exam_attempts")
+      .select("session_token, status")
+      .eq("exam_id", exam.id)
+      .eq("candidate_id", candidate.id)
+      .maybeSingle();
+    if (!raced) throw new Error(insertError.message);
+    if (raced.status !== "in_progress") throw new Error(ALREADY_TAKEN);
+    return { sessionToken: raced.session_token };
+  }
+
   return { sessionToken };
 }
+
+export async function login(input: { token: string; username: string; password: string }) {
+  const { data: exam, error: examError } = await supabaseAdmin
+    .from("exams")
+    .select("id")
+    .eq("public_token", input.token)
+    .maybeSingle();
+  if (examError) throw new Error(examError.message);
+  if (!exam) throw new Error(INVALID);
+
+  const { data: candidate, error: candidateError } = await supabaseAdmin
+    .from("exam_candidates")
+    .select(CANDIDATE_COLUMNS)
+    .eq("exam_id", exam.id)
+    .eq("username", input.username)
+    .maybeSingle();
+  if (candidateError) throw new Error(candidateError.message);
+  if (!candidate) throw new Error(INVALID);
+  return authorize(candidate as CandidateRecord, input.password);
+}
+
+/** Username/password sign-in from the public /exam page — no exam link needed. */
+export async function loginByUsername(input: { username: string; password: string }) {
+  const { data: candidate, error } = await supabaseAdmin
+    .from("exam_candidates")
+    .select(CANDIDATE_COLUMNS)
+    .eq("username", input.username)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!candidate) throw new Error(INVALID);
+  return authorize(candidate as CandidateRecord, input.password);
+}
+
 
 async function loadAttempt(sessionToken: string) {
   const { data, error } = await supabaseAdmin
