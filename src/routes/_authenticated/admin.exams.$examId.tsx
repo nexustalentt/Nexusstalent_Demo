@@ -523,6 +523,47 @@ function ExamBuilder() {
                 className={fieldClass}
               />
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={labelClass} htmlFor="candidate-start">
+                  Access from (optional)
+                </label>
+                <input
+                  id="candidate-start"
+                  type="datetime-local"
+                  value={accessStart}
+                  onChange={(event) => setAccessStart(event.target.value)}
+                  className={fieldClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor="candidate-end">
+                  Access until (optional)
+                </label>
+                <input
+                  id="candidate-end"
+                  type="datetime-local"
+                  value={accessEnd}
+                  onChange={(event) => setAccessEnd(event.target.value)}
+                  className={fieldClass}
+                />
+              </div>
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="candidate-duration">
+                Time limit override in minutes (optional)
+              </label>
+              <input
+                id="candidate-duration"
+                type="number"
+                min={1}
+                max={600}
+                value={candidateDuration}
+                onChange={(event) => setCandidateDuration(event.target.value)}
+                placeholder={String(exam.data?.duration_minutes ?? "")}
+                className={fieldClass}
+              />
+            </div>
             {accessError ? (
               <p className="text-sm font-semibold text-destructive">{accessError}</p>
             ) : null}
@@ -546,8 +587,10 @@ function ExamBuilder() {
             </ul>
             <p className="text-xs text-muted-foreground">
               Passwords are stored hashed and cannot be read back. Re-submitting the same username
-              resets that candidate&apos;s password.
+              resets that candidate&apos;s password, window and time limit. Candidates can also sign
+              in from the public Exam page with just this username and password.
             </p>
+
           </section>
         </aside>
       </div>
