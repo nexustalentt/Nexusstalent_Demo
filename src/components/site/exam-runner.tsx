@@ -125,7 +125,7 @@ export function ExamRunner({
       });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [state.data, submitted, submit]);
+  }, [state.data, submitted, started, submit]);
 
   const questions = state.data?.questions ?? [];
   const sections = useMemo(() => groupBySection(questions), [questions]);
