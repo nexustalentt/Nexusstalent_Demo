@@ -105,8 +105,14 @@ export async function attemptState(sessionToken: string): Promise<AttemptState> 
     })),
     answers: state.answers ?? {},
     reviewFlags: state.reviewFlags ?? [],
+    started: Boolean(state.started),
     secondsRemaining: Math.max(0, Math.floor(Number(state.secondsRemaining) || 0)),
   };
+}
+
+/** Starts the countdown from the moment the candidate clicks "Start Exam". */
+export async function startAttempt(sessionToken: string) {
+  return callRpc<{ ok: boolean }>("exam_start_attempt", { p_session_token: sessionToken });
 }
 
 export async function saveAnswer(input: {
