@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { questionSchema } from "@/lib/exam-schemas";
-import { questionTypes, type QuestionType } from "@/lib/exam-utils";
+import { examSections, questionTypes, type QuestionType } from "@/lib/exam-utils";
 import type { ExamQuestionRow } from "@/lib/exams-api";
 
 export type QuestionDraft = {
@@ -10,6 +10,7 @@ export type QuestionDraft = {
   options: string[];
   correct_options: number[];
   expected_answer: string;
+  section: string;
   marks: number;
 };
 
@@ -25,6 +26,7 @@ function draftFromRow(row?: ExamQuestionRow | null): QuestionDraft {
       options: ["", "", "", ""],
       correct_options: [],
       expected_answer: "",
+      section: "",
       marks: 1,
     };
   }
@@ -36,6 +38,7 @@ function draftFromRow(row?: ExamQuestionRow | null): QuestionDraft {
       ? (row.correct_options as number[]).map(Number)
       : [],
     expected_answer: row.expected_answer ?? "",
+    section: row.section ?? "",
     marks: Number(row.marks) || 0,
   };
 }
@@ -141,6 +144,25 @@ export function QuestionEditor({
             onChange={(event) => setDraft({ ...draft, marks: Number(event.target.value) })}
             className={fieldClass}
           />
+        </div>
+        <div>
+          <label className={labelClass} htmlFor="question-section">
+            Section
+          </label>
+          <input
+            id="question-section"
+            list="question-section-options"
+            value={draft.section}
+            maxLength={80}
+            placeholder="General"
+            onChange={(event) => setDraft({ ...draft, section: event.target.value })}
+            className={fieldClass}
+          />
+          <datalist id="question-section-options">
+            {examSections.map((section) => (
+              <option key={section} value={section} />
+            ))}
+          </datalist>
         </div>
       </div>
 
