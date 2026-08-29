@@ -234,6 +234,36 @@ function ExamBuilder() {
     onError: (error: Error) => setAccessError(error.message),
   });
 
+  const deleteCandidateMutation = useMutation({
+    mutationFn: async (candidate: { id: string; username: string }) => {
+      const attempts = await supabase
+        .from("exam_attempts")
+        .select("id")
+        .eq("candidate_id", candidate.id);
+      if (attempts.error) throw new Error(attempts.error.message);
+      const attemptIds = (attempts.data ?? []).map((row) => row.id);
+      if (attemptIds.length > 0) {
+        const answers = await supabase.from("exam_answers").delete().in("attempt_id", attemptIds);
+        if (answers.error) throw new Error(answers.error.message);
+        const removed = await supabase.from("exam_attempts").delete().in("id", attemptIds);
+        if (removed.error) throw new Error(removed.error.message);
+      }
+      const { error } = await supabase.from("exam_candidates").delete().eq("id", candidate.id);
+      if (error) throw new Error(error.message);
+      return candidate;
+    },
+    onSuccess: (candidate) => {
+      toast.success(`Removed ${candidate.username}`);
+      setShownPasswords((current) => {
+        const next = { ...current };
+        delete next[candidate.username.toLowerCase()];
+        return next;
+      });
+      invalidate();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const list = questions.data ?? [];
   const sectionGroups = groupBySection(list);
   const totalMarks = list.reduce((sum, question) => sum + (Number(question.marks) || 0), 0);
