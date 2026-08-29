@@ -351,6 +351,32 @@ function ExamBuilder() {
             </button>
           </section>
 
+          <div className="flex gap-2 rounded-full border border-primary/10 bg-card p-1">
+            {(["questions", "answers"] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setTab(value)}
+                className={`flex-1 rounded-full px-5 py-2 text-sm font-bold capitalize ${
+                  tab === value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+
+          {tab === "questions" ? (
+          <QuestionBankImport
+            existingCount={list.length}
+            pending={bulkImportMutation.isPending}
+            onImport={(items, mode) => bulkImportMutation.mutate({ items, mode })}
+          />
+          ) : null}
+
+          {tab === "questions" ? (
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
