@@ -133,6 +133,41 @@ function ExamBuilder() {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const bulkImportMutation = useMutation({
+    mutationFn: async ({
+      items,
+      mode,
+    }: {
+      items: ParsedQuestion[];
+      mode: "append" | "replace";
+    }) => {
+      if (mode === "replace") {
+        const { error } = await supabase.from("exam_questions").delete().eq("exam_id", examId);
+        if (error) throw new Error(error.message);
+      }
+      const start = mode === "replace" ? 0 : await nextPosition(examId);
+      const rows = items.map((item, index) => ({
+        exam_id: examId,
+        position: start + index,
+        question_type: item.question_type,
+        prompt: item.prompt,
+        options: item.options as never,
+        correct_options: item.correct_options as never,
+        expected_answer: null,
+        marks: item.marks,
+      }));
+      const { error } = await supabase.from("exam_questions").insert(rows);
+      if (error) throw new Error(error.message);
+      await recordAudit("exam_questions_imported", "exam", examId, { count: rows.length, mode });
+      return rows.length;
+    },
+    onSuccess: (count) => {
+      toast.success(`${count} questions added`);
+      invalidate();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const questionActionMutation = useMutation({
     mutationFn: async (action:
       | { type: "delete"; question: ExamQuestionRow }
