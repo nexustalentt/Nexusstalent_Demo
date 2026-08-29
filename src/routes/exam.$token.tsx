@@ -45,6 +45,18 @@ function ExamPage() {
 
   if (!ready || intro.isLoading) return <Shell>Loading…</Shell>;
 
+  if (intro.isError) {
+    return (
+      <Shell>
+        <h1 className="text-xl font-bold text-primary">Exam temporarily unavailable</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          We could not reach the exam service. Please refresh in a moment, or contact the
+          recruitment team if this keeps happening.
+        </p>
+      </Shell>
+    );
+  }
+
   if (!intro.data) {
     return (
       <Shell>
@@ -55,6 +67,7 @@ function ExamPage() {
       </Shell>
     );
   }
+
 
   if (!sessionToken) {
     return <LoginCard token={token} title={intro.data.title} onAuthenticated={onAuthenticated} />;
