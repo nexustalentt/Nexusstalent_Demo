@@ -72,6 +72,7 @@ function ExamBuilder() {
   const [accessStart, setAccessStart] = useState("");
   const [accessEnd, setAccessEnd] = useState("");
   const [candidateDuration, setCandidateDuration] = useState("");
+  const [shownPasswords, setShownPasswords] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (exam.data && !details) {
