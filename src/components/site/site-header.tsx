@@ -9,7 +9,9 @@ const navItems = [
   { label: "Services", to: "/services" },
   { label: "Industries", to: "/industries" },
   { label: "Careers", to: "/careers" },
+  { label: "Exam", to: "/exam" },
 ] as const;
+
 
 export function SiteLogo({ className = "text-xl" }: { className?: string }) {
   return (
