@@ -10,7 +10,7 @@ import { letterLabel, type ParsedQuestion } from "@/lib/question-bank-parser";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
 import { candidateAccessSchema, examDetailsSchema } from "@/lib/exam-schemas";
-import { questionTypeLabel } from "@/lib/exam-utils";
+import { groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import {
   deleteQuestion,
   duplicateQuestion,
@@ -119,6 +119,7 @@ function ExamBuilder() {
         options: draft.options as never,
         correct_options: draft.correct_options as never,
         expected_answer: draft.expected_answer || null,
+        section: draft.section.trim() || null,
         marks: draft.marks,
       };
       if (editing) {
@@ -162,6 +163,7 @@ function ExamBuilder() {
         options: item.options as never,
         correct_options: item.correct_options as never,
         expected_answer: null,
+        section: item.section.trim() || null,
         marks: item.marks,
       }));
       const { error } = await supabase.from("exam_questions").insert(rows);
@@ -227,6 +229,7 @@ function ExamBuilder() {
   });
 
   const list = questions.data ?? [];
+  const sectionGroups = groupBySection(list);
   const totalMarks = list.reduce((sum, question) => sum + (Number(question.marks) || 0), 0);
   const examLink =
     typeof window !== "undefined" && exam.data
@@ -384,6 +387,28 @@ function ExamBuilder() {
           />
           ) : null}
 
+          {tab === "questions" && sectionGroups.length > 0 ? (
+            <section className="rounded-2xl border border-primary/5 bg-card p-6">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                Sections ({sectionGroups.length})
+              </h2>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {sectionGroups.map((group) => (
+                  <li
+                    key={group.name}
+                    className="rounded-full bg-surface px-4 py-1.5 text-sm font-semibold text-primary"
+                  >
+                    {group.name}
+                    <span className="ml-2 text-muted-foreground">
+                      Q{group.startIndex + 1}–{group.startIndex + group.items.length} ·{" "}
+                      {group.items.length}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {tab === "questions" ? (
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -424,7 +449,8 @@ function ExamBuilder() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
                       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        {index + 1}. {questionTypeLabel(question.question_type)} ·{" "}
+                        {index + 1}. {normalizeSection(question.section)} ·{" "}
+                        {questionTypeLabel(question.question_type)} ·{" "}
                         {Number(question.marks)} {Number(question.marks) === 1 ? "mark" : "marks"}
                       </p>
                       <p className="mt-1 font-semibold text-primary">{question.prompt}</p>
@@ -537,6 +563,7 @@ function ExamBuilder() {
                   <thead>
                     <tr className="border-b border-primary/10 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       <th className="py-2 pr-4">Question</th>
+                      <th className="py-2 pr-4">Section</th>
                       <th className="py-2 pr-4">Question text</th>
                       <th className="py-2 pr-4">Correct answer</th>
                       <th className="py-2">Marks</th>
@@ -546,6 +573,9 @@ function ExamBuilder() {
                     {list.map((question, index) => (
                       <tr key={question.id} className="border-b border-primary/5">
                         <td className="py-2.5 pr-4 font-bold text-primary">{index + 1}</td>
+                        <td className="py-2.5 pr-4 text-muted-foreground">
+                          {normalizeSection(question.section)}
+                        </td>
                         <td className="max-w-md truncate py-2.5 pr-4 text-muted-foreground">
                           {question.prompt}
                         </td>
