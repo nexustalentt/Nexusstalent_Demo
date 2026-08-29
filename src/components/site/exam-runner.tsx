@@ -170,6 +170,20 @@ export function ExamRunner({
     );
   }
 
+  if (!started) {
+    return (
+      <InstructionsGate
+        exam={state.data.exam}
+        candidateName={state.data.candidateName}
+        candidateUsername={state.data.candidateUsername}
+        questionCount={questions.length}
+        pending={startMutation.isPending}
+        error={startMutation.error instanceof Error ? startMutation.error.message : null}
+        onStart={() => startMutation.mutate()}
+      />
+    );
+  }
+
   const question = questions[current];
   const answeredCount = questions.filter((item) => isAnswered(answers[item.id] ?? null)).length;
   const reviewCount = questions.filter((item) => review[item.id]).length;
