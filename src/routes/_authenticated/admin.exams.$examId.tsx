@@ -40,6 +40,14 @@ const fieldClass =
   "w-full rounded-lg border border-primary/10 bg-card px-4 py-2.5 text-sm outline-none focus:border-accent";
 const labelClass = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground";
 
+function answerLetters(question: ExamQuestionRow) {
+  const correct = Array.isArray(question.correct_options)
+    ? (question.correct_options as number[]).map(Number)
+    : [];
+  if (correct.length === 0) return question.expected_answer ? question.expected_answer : "Manual";
+  return correct.map(letterLabel).join(" / ");
+}
+
 function ExamBuilder() {
   const { examId } = Route.useParams();
   const queryClient = useQueryClient();
