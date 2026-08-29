@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAuthedUser } from "./staff-auth.server";
 import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
 
 export const getExamIntro = createServerFn({ method: "GET" })
@@ -74,7 +74,7 @@ export const submitExamAttempt = createServerFn({ method: "POST" })
   });
 
 export const createCandidateAccess = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuthedUser])
   .inputValidator((data: unknown) => {
     const parsed = candidateAccessSchema.parse((data as { credentials: unknown }).credentials);
     return { examId: String((data as { examId: string }).examId).slice(0, 60), credentials: parsed };
