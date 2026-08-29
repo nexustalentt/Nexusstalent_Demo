@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { formatDuration, questionTypeLabel } from "@/lib/exam-utils";
+import { letterLabel } from "@/lib/question-bank-parser";
 import { getAttemptState, saveExamAnswer, submitExamAttempt } from "@/lib/exams.functions";
 
 export type StoredAnswer = { selected?: number[]; text?: string } | null;
@@ -181,7 +182,9 @@ export function ExamRunner({
               {questionTypeLabel(question.question_type)} · {question.marks}{" "}
               {question.marks === 1 ? "mark" : "marks"}
             </p>
-            <p className="text-lg font-semibold text-primary">{question.prompt}</p>
+            <p className="text-lg font-semibold text-primary">
+              Question {current + 1}. {question.prompt}
+            </p>
 
             {question.question_type === "multiple_select" ? (
               <div className="space-y-2">
@@ -201,7 +204,9 @@ export function ExamRunner({
                         }
                         className="size-4 accent-accent"
                       />
-                      {option}
+                      <span>
+                        <span className="font-bold text-primary">{letterLabel(index)}.</span> {option}
+                      </span>
                     </label>
                   );
                 })}
@@ -219,7 +224,7 @@ export function ExamRunner({
                       onChange={() => update(question.id, { selected: [index] })}
                       className="size-4 accent-accent"
                     />
-                    {option}
+                    <span className="font-bold text-primary">{letterLabel(index)}.</span> {option}
                   </label>
                 ))}
               </div>

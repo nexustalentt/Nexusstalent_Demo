@@ -19,10 +19,11 @@ export const Route = createFileRoute("/sitemap.xml")({
             .eq("status", "active")
             .limit(500);
           for (const job of data ?? []) {
-            entries.push({
+            const entry: { loc: string; lastmod?: string } = {
               loc: `${origin}/careers/${job.slug}`,
-              lastmod: job.updated_at ? new Date(job.updated_at).toISOString() : undefined,
-            });
+            };
+            if (job.updated_at) entry.lastmod = new Date(job.updated_at).toISOString();
+            entries.push(entry);
           }
         } catch (error) {
           console.error("[sitemap] job fetch failed", error);

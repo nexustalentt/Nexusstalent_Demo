@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowDown, ArrowUp, Copy, Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import { QuestionEditor, type QuestionDraft } from "@/components/admin/question-editor";
+import { QuestionBankImport } from "@/components/admin/question-bank-import";
+import { letterLabel, type ParsedQuestion } from "@/lib/question-bank-parser";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
 import { candidateAccessSchema, examDetailsSchema } from "@/lib/exam-schemas";
@@ -38,6 +40,14 @@ const fieldClass =
   "w-full rounded-lg border border-primary/10 bg-card px-4 py-2.5 text-sm outline-none focus:border-accent";
 const labelClass = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground";
 
+function answerLetters(question: ExamQuestionRow) {
+  const correct = Array.isArray(question.correct_options)
+    ? (question.correct_options as number[]).map(Number)
+    : [];
+  if (correct.length === 0) return question.expected_answer ? question.expected_answer : "Manual";
+  return correct.map(letterLabel).join(" / ");
+}
+
 function ExamBuilder() {
   const { examId } = Route.useParams();
   const queryClient = useQueryClient();
@@ -45,6 +55,7 @@ function ExamBuilder() {
   const questions = useQuery(examQuestionsQuery(examId));
   const candidates = useQuery(examCandidatesQuery(examId));
 
+  const [tab, setTab] = useState<"questions" | "answers">("questions");
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<ExamQuestionRow | null>(null);
   const [details, setDetails] = useState<null | {
@@ -125,6 +136,41 @@ function ExamBuilder() {
       toast.success("Question saved");
       setAdding(false);
       setEditing(null);
+      invalidate();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const bulkImportMutation = useMutation({
+    mutationFn: async ({
+      items,
+      mode,
+    }: {
+      items: ParsedQuestion[];
+      mode: "append" | "replace";
+    }) => {
+      if (mode === "replace") {
+        const { error } = await supabase.from("exam_questions").delete().eq("exam_id", examId);
+        if (error) throw new Error(error.message);
+      }
+      const start = mode === "replace" ? 0 : await nextPosition(examId);
+      const rows = items.map((item, index) => ({
+        exam_id: examId,
+        position: start + index,
+        question_type: item.question_type,
+        prompt: item.prompt,
+        options: item.options as never,
+        correct_options: item.correct_options as never,
+        expected_answer: null,
+        marks: item.marks,
+      }));
+      const { error } = await supabase.from("exam_questions").insert(rows);
+      if (error) throw new Error(error.message);
+      await recordAudit("exam_questions_imported", "exam", examId, { count: rows.length, mode });
+      return rows.length;
+    },
+    onSuccess: (count) => {
+      toast.success(`${count} questions added`);
       invalidate();
     },
     onError: (error: Error) => toast.error(error.message),
@@ -313,6 +359,32 @@ function ExamBuilder() {
             </button>
           </section>
 
+          <div className="flex gap-2 rounded-full border border-primary/10 bg-card p-1">
+            {(["questions", "answers"] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setTab(value)}
+                className={`flex-1 rounded-full px-5 py-2 text-sm font-bold capitalize ${
+                  tab === value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+
+          {tab === "questions" ? (
+          <QuestionBankImport
+            existingCount={list.length}
+            pending={bulkImportMutation.isPending}
+            onImport={(items, mode) => bulkImportMutation.mutate({ items, mode })}
+          />
+          ) : null}
+
+          {tab === "questions" ? (
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -433,6 +505,62 @@ function ExamBuilder() {
               ))}
             </ol>
           </section>
+          ) : (
+          <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                Answer key ({list.length})
+              </h2>
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    list
+                      .map((question, index) => `${index + 1} - ${answerLetters(question)}`)
+                      .join("\n"),
+                  );
+                  toast.success("Answer key copied");
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-accent hover:text-accent"
+              >
+                <Copy className="size-4" aria-hidden="true" /> Copy answer key
+              </button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Candidates never see this key — it stays inside the admin portal.
+            </p>
+            {list.length === 0 ? (
+              <EmptyState title="No questions yet" hint="Paste a question bank to generate the key." />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-primary/10 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <th className="py-2 pr-4">Question</th>
+                      <th className="py-2 pr-4">Question text</th>
+                      <th className="py-2 pr-4">Correct answer</th>
+                      <th className="py-2">Marks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {list.map((question, index) => (
+                      <tr key={question.id} className="border-b border-primary/5">
+                        <td className="py-2.5 pr-4 font-bold text-primary">{index + 1}</td>
+                        <td className="max-w-md truncate py-2.5 pr-4 text-muted-foreground">
+                          {question.prompt}
+                        </td>
+                        <td className="py-2.5 pr-4 font-bold text-accent">
+                          {answerLetters(question)}
+                        </td>
+                        <td className="py-2.5 text-muted-foreground">{Number(question.marks)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+          )}
         </div>
 
         <aside className="space-y-6">
