@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { formatDuration, questionTypeLabel } from "@/lib/exam-utils";
+import { letterLabel } from "@/lib/question-bank-parser";
 import { getAttemptState, saveExamAnswer, submitExamAttempt } from "@/lib/exams.functions";
 
 export type StoredAnswer = { selected?: number[]; text?: string } | null;
