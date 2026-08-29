@@ -1,4 +1,5 @@
 import { questionSchema } from "./exam-schemas";
+import { examSections } from "./exam-utils";
 import type { QuestionDraft } from "@/components/admin/question-editor";
 
 export type ParsedQuestion = QuestionDraft & { number: number };
@@ -20,8 +21,24 @@ const optionStart = /^\(?([A-Za-z])\)?\s*[).:.\-]\s*(.*)$/;
 const answerLine = /^(?:answer|ans|correct\s*answer|key)\s*[:\-–)]?\s*(.+)$/i;
 const keyLine = /^(\d{1,4})\s*[).:.\-–>]+\s*([A-Za-z](?:\s*[,/&]\s*[A-Za-z])*)\s*$/;
 const answersHeader = /^(?:answers?|answer\s*key)\s*[:.]?\s*$/i;
+const sectionHeader = /^(?:section|part)\s*\d*\s*[:\-–.)]?\s*(.*)$/i;
+
+/** Recognises "Section: English", "Part 2 - Logical Reasoning" or a bare known section name. */
+function detectSection(line: string): string | null {
+  const known = examSections.find(
+    (section) => section.toLowerCase() === line.toLowerCase().replace(/[:\-–.]+$/, "").trim(),
+  );
+  if (known) return known;
+  const match = line.match(sectionHeader);
+  if (!match) return null;
+  const name = (match[1] ?? "").trim();
+  if (!name || name.length > 80) return null;
+  if (/^[A-Za-z]\s*[).:]/.test(line)) return null;
+  return name;
+}
 
 type Raw = {
+  section: string;
   number: number | null;
   prompt: string[];
   options: string[];
@@ -29,11 +46,16 @@ type Raw = {
 };
 
 /** Parses a pasted question bank into structured questions plus per-question errors. */
-export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseResult {
+export function parseQuestionBank(
+  input: string,
+  marksPerQuestion = 1,
+  defaultSection = "",
+): ParseResult {
   const lines = input.replace(/\r\n?/g, "\n").split("\n");
   const raws: Raw[] = [];
   const keyMap = new Map<number, string[]>();
   let current: Raw | null = null;
+  let section = defaultSection.trim();
   let inKeySection = false;
   const errors: ParseError[] = [];
 
@@ -45,6 +67,15 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
   for (const rawLine of lines) {
     const line = rawLine.trim();
     if (!line) continue;
+
+    if (!inKeySection) {
+      const detected = detectSection(line);
+      if (detected) {
+        push();
+        section = detected;
+        continue;
+      }
+    }
 
     if (answersHeader.test(line)) {
       push();
@@ -83,6 +114,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
       if (looksNumbered) {
         push();
         current = {
+          section,
           number: Number(start[1]),
           prompt: start[2] ? [start[2]!.trim()] : [],
           options: [],
@@ -93,7 +125,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
     }
 
     if (!current) {
-      current = { number: null, prompt: [line], options: [], answerLetters: [] };
+      current = { section, number: null, prompt: [line], options: [], answerLetters: [] };
       continue;
     }
     if (current.options.length === 0) current.prompt.push(line);
@@ -157,6 +189,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
       options,
       correct_options: indices,
       expected_answer: "",
+      section: raw.section,
       marks: marksPerQuestion,
     };
 
@@ -166,6 +199,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
       options: draft.options,
       correct_options: draft.correct_options,
       expected_answer: "",
+      section: draft.section,
       marks: draft.marks,
     });
     if (!parsed.success) {
@@ -179,6 +213,13 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
     questions.push(draft);
   });
 
-  questions.sort((a, b) => a.number - b.number);
+  const order = new Map<string, number>();
+  questions.forEach((question) => {
+    if (!order.has(question.section)) order.set(question.section, order.size);
+  });
+  questions.sort(
+    (a, b) =>
+      (order.get(a.section) ?? 0) - (order.get(b.section) ?? 0) || a.number - b.number,
+  );
   return { questions, errors };
 }
