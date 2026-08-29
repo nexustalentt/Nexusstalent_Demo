@@ -53,3 +53,32 @@ export function formatDuration(totalSeconds: number) {
 export function optionLabel(index: number) {
   return `Option ${index + 1}`;
 }
+
+/** Default aptitude sections offered in the exam creator. */
+export const examSections = [
+  "English",
+  "Logical Reasoning",
+  "Manual Testing",
+  "Automation Testing",
+] as const;
+
+export const generalSection = "General";
+
+export function normalizeSection(value?: string | null) {
+  const trimmed = (value ?? "").trim();
+  return trimmed.length > 0 ? trimmed : generalSection;
+}
+
+export type SectionGroup<T> = { name: string; items: T[]; startIndex: number };
+
+/** Groups questions by section, preserving their saved order. */
+export function groupBySection<T extends { section?: string | null }>(items: T[]): SectionGroup<T>[] {
+  const groups: SectionGroup<T>[] = [];
+  items.forEach((item, index) => {
+    const name = normalizeSection(item.section);
+    const existing = groups.find((group) => group.name === name);
+    if (existing) existing.items.push(item);
+    else groups.push({ name, items: [item], startIndex: index });
+  });
+  return groups;
+}
