@@ -153,6 +153,7 @@ export type Database = {
           feedback: string | null
           graded: boolean
           id: string
+          marked_for_review: boolean
           question_id: string
           updated_at: string
         }
@@ -164,6 +165,7 @@ export type Database = {
           feedback?: string | null
           graded?: boolean
           id?: string
+          marked_for_review?: boolean
           question_id: string
           updated_at?: string
         }
@@ -175,6 +177,7 @@ export type Database = {
           feedback?: string | null
           graded?: boolean
           id?: string
+          marked_for_review?: boolean
           question_id?: string
           updated_at?: string
         }
@@ -329,6 +332,7 @@ export type Database = {
           position: number
           prompt: string
           question_type: string
+          section: string | null
           updated_at: string
         }
         Insert: {
@@ -342,6 +346,7 @@ export type Database = {
           position?: number
           prompt: string
           question_type: string
+          section?: string | null
           updated_at?: string
         }
         Update: {
@@ -355,6 +360,7 @@ export type Database = {
           position?: number
           prompt?: string
           question_type?: string
+          section?: string | null
           updated_at?: string
         }
         Relationships: [

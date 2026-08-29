@@ -5,6 +5,7 @@ import { gradeAnswer, summarize, type StoredAnswer } from "./exam-grading.server
 export type CandidateQuestion = {
   id: string;
   position: number;
+  section: string | null;
   question_type: string;
   prompt: string;
   options: string[];
@@ -15,12 +16,13 @@ export type AttemptState = {
   exam: { title: string; description: string | null; instructions: string | null; duration_minutes: number };
   questions: CandidateQuestion[];
   answers: Record<string, StoredAnswer>;
+  reviewFlags: string[];
   secondsRemaining: number;
   status: string;
   submittedAt: string | null;
 };
 
-const QUESTION_COLUMNS = "id, position, question_type, prompt, options, marks";
+const QUESTION_COLUMNS = "id, position, section, question_type, prompt, options, marks";
 
 export async function examIntro(token: string) {
   const { data, error } = await supabaseAdmin
@@ -179,7 +181,10 @@ export async function attemptState(sessionToken: string): Promise<AttemptState> 
       .select(QUESTION_COLUMNS)
       .eq("exam_id", attempt.exam_id)
       .order("position", { ascending: true }),
-    supabaseAdmin.from("exam_answers").select("question_id, answer").eq("attempt_id", attempt.id),
+    supabaseAdmin
+      .from("exam_answers")
+      .select("question_id, answer, marked_for_review")
+      .eq("attempt_id", attempt.id),
   ]);
 
   if (examResult.error) throw new Error(examResult.error.message);
@@ -187,8 +192,10 @@ export async function attemptState(sessionToken: string): Promise<AttemptState> 
   if (answerResult.error) throw new Error(answerResult.error.message);
 
   const answers: Record<string, StoredAnswer> = {};
+  const reviewFlags: string[] = [];
   for (const row of answerResult.data ?? []) {
     answers[row.question_id] = (row.answer ?? null) as StoredAnswer;
+    if (row.marked_for_review) reviewFlags.push(row.question_id);
   }
 
   return {
@@ -196,12 +203,14 @@ export async function attemptState(sessionToken: string): Promise<AttemptState> 
     questions: (questionResult.data ?? []).map((question) => ({
       id: question.id,
       position: question.position,
+      section: question.section ?? null,
       question_type: question.question_type,
       prompt: question.prompt,
       options: Array.isArray(question.options) ? (question.options as string[]) : [],
       marks: Number(question.marks) || 0,
     })),
     answers,
+    reviewFlags,
     secondsRemaining: Math.max(
       0,
       Math.floor((new Date(attempt.expires_at).getTime() - Date.now()) / 1000),
@@ -214,7 +223,8 @@ export async function attemptState(sessionToken: string): Promise<AttemptState> 
 export async function saveAnswer(input: {
   sessionToken: string;
   questionId: string;
-  answer: StoredAnswer;
+  answer?: StoredAnswer;
+  markedForReview?: boolean;
 }) {
   const attempt = await loadAttempt(input.sessionToken);
   if (attempt.status !== "in_progress") throw new Error("This exam has already been submitted.");
@@ -232,14 +242,18 @@ export async function saveAnswer(input: {
   if (questionError) throw new Error(questionError.message);
   if (!question) throw new Error("Unknown question.");
 
-  const { error } = await supabaseAdmin.from("exam_answers").upsert(
-    {
-      attempt_id: attempt.id,
-      question_id: input.questionId,
-      answer: input.answer as never,
-    },
-    { onConflict: "attempt_id,question_id" },
-  );
+  const payload: Record<string, unknown> = {
+    attempt_id: attempt.id,
+    question_id: input.questionId,
+  };
+  if (input.answer !== undefined) payload["answer"] = input.answer;
+  if (input.markedForReview !== undefined) {
+    payload["marked_for_review"] = input.markedForReview;
+  }
+
+  const { error } = await supabaseAdmin
+    .from("exam_answers")
+    .upsert(payload as never, { onConflict: "attempt_id,question_id" });
   if (error) throw new Error(error.message);
   return { ok: true };
 }

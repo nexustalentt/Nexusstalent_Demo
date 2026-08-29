@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, ClipboardPaste } from "lucide-react";
 import { letterLabel, parseQuestionBank, type ParsedQuestion } from "@/lib/question-bank-parser";
+import { examSections, groupBySection } from "@/lib/exam-utils";
 
 const fieldClass =
   "w-full rounded-lg border border-primary/10 bg-card px-4 py-2.5 text-sm outline-none focus:border-accent";
 const labelClass = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground";
 
-const sample = `Question 1. What is 25% of 200?
+const sample = `Section: English
+Question 1. What is 25% of 200?
 A. 25
 B. 40
 C. 50
@@ -18,7 +20,15 @@ A. 20 km
 B. 30 km
 C. 40 km
 D. 50 km
-Answer: A`;
+Answer: A
+
+Section: Logical Reasoning
+Question 3. Which number completes the series 2, 4, 8, 16, __?
+A. 20
+B. 24
+C. 32
+D. 64
+Answer: C`;
 
 export function QuestionBankImport({
   pending,
@@ -31,11 +41,13 @@ export function QuestionBankImport({
 }) {
   const [text, setText] = useState("");
   const [marks, setMarks] = useState(1);
+  const [defaultSection, setDefaultSection] = useState<string>(examSections[0]);
 
   const result = useMemo(
-    () => parseQuestionBank(text, Number(marks) || 1),
-    [text, marks],
+    () => parseQuestionBank(text, Number(marks) || 1, defaultSection),
+    [text, marks, defaultSection],
   );
+  const groups = useMemo(() => groupBySection(result.questions), [result.questions]);
   const hasInput = text.trim().length > 0;
   const canSave = hasInput && result.errors.length === 0 && result.questions.length > 0;
 
@@ -59,7 +71,7 @@ export function QuestionBankImport({
         <span className="font-semibold text-primary">Answers</span> heading at the end (1 - C, 2 - A).
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-[1fr_10rem]">
+      <div className="grid gap-4 sm:grid-cols-[1fr_12rem]">
         <div>
           <label className={labelClass} htmlFor="question-bank">
             Question bank
@@ -86,6 +98,26 @@ export function QuestionBankImport({
             onChange={(event) => setMarks(Number(event.target.value))}
             className={fieldClass}
           />
+          <label className={`${labelClass} mt-4`} htmlFor="bank-section">
+            Section
+          </label>
+          <input
+            id="bank-section"
+            list="bank-section-options"
+            value={defaultSection}
+            maxLength={80}
+            onChange={(event) => setDefaultSection(event.target.value)}
+            className={fieldClass}
+          />
+          <datalist id="bank-section-options">
+            {examSections.map((section) => (
+              <option key={section} value={section} />
+            ))}
+          </datalist>
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Used until a <span className="font-semibold">Section: name</span> line appears in the
+            pasted text.
+          </p>
         </div>
       </div>
 
@@ -105,22 +137,29 @@ export function QuestionBankImport({
       {result.questions.length > 0 ? (
         <div className="space-y-4 rounded-lg bg-surface p-5">
           <p className={labelClass}>Generated paper preview ({result.questions.length} questions)</p>
-          <ol className="space-y-4">
-            {result.questions.map((question) => (
-              <li key={question.number}>
-                <p className="font-semibold text-primary">
-                  Question {question.number}. {question.prompt}
-                </p>
-                <ul className="mt-1 space-y-0.5 text-sm text-muted-foreground">
-                  {question.options.map((option, index) => (
-                    <li key={index}>
-                      {letterLabel(index)}. {option}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ol>
+          {groups.map((group) => (
+            <div key={group.name} className="space-y-3">
+              <p className="text-sm font-bold text-primary">
+                {group.name} · {group.items.length} questions
+              </p>
+              <ol className="space-y-4">
+                {group.items.map((question) => (
+                  <li key={`${group.name}-${question.number}`}>
+                    <p className="font-semibold text-primary">
+                      Question {question.number}. {question.prompt}
+                    </p>
+                    <ul className="mt-1 space-y-0.5 text-sm text-muted-foreground">
+                      {question.options.map((option, index) => (
+                        <li key={index}>
+                          {letterLabel(index)}. {option}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
           <div>
             <p className={labelClass}>Answer key (admin only)</p>
             <p className="text-sm font-semibold text-primary">

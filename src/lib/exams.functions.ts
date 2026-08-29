@@ -27,7 +27,12 @@ export const getAttemptState = createServerFn({ method: "POST" })
 
 export const saveExamAnswer = createServerFn({ method: "POST" })
   .inputValidator(
-    (data: { sessionToken: string; questionId: string; answer: { selected?: number[]; text?: string } | null }) => {
+    (data: {
+      sessionToken: string;
+      questionId: string;
+      answer?: { selected?: number[]; text?: string } | null;
+      markedForReview?: boolean;
+    }) => {
       const answer: { selected?: number[]; text?: string } = {};
       if (Array.isArray(data.answer?.selected)) {
         answer.selected = data.answer.selected
@@ -38,11 +43,20 @@ export const saveExamAnswer = createServerFn({ method: "POST" })
       if (typeof data.answer?.text === "string") {
         answer.text = data.answer.text.slice(0, 20000);
       }
-      return {
+      const payload: {
+        sessionToken: string;
+        questionId: string;
+        answer?: { selected?: number[]; text?: string } | null;
+        markedForReview?: boolean;
+      } = {
         sessionToken: String(data.sessionToken).slice(0, 200),
         questionId: String(data.questionId).slice(0, 60),
-        answer: data.answer ? answer : null,
       };
+      if (data.answer !== undefined) payload.answer = data.answer ? answer : null;
+      if (typeof data.markedForReview === "boolean") {
+        payload.markedForReview = data.markedForReview;
+      }
+      return payload;
     },
   )
   .handler(async ({ data }) => {
