@@ -182,7 +182,9 @@ export function ExamRunner({
               {questionTypeLabel(question.question_type)} · {question.marks}{" "}
               {question.marks === 1 ? "mark" : "marks"}
             </p>
-            <p className="text-lg font-semibold text-primary">{question.prompt}</p>
+            <p className="text-lg font-semibold text-primary">
+              Question {current + 1}. {question.prompt}
+            </p>
 
             {question.question_type === "multiple_select" ? (
               <div className="space-y-2">
