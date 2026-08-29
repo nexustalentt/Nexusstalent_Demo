@@ -201,7 +201,9 @@ export function ExamRunner({
                         }
                         className="size-4 accent-accent"
                       />
-                      {option}
+                      <span>
+                        <span className="font-bold text-primary">{letterLabel(index)}.</span> {option}
+                      </span>
                     </label>
                   );
                 })}
@@ -219,7 +221,7 @@ export function ExamRunner({
                       onChange={() => update(question.id, { selected: [index] })}
                       className="size-4 accent-accent"
                     />
-                    {option}
+                    <span className="font-bold text-primary">{letterLabel(index)}.</span> {option}
                   </label>
                 ))}
               </div>
