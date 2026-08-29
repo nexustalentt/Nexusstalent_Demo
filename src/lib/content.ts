@@ -130,7 +130,7 @@ import ltiLogo from "@/assets/logos/ltimindtree.svg";
 import wiproLogo from "@/assets/logos/wipro.svg";
 import accentureLogo from "@/assets/logos/accenture.svg";
 import capgeminiLogo from "@/assets/logos/capgemini.svg";
-import benzAsset from "@/assets/logos/mercedes-benz.png.asset.json";
+import benzLogo from "@/assets/logos/mercedes-benz.svg";
 
 export type ClientLogo = {
   name: string;
