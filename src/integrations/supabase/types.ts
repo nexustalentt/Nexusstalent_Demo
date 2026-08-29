@@ -283,6 +283,7 @@ export type Database = {
           id: string
           password_crypt: string | null
           password_hash: string
+          password_note: string | null
           username: string
         }
         Insert: {
@@ -297,6 +298,7 @@ export type Database = {
           id?: string
           password_crypt?: string | null
           password_hash: string
+          password_note?: string | null
           username: string
         }
         Update: {
@@ -311,6 +313,7 @@ export type Database = {
           id?: string
           password_crypt?: string | null
           password_hash?: string
+          password_note?: string | null
           username?: string
         }
         Relationships: [
