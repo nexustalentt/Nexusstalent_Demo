@@ -57,9 +57,13 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
 
   const mutation = useMutation({
     mutationFn: () => candidateLoginGlobal({ data: { username: username.trim(), password } }),
-    onSuccess: (result) => onAuthenticated(result.sessionToken),
+    onSuccess: (result) => {
+      if (result.ok) onAuthenticated(result.sessionToken);
+      else setError(result.error);
+    },
     onError: (mutationError: Error) => setError(mutationError.message),
   });
+
 
   return (
     <Shell>
