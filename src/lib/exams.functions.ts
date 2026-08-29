@@ -65,6 +65,15 @@ export const saveExamAnswer = createServerFn({ method: "POST" })
     return saveAnswer(data);
   });
 
+export const startExamAttempt = createServerFn({ method: "POST" })
+  .inputValidator((data: { sessionToken: string }) => ({
+    sessionToken: String(data.sessionToken).slice(0, 200),
+  }))
+  .handler(async ({ data }) => {
+    const { startAttempt } = await import("./exam-attempt.server");
+    return startAttempt(data.sessionToken);
+  });
+
 export const submitExamAttempt = createServerFn({ method: "POST" })
   .inputValidator((data: { sessionToken: string }) => ({
     sessionToken: String(data.sessionToken).slice(0, 200),

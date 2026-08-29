@@ -3,7 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { formatDuration, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import { letterLabel } from "@/lib/question-bank-parser";
-import { getAttemptState, saveExamAnswer, submitExamAttempt } from "@/lib/exams.functions";
+import {
+  getAttemptState,
+  saveExamAnswer,
+  startExamAttempt,
+  submitExamAttempt,
+} from "@/lib/exams.functions";
 
 export type StoredAnswer = { selected?: number[]; text?: string } | null;
 
@@ -92,7 +97,16 @@ export function ExamRunner({
     submitMutation.mutate();
   }, [submitMutation]);
 
+  const startMutation = useMutation({
+    mutationFn: () => startExamAttempt({ data: { sessionToken } }),
+    onSuccess: async () => {
+      hydrated.current = false;
+      await state.refetch();
+    },
+  });
+
   const submitted = state.data && state.data.status !== "in_progress";
+  const started = Boolean(state.data?.started);
 
   useEffect(() => {
     if (submitted) onSubmitted?.();
@@ -100,7 +114,7 @@ export function ExamRunner({
 
 
   useEffect(() => {
-    if (!state.data || submitted) return;
+    if (!state.data || submitted || !started) return;
     const interval = window.setInterval(() => {
       setSeconds((value) => {
         if (value <= 1) {
@@ -111,7 +125,7 @@ export function ExamRunner({
       });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [state.data, submitted, submit]);
+  }, [state.data, submitted, started, submit]);
 
   const questions = state.data?.questions ?? [];
   const sections = useMemo(() => groupBySection(questions), [questions]);
@@ -153,6 +167,20 @@ export function ExamRunner({
         </button>
       </Shell>
 
+    );
+  }
+
+  if (!started) {
+    return (
+      <InstructionsGate
+        exam={state.data.exam}
+        candidateName={state.data.candidateName}
+        candidateUsername={state.data.candidateUsername}
+        questionCount={questions.length}
+        pending={startMutation.isPending}
+        error={startMutation.error instanceof Error ? startMutation.error.message : null}
+        onStart={() => startMutation.mutate()}
+      />
     );
   }
 
@@ -483,6 +511,105 @@ export function ExamRunner({
             </section>
           </div>
         </div>
+      </div>
+    </main>
+  );
+}
+
+/** Instructions pop-up shown after login; the exam and timer only start on click. */
+function InstructionsGate({
+  exam,
+  candidateName,
+  candidateUsername,
+  questionCount,
+  pending,
+  error,
+  onStart,
+}: {
+  exam: { title: string; description: string | null; instructions: string | null; duration_minutes: number };
+  candidateName: string | null;
+  candidateUsername: string | null;
+  questionCount: number;
+  pending: boolean;
+  error: string | null;
+  onStart: () => void;
+}) {
+  const [acknowledged, setAcknowledged] = useState(false);
+
+  return (
+    <main className="flex min-h-screen items-start justify-center bg-surface p-4 sm:items-center sm:p-6">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exam-instructions-title"
+        className="w-full max-w-2xl rounded-2xl border border-primary/5 bg-card p-6 shadow-xl sm:p-8"
+      >
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Exam instructions</p>
+        <h1 id="exam-instructions-title" className="mt-2 text-2xl font-bold text-primary">
+          {exam.title}
+        </h1>
+        {candidateName ? (
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">
+            Candidate: {candidateName}
+            {candidateUsername ? ` (${candidateUsername})` : ""}
+          </p>
+        ) : null}
+
+        <dl className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-primary/5 bg-surface p-4 text-sm">
+          <div>
+            <dt className="text-muted-foreground">Duration</dt>
+            <dd className="font-bold text-primary">{exam.duration_minutes} minutes</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">Questions</dt>
+            <dd className="font-bold text-primary">{questionCount}</dd>
+          </div>
+        </dl>
+
+        {exam.description ? (
+          <p className="mt-5 text-sm text-muted-foreground">{exam.description}</p>
+        ) : null}
+
+        <div className="mt-5 max-h-72 overflow-y-auto rounded-xl border border-primary/5 p-4 text-sm leading-relaxed text-muted-foreground">
+          {exam.instructions ? (
+            <div className="whitespace-pre-wrap">{exam.instructions}</div>
+          ) : (
+            <ul className="list-disc space-y-1.5 pl-5">
+              <li>The timer starts as soon as you click “Start Exam” and cannot be paused.</li>
+              <li>Your answers are saved automatically as you go.</li>
+              <li>The exam is submitted automatically when the timer reaches zero.</li>
+              <li>Keep your camera on for the entire exam.</li>
+            </ul>
+          )}
+        </div>
+
+        <label className="mt-5 flex items-start gap-3 text-sm font-semibold text-primary">
+          <input
+            type="checkbox"
+            checked={acknowledged}
+            onChange={(event) => setAcknowledged(event.target.checked)}
+            className="mt-0.5 size-4 rounded border-primary/30"
+          />
+          I have read and understood the instructions above.
+        </label>
+
+        {error ? (
+          <p role="alert" className="mt-4 text-sm font-semibold text-destructive">
+            {error}
+          </p>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={onStart}
+          disabled={!acknowledged || pending}
+          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
+        >
+          {pending ? "Starting exam…" : "Start Exam"}
+        </button>
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Your {exam.duration_minutes}-minute timer begins the moment you click Start Exam.
+        </p>
       </div>
     </main>
   );

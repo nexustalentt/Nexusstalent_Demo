@@ -204,6 +204,7 @@ export type Database = {
           candidate_id: string
           created_at: string
           exam_id: string
+          exam_started_at: string | null
           expires_at: string
           id: string
           manual_score: number
@@ -222,6 +223,7 @@ export type Database = {
           candidate_id: string
           created_at?: string
           exam_id: string
+          exam_started_at?: string | null
           expires_at: string
           id?: string
           manual_score?: number
@@ -240,6 +242,7 @@ export type Database = {
           candidate_id?: string
           created_at?: string
           exam_id?: string
+          exam_started_at?: string | null
           expires_at?: string
           id?: string
           manual_score?: number
@@ -738,6 +741,7 @@ export type Database = {
         }
         Returns: Json
       }
+      exam_start_attempt: { Args: { p_session_token: string }; Returns: Json }
       exam_submit: { Args: { p_session_token: string }; Returns: Json }
       exam_upsert_candidate: {
         Args: {
