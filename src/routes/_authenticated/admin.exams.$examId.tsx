@@ -783,19 +783,54 @@ function ExamBuilder() {
               {accessMutation.isPending ? "Creating…" : "Create access"}
             </button>
             <ul className="space-y-2 text-sm">
-              {(candidates.data ?? []).map((candidate) => (
-                <li key={candidate.id} className="rounded-lg bg-surface px-3 py-2">
-                  <span className="font-semibold text-primary">{candidate.username}</span>
-                  {candidate.full_name ? (
-                    <span className="text-muted-foreground"> · {candidate.full_name}</span>
-                  ) : null}
-                </li>
-              ))}
+              {(candidates.data ?? []).map((candidate) => {
+                const shown = shownPasswords[candidate.username.toLowerCase()];
+                return (
+                  <li
+                    key={candidate.id}
+                    className="flex items-start justify-between gap-3 rounded-lg bg-surface px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate">
+                        <span className="font-semibold text-primary">{candidate.username}</span>
+                        {candidate.full_name ? (
+                          <span className="text-muted-foreground"> · {candidate.full_name}</span>
+                        ) : null}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        Password:{" "}
+                        <span className="font-mono text-foreground">{shown ?? "••••••••"}</span>
+                        {shown ? null : " (hidden — reset it to see a new one)"}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Delete ${candidate.username}? Their attempt and answers will be removed.`,
+                          )
+                        ) {
+                          deleteCandidateMutation.mutate({
+                            id: candidate.id,
+                            username: candidate.username,
+                          });
+                        }
+                      }}
+                      disabled={deleteCandidateMutation.isPending}
+                      className="shrink-0 rounded-full border border-destructive/30 px-3 py-1 text-xs font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60"
+                    >
+                      Delete
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
             <p className="text-xs text-muted-foreground">
-              Passwords are stored hashed and cannot be read back. Re-submitting the same username
-              resets that candidate&apos;s password, window and time limit. Candidates can also sign
-              in from the public Exam page with just this username and password.
+              Passwords are stored hashed, so a saved password is only readable right after you
+              create or reset it. Re-submitting the same username resets that candidate&apos;s
+              password, window and time limit. Candidates can also sign in from the public Exam page
+              with just this username and password.
             </p>
 
           </section>
