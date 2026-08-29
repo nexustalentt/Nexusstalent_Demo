@@ -21,6 +21,7 @@ export const questionSchema = z
     options: z.array(z.string().trim().max(500)).default([]),
     correct_options: z.array(z.number().int().min(0)).default([]),
     expected_answer: z.string().trim().max(2000).optional().or(z.literal("")),
+    section: z.string().trim().max(80).optional().or(z.literal("")),
     marks: z.coerce.number().min(0).max(1000),
   })
   .superRefine((value, ctx) => {
