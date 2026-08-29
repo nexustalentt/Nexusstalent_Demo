@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowDown, ArrowUp, Copy, Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import { QuestionEditor, type QuestionDraft } from "@/components/admin/question-editor";
+import { QuestionBankImport } from "@/components/admin/question-bank-import";
+import { letterLabel, type ParsedQuestion } from "@/lib/question-bank-parser";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
 import { candidateAccessSchema, examDetailsSchema } from "@/lib/exam-schemas";
