@@ -281,6 +281,7 @@ export type Database = {
           exam_id: string
           full_name: string | null
           id: string
+          password_crypt: string | null
           password_hash: string
           username: string
         }
@@ -294,6 +295,7 @@ export type Database = {
           exam_id: string
           full_name?: string | null
           id?: string
+          password_crypt?: string | null
           password_hash: string
           username: string
         }
@@ -307,6 +309,7 @@ export type Database = {
           exam_id?: string
           full_name?: string | null
           id?: string
+          password_crypt?: string | null
           password_hash?: string
           username?: string
         }
@@ -701,6 +704,51 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      exam_attempt_state: { Args: { p_session_token: string }; Returns: Json }
+      exam_candidate_login: {
+        Args: { p_password: string; p_token?: string; p_username: string }
+        Returns: Json
+      }
+      exam_finalize_attempt: {
+        Args: { p_attempt_id: string }
+        Returns: undefined
+      }
+      exam_grade_answer: {
+        Args: {
+          p_answer: Json
+          p_correct_options: Json
+          p_expected_answer: string
+          p_marks: number
+          p_question_type: string
+        }
+        Returns: number
+      }
+      exam_normalize_text: { Args: { p_text: string }; Returns: string }
+      exam_public_intro: { Args: { p_token: string }; Returns: Json }
+      exam_save_answer: {
+        Args: {
+          p_answer?: Json
+          p_marked?: boolean
+          p_question_id: string
+          p_session_token: string
+          p_set_answer?: boolean
+        }
+        Returns: Json
+      }
+      exam_submit: { Args: { p_session_token: string }; Returns: Json }
+      exam_upsert_candidate: {
+        Args: {
+          p_access_end_at?: string
+          p_access_start_at?: string
+          p_duration_minutes?: number
+          p_email?: string
+          p_exam_id: string
+          p_full_name?: string
+          p_password: string
+          p_username: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
