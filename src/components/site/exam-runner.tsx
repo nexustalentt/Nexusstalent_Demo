@@ -41,9 +41,11 @@ const legend: { status: Status; label: string }[] = [
 export function ExamRunner({
   sessionToken,
   onSessionInvalid,
+  onSubmitted,
 }: {
   sessionToken: string;
   onSessionInvalid: () => void;
+  onSubmitted?: () => void;
 }) {
   const state = useQuery({
     queryKey: ["exam-attempt", sessionToken],
@@ -91,6 +93,11 @@ export function ExamRunner({
   }, [submitMutation]);
 
   const submitted = state.data && state.data.status !== "in_progress";
+
+  useEffect(() => {
+    if (submitted) onSubmitted?.();
+  }, [submitted, onSubmitted]);
+
 
   useEffect(() => {
     if (!state.data || submitted) return;
