@@ -160,6 +160,7 @@ export async function duplicateQuestion(question: ExamQuestionRow) {
     options: question.options as never,
     correct_options: question.correct_options as never,
     expected_answer: question.expected_answer,
+    section: question.section,
     marks: question.marks,
   });
   if (error) throw new Error(error.message);
