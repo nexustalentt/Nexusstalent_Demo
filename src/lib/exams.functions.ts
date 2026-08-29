@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireAuthedUser } from "./staff-auth.server";
+import { requireAuthedUser } from "./staff-auth.middleware";
 import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
 
 export const getExamIntro = createServerFn({ method: "GET" })
