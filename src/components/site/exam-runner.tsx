@@ -137,7 +137,15 @@ export function ExamRunner({
           Thank you for completing the exam. Your responses have been recorded and the recruitment
           team will be in touch. This exam cannot be taken again with the same credentials.
         </p>
+        <button
+          type="button"
+          onClick={onSessionInvalid}
+          className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+        >
+          Exit exam
+        </button>
       </Shell>
+
     );
   }
 
