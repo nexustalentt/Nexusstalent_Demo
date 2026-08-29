@@ -47,6 +47,7 @@ function ExamBuilder() {
   const questions = useQuery(examQuestionsQuery(examId));
   const candidates = useQuery(examCandidatesQuery(examId));
 
+  const [tab, setTab] = useState<"questions" | "answers">("questions");
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<ExamQuestionRow | null>(null);
   const [details, setDetails] = useState<null | {
