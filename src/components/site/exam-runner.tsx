@@ -97,7 +97,16 @@ export function ExamRunner({
     submitMutation.mutate();
   }, [submitMutation]);
 
+  const startMutation = useMutation({
+    mutationFn: () => startExamAttempt({ data: { sessionToken } }),
+    onSuccess: async () => {
+      hydrated.current = false;
+      await state.refetch();
+    },
+  });
+
   const submitted = state.data && state.data.status !== "in_progress";
+  const started = Boolean(state.data?.started);
 
   useEffect(() => {
     if (submitted) onSubmitted?.();
@@ -105,7 +114,7 @@ export function ExamRunner({
 
 
   useEffect(() => {
-    if (!state.data || submitted) return;
+    if (!state.data || submitted || !started) return;
     const interval = window.setInterval(() => {
       setSeconds((value) => {
         if (value <= 1) {
