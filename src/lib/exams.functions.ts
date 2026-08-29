@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireAuthedUser } from "./staff-auth.middleware";
 import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
+import { istLocalToIso } from "./exam-utils";
 
 export const getExamIntro = createServerFn({ method: "GET" })
   .inputValidator((data: { token: string }) => ({ token: String(data.token).slice(0, 120) }))
@@ -103,10 +104,10 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
     if (data.credentials.full_name) args.p_full_name = data.credentials.full_name;
     if (data.credentials.email) args.p_email = data.credentials.email;
     if (data.credentials.access_start_at) {
-      args.p_access_start_at = new Date(data.credentials.access_start_at).toISOString();
+      args.p_access_start_at = istLocalToIso(data.credentials.access_start_at);
     }
     if (data.credentials.access_end_at) {
-      args.p_access_end_at = new Date(data.credentials.access_end_at).toISOString();
+      args.p_access_end_at = istLocalToIso(data.credentials.access_end_at);
     }
     if (typeof data.credentials.duration_minutes === "number") {
       args.p_duration_minutes = data.credentials.duration_minutes;

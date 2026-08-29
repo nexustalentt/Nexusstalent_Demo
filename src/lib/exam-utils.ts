@@ -82,3 +82,53 @@ export function groupBySection<T extends { section?: string | null }>(items: T[]
   });
   return groups;
 }
+
+/** Exam access windows are always interpreted and displayed in India Standard Time. */
+export const examTimeZone = "Asia/Kolkata";
+
+/**
+ * Converts a `datetime-local` value ("YYYY-MM-DDTHH:mm") entered by admins into an
+ * absolute ISO timestamp, treating the entered time as IST (+05:30).
+ */
+export function istLocalToIso(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  const withSeconds = trimmed.length === 16 ? `${trimmed}:00` : trimmed;
+  return new Date(`${withSeconds}+05:30`).toISOString();
+}
+
+/** Formats an absolute timestamp as IST in 24-hour clock, e.g. "29 Aug 2026, 13:14 IST". */
+export function formatIst(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: examTimeZone,
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("day")} ${get("month")} ${get("year")}, ${get("hour")}:${get("minute")} IST`;
+}
+
+/** Converts an absolute timestamp into a `datetime-local` value in IST. */
+export function isoToIstLocal(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: examTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
+}
