@@ -54,22 +54,35 @@ export async function examIntro(token: string) {
   });
 }
 
+export type LoginResult = { ok: true; sessionToken: string } | { ok: false; error: string };
+
+/** Bad credentials are an expected outcome, so return them instead of throwing. */
+async function attemptLogin(args: {
+  username: string;
+  password: string;
+  token: string | null;
+}): Promise<LoginResult> {
+  try {
+    const result = await callRpc<{ sessionToken: string }>("exam_candidate_login", {
+      p_username: args.username,
+      p_password: args.password,
+      p_token: args.token,
+    });
+    return { ok: true, sessionToken: result.sessionToken };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : "Login failed." };
+  }
+}
+
 export async function login(input: { token: string; username: string; password: string }) {
-  return callRpc<{ sessionToken: string }>("exam_candidate_login", {
-    p_username: input.username,
-    p_password: input.password,
-    p_token: input.token,
-  });
+  return attemptLogin({ username: input.username, password: input.password, token: input.token });
 }
 
 /** Username/password sign-in from the public /exam page — no exam link needed. */
 export async function loginByUsername(input: { username: string; password: string }) {
-  return callRpc<{ sessionToken: string }>("exam_candidate_login", {
-    p_username: input.username,
-    p_password: input.password,
-    p_token: null,
-  });
+  return attemptLogin({ username: input.username, password: input.password, token: null });
 }
+
 
 export async function attemptState(sessionToken: string): Promise<AttemptState> {
   const state = await callRpc<AttemptState & { secondsRemaining: number | string }>(
