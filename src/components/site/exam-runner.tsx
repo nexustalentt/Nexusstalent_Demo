@@ -3,7 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { formatDuration, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import { letterLabel } from "@/lib/question-bank-parser";
-import { getAttemptState, saveExamAnswer, submitExamAttempt } from "@/lib/exams.functions";
+import {
+  getAttemptState,
+  saveExamAnswer,
+  startExamAttempt,
+  submitExamAttempt,
+} from "@/lib/exams.functions";
 
 export type StoredAnswer = { selected?: number[]; text?: string } | null;
 
