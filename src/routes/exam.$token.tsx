@@ -76,7 +76,9 @@ function ExamPage() {
 
   return (
     <ProctoredExam>
-      <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} />
+      {(onSubmitted) => (
+        <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} onSubmitted={onSubmitted} />
+      )}
     </ProctoredExam>
   );
 }

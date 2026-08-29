@@ -95,6 +95,11 @@ export function ProctoredExam({
     await start();
   }, [stream, start]);
 
+  // Exam submitted or session over: camera is already stopped, render the child as-is.
+  if (submitted) {
+    return <>{children(handleSubmitted)}</>;
+  }
+
   if (status === "unsupported") {
     return (
       <Shell>
@@ -141,7 +146,7 @@ export function ProctoredExam({
 
   return (
     <>
-      {children}
+      {children(handleSubmitted)}
       <CameraOverlay stream={stream} />
       {cameraLost ? (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/70 p-6">
