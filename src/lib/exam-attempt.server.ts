@@ -33,16 +33,15 @@ export const ALREADY_TAKEN = "You already took an exam. Thank you!";
  * functions, so the flow only needs the publishable key and works on any host
  * (Lovable, Vercel, custom domain) without a service-role key.
  */
-function rpc() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return publicClient().rpc as unknown as (name: string, args?: Record<string, unknown>) => any;
-}
-
 async function callRpc<T>(name: string, args?: Record<string, unknown>): Promise<T> {
-  const { data, error } = await rpc()(name, args);
+  const client = publicClient() as unknown as {
+    rpc: (fn: string, params?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>;
+  };
+  const { data, error } = await client.rpc(name, args);
   if (error) throw new Error(cleanMessage(error.message));
   return data as T;
 }
+
 
 /** Postgres prefixes raised messages in some clients; keep the candidate-facing text. */
 function cleanMessage(message: string) {
