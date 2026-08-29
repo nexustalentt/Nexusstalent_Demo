@@ -145,7 +145,7 @@ export const clients: ClientLogo[] = [
   { name: "Wipro", mark: "WP", note: "Technology Consulting", logo: wiproLogo },
   { name: "Accenture", mark: "ACN", note: "Global Consulting", logo: accentureLogo },
   { name: "Capgemini", mark: "CG", note: "Digital Engineering", logo: capgeminiLogo },
-  { name: "Mercedes-Benz", mark: "MB", note: "Automotive", logo: benzAsset.url },
+  { name: "Mercedes-Benz", mark: "MB", note: "Automotive", logo: benzLogo },
   { name: "Yuva Pay", mark: "YP", note: "Fintech Startup" },
   { name: "Entity Data", mark: "ED", note: "Data & Analytics" },
 ];
