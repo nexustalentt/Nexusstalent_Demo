@@ -214,9 +214,14 @@ function ExamBuilder() {
       });
       if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Check credentials");
       await createCandidateAccess({ data: { examId, credentials: parsed.data } });
+      return { username: parsed.data.username, password: parsed.data.password };
     },
-    onSuccess: () => {
+    onSuccess: (created) => {
       toast.success("Candidate access created");
+      setShownPasswords((current) => ({
+        ...current,
+        [created.username.toLowerCase()]: created.password,
+      }));
       setUsername("");
       setPassword("");
       setFullName("");
