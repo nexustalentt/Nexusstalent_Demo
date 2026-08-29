@@ -95,6 +95,11 @@ export function ExamRunner({
   const submitted = state.data && state.data.status !== "in_progress";
 
   useEffect(() => {
+    if (submitted) onSubmitted?.();
+  }, [submitted, onSubmitted]);
+
+
+  useEffect(() => {
     if (!state.data || submitted) return;
     const interval = window.setInterval(() => {
       setSeconds((value) => {
