@@ -55,10 +55,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
     if (inKeySection) {
       const key = line.match(keyLine);
       if (key) {
-        keyMap.set(
-          Number(key[1]),
-          key[2].split(/[,/&\s]+/).filter(Boolean),
-        );
+        keyMap.set(Number(key[1]), (key[2] ?? "").split(/[,/&\s]+/).filter(Boolean));
         continue;
       }
       inKeySection = false;
@@ -66,7 +63,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
 
     const answer = line.match(answerLine);
     if (answer && current) {
-      current.answerLetters = answer[1]
+      current.answerLetters = (answer[1] ?? "")
         .split(/[,/&\s]+/)
         .map((part) => part.replace(/[).:-]/g, ""))
         .filter(Boolean);
@@ -74,9 +71,9 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
     }
 
     const option = current ? line.match(optionStart) : null;
-    if (option && letterToIndex(option[1]) >= 0 && current) {
+    if (option && letterToIndex(option[1] ?? "") >= 0 && current) {
       // Only treat as an option when it follows the expected letter sequence-ish.
-      current.options.push(option[2].trim());
+      current.options.push((option[2] ?? "").trim());
       continue;
     }
 
@@ -87,7 +84,7 @@ export function parseQuestionBank(input: string, marksPerQuestion = 1): ParseRes
         push();
         current = {
           number: Number(start[1]),
-          prompt: start[2] ? [start[2].trim()] : [],
+          prompt: start[2] ? [start[2]!.trim()] : [],
           options: [],
           answerLetters: [],
         };
