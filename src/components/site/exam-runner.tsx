@@ -41,9 +41,11 @@ const legend: { status: Status; label: string }[] = [
 export function ExamRunner({
   sessionToken,
   onSessionInvalid,
+  onSubmitted,
 }: {
   sessionToken: string;
   onSessionInvalid: () => void;
+  onSubmitted?: () => void;
 }) {
   const state = useQuery({
     queryKey: ["exam-attempt", sessionToken],
