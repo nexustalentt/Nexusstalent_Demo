@@ -23,6 +23,7 @@ export type AttemptState = {
   questions: CandidateQuestion[];
   answers: Record<string, StoredAnswer>;
   reviewFlags: string[];
+  started: boolean;
   secondsRemaining: number;
   status: string;
   submittedAt: string | null;
