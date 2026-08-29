@@ -91,9 +91,13 @@ function LoginCard({
 
   const mutation = useMutation({
     mutationFn: () => candidateLogin({ data: { token, username, password } }),
-    onSuccess: (result) => onAuthenticated(result.sessionToken),
+    onSuccess: (result) => {
+      if (result.ok) onAuthenticated(result.sessionToken);
+      else setError(result.error);
+    },
     onError: (mutationError: Error) => setError(mutationError.message),
   });
+
 
   return (
     <Shell>
