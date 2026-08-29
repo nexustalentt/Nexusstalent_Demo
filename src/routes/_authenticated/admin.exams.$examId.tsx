@@ -471,6 +471,62 @@ function ExamBuilder() {
               ))}
             </ol>
           </section>
+          ) : (
+          <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                Answer key ({list.length})
+              </h2>
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    list
+                      .map((question, index) => `${index + 1} - ${answerLetters(question)}`)
+                      .join("\n"),
+                  );
+                  toast.success("Answer key copied");
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-accent hover:text-accent"
+              >
+                <Copy className="size-4" aria-hidden="true" /> Copy answer key
+              </button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Candidates never see this key — it stays inside the admin portal.
+            </p>
+            {list.length === 0 ? (
+              <EmptyState title="No questions yet" hint="Paste a question bank to generate the key." />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-primary/10 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <th className="py-2 pr-4">Question</th>
+                      <th className="py-2 pr-4">Question text</th>
+                      <th className="py-2 pr-4">Correct answer</th>
+                      <th className="py-2">Marks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {list.map((question, index) => (
+                      <tr key={question.id} className="border-b border-primary/5">
+                        <td className="py-2.5 pr-4 font-bold text-primary">{index + 1}</td>
+                        <td className="max-w-md truncate py-2.5 pr-4 text-muted-foreground">
+                          {question.prompt}
+                        </td>
+                        <td className="py-2.5 pr-4 font-bold text-accent">
+                          {answerLetters(question)}
+                        </td>
+                        <td className="py-2.5 text-muted-foreground">{Number(question.marks)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+          )}
         </div>
 
         <aside className="space-y-6">
