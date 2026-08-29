@@ -784,7 +784,8 @@ function ExamBuilder() {
             </button>
             <ul className="space-y-2 text-sm">
               {(candidates.data ?? []).map((candidate) => {
-                const shown = shownPasswords[candidate.username.toLowerCase()];
+                const shown =
+                  candidate.password_note ?? shownPasswords[candidate.username.toLowerCase()];
                 return (
                   <li
                     key={candidate.id}
@@ -799,8 +800,8 @@ function ExamBuilder() {
                       </p>
                       <p className="mt-0.5 text-xs text-muted-foreground">
                         Password:{" "}
-                        <span className="font-mono text-foreground">{shown ?? "••••••••"}</span>
-                        {shown ? null : " (hidden — reset it to see a new one)"}
+                        <span className="font-mono text-foreground">{shown ?? "not stored yet"}</span>
+                        {shown ? null : " (reset it once to store and show it)"}
                       </p>
                     </div>
                     <button
@@ -827,8 +828,8 @@ function ExamBuilder() {
               })}
             </ul>
             <p className="text-xs text-muted-foreground">
-              Passwords are stored hashed, so a saved password is only readable right after you
-              create or reset it. Re-submitting the same username resets that candidate&apos;s
+              Passwords are stored so they stay visible here for your team — only signed-in staff
+              can see this list. Re-submitting the same username resets that candidate&apos;s
               password, window and time limit. Candidates can also sign in from the public Exam page
               with just this username and password.
             </p>
