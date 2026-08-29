@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.exam_finalize_attempt(uuid) FROM anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.exam_upsert_candidate(uuid, text, text, text, text, timestamptz, timestamptz, integer) FROM anon;
