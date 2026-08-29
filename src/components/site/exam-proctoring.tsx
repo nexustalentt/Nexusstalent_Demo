@@ -28,10 +28,24 @@ async function requestCamera(): Promise<MediaStream> {
  * The stream is never recorded, uploaded, or sent anywhere — it only feeds
  * the on-screen preview and is stopped when the exam ends.
  */
-export function ProctoredExam({ children }: { children: ReactNode }) {
+export function ProctoredExam({
+  children,
+}: {
+  children: (onSubmitted: () => void) => ReactNode;
+}) {
   const [status, setStatus] = useState<CameraStatus>("idle");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraLost, setCameraLost] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  /** Called by the exam runner the moment the attempt is submitted. */
+  const handleSubmitted = useCallback(() => {
+    setSubmitted(true);
+    setStream((current) => {
+      stopStream(current);
+      return null;
+    });
+  }, []);
 
   const start = useCallback(async () => {
     if (!cameraSupported()) {
