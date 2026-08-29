@@ -86,30 +86,37 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
     if (roleError) throw new Error(roleError.message);
     if (!isStaff) throw new Error("Forbidden");
 
-    const { hashPassword } = await import("./exam-crypto.server");
-    const password_hash = await hashPassword(data.credentials.password);
-    const { error } = await context.supabase.from("exam_candidates").upsert(
-      {
-        exam_id: data.examId,
-        username: data.credentials.username,
-        password_hash,
-        full_name: data.credentials.full_name || null,
-        email: data.credentials.email || null,
-        access_start_at: data.credentials.access_start_at
-          ? new Date(data.credentials.access_start_at).toISOString()
-          : null,
-        access_end_at: data.credentials.access_end_at
-          ? new Date(data.credentials.access_end_at).toISOString()
-          : null,
-        duration_minutes:
-          typeof data.credentials.duration_minutes === "number"
-            ? data.credentials.duration_minutes
-            : null,
-      },
-      { onConflict: "exam_id,username" },
-    );
+    const args: {
+      p_exam_id: string;
+      p_username: string;
+      p_password: string;
+      p_full_name?: string;
+      p_email?: string;
+      p_access_start_at?: string;
+      p_access_end_at?: string;
+      p_duration_minutes?: number;
+    } = {
+      p_exam_id: data.examId,
+      p_username: data.credentials.username,
+      p_password: data.credentials.password,
+    };
+    if (data.credentials.full_name) args.p_full_name = data.credentials.full_name;
+    if (data.credentials.email) args.p_email = data.credentials.email;
+    if (data.credentials.access_start_at) {
+      args.p_access_start_at = new Date(data.credentials.access_start_at).toISOString();
+    }
+    if (data.credentials.access_end_at) {
+      args.p_access_end_at = new Date(data.credentials.access_end_at).toISOString();
+    }
+    if (typeof data.credentials.duration_minutes === "number") {
+      args.p_duration_minutes = data.credentials.duration_minutes;
+    }
+
+    const { error } = await context.supabase.rpc("exam_upsert_candidate", args);
+
     if (error) throw new Error(error.message);
     return { ok: true };
+
   });
 
 export const candidateLoginGlobal = createServerFn({ method: "POST" })
