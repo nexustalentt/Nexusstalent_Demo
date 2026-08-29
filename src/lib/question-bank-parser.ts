@@ -53,7 +53,7 @@ export function parseQuestionBank(
 ): ParseResult {
   const lines = input.replace(/\r\n?/g, "\n").split("\n");
   const raws: Raw[] = [];
-  const keyMap = new Map<number, string[]>();
+  const keyMap = new Map<string, string[]>();
   let current: Raw | null = null;
   let section = defaultSection.trim();
   let inKeySection = false;
@@ -86,7 +86,9 @@ export function parseQuestionBank(
     if (inKeySection) {
       const key = line.match(keyLine);
       if (key) {
-        keyMap.set(Number(key[1]), (key[2] ?? "").split(/[,/&\s]+/).filter(Boolean));
+        const letters = (key[2] ?? "").split(/[,/&\s]+/).filter(Boolean);
+        keyMap.set(`${section}|${Number(key[1])}`, letters);
+        if (!keyMap.has(`|${Number(key[1])}`)) keyMap.set(`|${Number(key[1])}`, letters);
         continue;
       }
       inKeySection = false;
@@ -133,7 +135,7 @@ export function parseQuestionBank(
   }
   push();
 
-  const seen = new Set<number>();
+  const seen = new Set<string>();
   const questions: ParsedQuestion[] = [];
 
   raws.forEach((raw, position) => {
@@ -142,15 +144,19 @@ export function parseQuestionBank(
     if (raw.number === null) {
       errors.push({ number: null, message: `A block near question ${label} has no question number.` });
     }
-    if (seen.has(number)) {
+    const seenKey = `${raw.section}|${number}`;
+    if (seen.has(seenKey)) {
       errors.push({ number, message: `Question ${number} appears more than once.` });
       return;
     }
-    seen.add(number);
+    seen.add(seenKey);
 
     const prompt = raw.prompt.join(" ").trim();
     const options = raw.options.map((option) => option.trim()).filter(Boolean);
-    const letters = raw.answerLetters.length > 0 ? raw.answerLetters : (keyMap.get(number) ?? []);
+    const letters =
+      raw.answerLetters.length > 0
+        ? raw.answerLetters
+        : (keyMap.get(`${raw.section}|${number}`) ?? keyMap.get(`|${number}`) ?? []);
 
     if (!prompt) {
       errors.push({ number, message: `Question ${number} has no question text.` });
