@@ -1,0 +1,2 @@
+GRANT EXECUTE ON FUNCTION public.exam_finalize_attempt(uuid) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.exam_upsert_candidate(uuid, text, text, text, text, timestamptz, timestamptz, integer) TO anon;
