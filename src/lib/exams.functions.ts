@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireAuthedUser } from "./staff-auth.middleware";
 import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
+import { istLocalToIso } from "./exam-utils";
 
 export const getExamIntro = createServerFn({ method: "GET" })
   .inputValidator((data: { token: string }) => ({ token: String(data.token).slice(0, 120) }))

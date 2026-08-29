@@ -10,7 +10,7 @@ import { letterLabel, type ParsedQuestion } from "@/lib/question-bank-parser";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
 import { candidateAccessSchema, examDetailsSchema } from "@/lib/exam-schemas";
-import { groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
+import { formatIst, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import {
   deleteQuestion,
   duplicateQuestion,
@@ -733,7 +733,7 @@ function ExamBuilder() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className={labelClass} htmlFor="candidate-start">
-                  Access from (optional)
+                  Access from (IST, optional)
                 </label>
                 <input
                   id="candidate-start"
@@ -745,7 +745,7 @@ function ExamBuilder() {
               </div>
               <div>
                 <label className={labelClass} htmlFor="candidate-end">
-                  Access until (optional)
+                  Access until (IST, optional)
                 </label>
                 <input
                   id="candidate-end"
@@ -803,6 +803,12 @@ function ExamBuilder() {
                         <span className="font-mono text-foreground">{shown ?? "not stored yet"}</span>
                         {shown ? null : " (reset it once to store and show it)"}
                       </p>
+                      {candidate.access_start_at || candidate.access_end_at ? (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          Window: {formatIst(candidate.access_start_at) || "any time"} →{" "}
+                          {formatIst(candidate.access_end_at) || "no end"}
+                        </p>
+                      ) : null}
                     </div>
                     <button
                       type="button"
