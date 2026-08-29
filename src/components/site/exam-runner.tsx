@@ -263,6 +263,15 @@ export function ExamRunner({
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary/5 bg-card p-6">
           <div>
             <h1 className="text-xl font-bold text-primary">{state.data.exam.title}</h1>
+            {state.data.candidateName ? (
+              <p className="mt-0.5 text-sm font-semibold text-accent">
+                Candidate: {state.data.candidateName}
+                {state.data.candidateUsername &&
+                state.data.candidateUsername !== state.data.candidateName
+                  ? ` (${state.data.candidateUsername})`
+                  : ""}
+              </p>
+            ) : null}
             <p className="text-sm text-muted-foreground">
               {currentSection ? `${currentSection} – ` : ""}
               Question {indexInSection || current + 1} of{" "}

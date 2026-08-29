@@ -18,6 +18,8 @@ export type AttemptState = {
     instructions: string | null;
     duration_minutes: number;
   };
+  candidateName: string | null;
+  candidateUsername: string | null;
   questions: CandidateQuestion[];
   answers: Record<string, StoredAnswer>;
   reviewFlags: string[];
