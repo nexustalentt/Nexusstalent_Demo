@@ -90,18 +90,19 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
       p_exam_id: data.examId,
       p_username: data.credentials.username,
       p_password: data.credentials.password,
-      p_full_name: data.credentials.full_name || null,
-      p_email: data.credentials.email || null,
+      p_full_name: data.credentials.full_name || undefined,
+      p_email: data.credentials.email || undefined,
       p_access_start_at: data.credentials.access_start_at
         ? new Date(data.credentials.access_start_at).toISOString()
-        : null,
+        : undefined,
       p_access_end_at: data.credentials.access_end_at
         ? new Date(data.credentials.access_end_at).toISOString()
-        : null,
+        : undefined,
       p_duration_minutes:
         typeof data.credentials.duration_minutes === "number"
           ? data.credentials.duration_minutes
-          : null,
+          : undefined,
+
     });
     if (error) throw new Error(error.message);
     return { ok: true };
