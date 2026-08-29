@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ExamRunner, Shell, fieldClass } from "@/components/site/exam-runner";
+import { ProctoredExam } from "@/components/site/exam-proctoring";
 import { candidateLogin, getExamIntro } from "@/lib/exams.functions";
 
 export const Route = createFileRoute("/exam/$token")({
@@ -73,7 +74,11 @@ function ExamPage() {
     return <LoginCard token={token} title={intro.data.title} onAuthenticated={onAuthenticated} />;
   }
 
-  return <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} />;
+  return (
+    <ProctoredExam>
+      <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} />
+    </ProctoredExam>
+  );
 }
 
 function LoginCard({

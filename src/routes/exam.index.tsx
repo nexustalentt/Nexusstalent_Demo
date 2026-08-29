@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ExamRunner, Shell, fieldClass } from "@/components/site/exam-runner";
+import { ProctoredExam } from "@/components/site/exam-proctoring";
 import { candidateLoginGlobal } from "@/lib/exams.functions";
 
 const STORAGE_KEY = "exam-session-current";
@@ -37,7 +38,11 @@ function ExamLoginPage() {
   if (!ready) return <Shell>Loading…</Shell>;
 
   if (sessionToken) {
-    return <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} />;
+    return (
+      <ProctoredExam>
+        <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} />
+      </ProctoredExam>
+    );
   }
 
   return (
