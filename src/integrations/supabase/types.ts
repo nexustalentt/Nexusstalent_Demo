@@ -856,51 +856,7 @@ export type Database = {
       }
     }
     Views: {
-      public_site_settings: {
-        Row: {
-          address: string | null
-          business_hours: string | null
-          company_email: string | null
-          company_name: string | null
-          enterprise_clients: string | null
-          linkedin_url: string | null
-          phone: string | null
-          professionals_placed: string | null
-          recruitment_email: string | null
-          successful_projects: string | null
-          twitter_url: string | null
-          years_experience: string | null
-        }
-        Insert: {
-          address?: string | null
-          business_hours?: string | null
-          company_email?: string | null
-          company_name?: string | null
-          enterprise_clients?: string | null
-          linkedin_url?: string | null
-          phone?: string | null
-          professionals_placed?: string | null
-          recruitment_email?: string | null
-          successful_projects?: string | null
-          twitter_url?: string | null
-          years_experience?: string | null
-        }
-        Update: {
-          address?: string | null
-          business_hours?: string | null
-          company_email?: string | null
-          company_name?: string | null
-          enterprise_clients?: string | null
-          linkedin_url?: string | null
-          phone?: string | null
-          professionals_placed?: string | null
-          recruitment_email?: string | null
-          successful_projects?: string | null
-          twitter_url?: string | null
-          years_experience?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       exam_attempt_state: { Args: { p_session_token: string }; Returns: Json }
