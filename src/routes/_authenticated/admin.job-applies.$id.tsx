@@ -101,7 +101,7 @@ function JobApplyDetail() {
   return (
     <AdminShell
       title={data ? `${data.first_name} ${data.last_name}` : "Application"}
-      description={data ? `Application ID ${data.application_code}` : undefined}
+      description={data ? `Application ID ${data.application_code}` : ""}
       actions={
         <Link
           to="/admin/job-applies"
