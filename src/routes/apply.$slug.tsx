@@ -337,7 +337,7 @@ function ApplyPage() {
                   onChange={(e) => set("preferred_location", e.target.value)}
                 />
               </Field>
-              <Field name="pan_number" label="PAN number" errors={errors}>
+              <Field name="pan_number" label="PAN number" required errors={errors}>
                 <input
                   id="pan_number"
                   className={`${field} uppercase`}
