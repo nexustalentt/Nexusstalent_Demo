@@ -68,6 +68,24 @@ const labelClass = "text-xs font-bold tracking-widest uppercase text-muted-foreg
 
 type FormState = Record<string, string>;
 
+const fieldLabels: Record<string, string> = {
+  first_name: "First name",
+  last_name: "Last name",
+  phone: "Phone number",
+  email: "Email address",
+  pan_number: "PAN number",
+  highest_qualification: "Highest qualification",
+  marks: "Marks / percentage / CGPA",
+  year_of_passing: "Year of passing",
+  primary_skills: "Primary technical skills",
+  total_experience: "Total years of experience",
+  resume_name: "Resume upload",
+  resume_base64: "Resume upload",
+  linkedin_url: "LinkedIn profile",
+  github_url: "GitHub profile",
+  portfolio_url: "Portfolio / website",
+};
+
 function Field({
   name,
   label,
