@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import {
   Briefcase,
+  ClipboardCheck,
   ClipboardList,
   FileText,
   LayoutDashboard,
@@ -12,6 +13,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
