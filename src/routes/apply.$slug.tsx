@@ -226,8 +226,10 @@ function ApplyPage() {
       }
       setSuccess(result.applicationCode);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setFormError("Could not submit your application. Please try again.");
+    } catch (submitError) {
+      const detail =
+        submitError instanceof Error && submitError.message ? ` (${submitError.message})` : "";
+      setFormError(`Could not submit your application. Please try again.${detail}`);
     } finally {
       setPending(false);
     }
