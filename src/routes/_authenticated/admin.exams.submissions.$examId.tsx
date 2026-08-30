@@ -135,15 +135,39 @@ function ExamSubmissions() {
                   <td className="px-5 py-4 text-muted-foreground">
                     {attempt.submitted_at ? formatDate(attempt.submitted_at) : "--"}
                   </td>
-                  <td className="px-5 py-4 text-right">
-                    <Link
-                      to="/admin/exams/attempts/$attemptId"
-                      params={{ attemptId: attempt.id }}
-                      className="text-sm font-semibold text-accent hover:underline"
-                    >
-                      View
-                    </Link>
+                  <td className="px-5 py-4">
+                    <div className="flex flex-wrap items-center justify-end gap-3">
+                      <Link
+                        to="/admin/exams/attempts/$attemptId"
+                        params={{ attemptId: attempt.id }}
+                        className="text-sm font-semibold text-accent hover:underline"
+                      >
+                        View
+                      </Link>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        aria-label={`Delete submission of ${attempt.exam_candidates?.full_name || attempt.exam_candidates?.username || "candidate"}`}
+                        onClick={() => {
+                          const who =
+                            attempt.exam_candidates?.full_name ||
+                            attempt.exam_candidates?.username ||
+                            "this candidate";
+                          if (
+                            window.confirm(
+                              `Delete the submission of ${who}? The attempt, its answers and scores are removed permanently. Their login is kept, so they can take the exam again.`,
+                            )
+                          ) {
+                            removeAttempt.mutate({ id: attempt.id, exam_id: attempt.exam_id });
+                          }
+                        }}
+                        className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-destructive hover:text-destructive disabled:opacity-60"
+                      >
+                        <Trash2 className="size-4" aria-hidden="true" />
+                      </button>
+                    </div>
                   </td>
+
                 </tr>
               ))}
             </tbody>
