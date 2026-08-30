@@ -19,6 +19,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ApplySlugRouteImport } from './routes/apply.$slug'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
 import { Route as ExamIndexRouteImport } from './routes/exam.index'
@@ -86,6 +87,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplySlugRoute = ApplySlugRouteImport.update({
+  id: '/apply/$slug',
+  path: '/apply/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareersIndexRoute = CareersIndexRouteImport.update({
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/apply/$slug': typeof ApplySlugRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
   '/careers/': typeof CareersIndexRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/apply/$slug': typeof ApplySlugRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
   '/careers': typeof CareersIndexRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/apply/$slug': typeof ApplySlugRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/exam/$token': typeof ExamTokenRoute
   '/careers/': typeof CareersIndexRoute
@@ -301,6 +310,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms'
+    | '/apply/$slug'
     | '/careers/$slug'
     | '/exam/$token'
     | '/careers/'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms'
+    | '/apply/$slug'
     | '/careers/$slug'
     | '/exam/$token'
     | '/careers'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms'
+    | '/apply/$slug'
     | '/careers/$slug'
     | '/exam/$token'
     | '/careers/'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApplySlugRoute: typeof ApplySlugRoute
   CareersSlugRoute: typeof CareersSlugRoute
   ExamTokenRoute: typeof ExamTokenRoute
   CareersIndexRoute: typeof CareersIndexRoute
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply/$slug': {
+      id: '/apply/$slug'
+      path: '/apply/$slug'
+      fullPath: '/apply/$slug'
+      preLoaderRoute: typeof ApplySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/careers/': {
@@ -660,6 +680,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApplySlugRoute: ApplySlugRoute,
   CareersSlugRoute: CareersSlugRoute,
   ExamTokenRoute: ExamTokenRoute,
   CareersIndexRoute: CareersIndexRoute,
