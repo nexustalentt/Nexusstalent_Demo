@@ -70,8 +70,11 @@ export function JobForm({
     requirements: job?.requirements ?? "",
     preferred_qualifications: job?.preferred_qualifications ?? "",
     benefits: job?.benefits ?? "",
+    application_method:
+      job?.application_method === "internal_form" ? "internal_form" : "google_form",
     google_form_url: job?.google_form_url ?? "",
     form_id: job?.form_id ?? null,
+
     status: (job?.status as JobStatus) ?? "draft",
     published_at: job?.published_at ? new Date(job?.published_at) : null,
     updated_at: job?.updated_at ? new Date(job?.updated_at) : null,
