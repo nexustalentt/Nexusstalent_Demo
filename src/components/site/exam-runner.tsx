@@ -85,12 +85,12 @@ function useExamGuards(ref: RefObject<HTMLElement | null>, active: boolean) {
     node.addEventListener("copy", blockClipboard);
     node.addEventListener("cut", blockClipboard);
     node.addEventListener("contextmenu", blockContextMenu);
-    node.addEventListener("keydown", blockKeys);
+    document.addEventListener("keydown", blockKeys);
     return () => {
       node.removeEventListener("copy", blockClipboard);
       node.removeEventListener("cut", blockClipboard);
       node.removeEventListener("contextmenu", blockContextMenu);
-      node.removeEventListener("keydown", blockKeys);
+      document.removeEventListener("keydown", blockKeys);
     };
   }, [ref, active]);
 }
