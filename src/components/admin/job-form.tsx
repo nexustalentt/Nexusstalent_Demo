@@ -27,8 +27,10 @@ const jobSchema = z.object({
   requirements: z.string().trim().max(4000).optional(),
   preferred_qualifications: z.string().trim().max(4000).optional(),
   benefits: z.string().trim().max(4000).optional(),
+  application_method: z.enum(["google_form", "internal_form"]),
   google_form_url: z.string().trim().url("Enter a valid URL").max(500).optional().or(z.literal("")),
   form_id: z.string().uuid().nullable(),
+
   status: z.enum(["draft", "active", "closed", "archived"]),
   published_at: z.date().nullable(),
   updated_at: z.date().nullable(),
