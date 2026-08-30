@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.exam_start_attempt(text) FROM PUBLIC;
