@@ -356,40 +356,66 @@ export function JobForm({
       <section className="rounded-2xl border border-primary/5 bg-card p-6">
         <h2 className="font-bold text-primary">Application &amp; publishing</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <div>
-            <label className={label} htmlFor="form_id">
-              Linked application form
+          <div className="md:col-span-2">
+            <label className={label} htmlFor="application_method">
+              Application method
             </label>
             <select
-              id="form_id"
-              value={values.form_id ?? ""}
-              onChange={(event) => set("form_id", event.target.value || null)}
+              id="application_method"
+              value={values.application_method}
+              onChange={(event) =>
+                set("application_method", event.target.value as JobFormValues["application_method"])
+              }
               className={field}
             >
-              <option value="">Use custom URL below</option>
-              {forms.map((form) => (
-                <option key={form.id} value={form.id}>
-                  {form.name}
-                </option>
-              ))}
+              <option value="google_form">Google Form (external link)</option>
+              <option value="internal_form">Job Application Form (on this website)</option>
             </select>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {values.application_method === "internal_form"
+                ? "Candidates apply through the built-in application form and submissions appear under Job Applies."
+                : "Candidates are sent to the Google Form link below."}
+            </p>
           </div>
-          <div>
-            <label className={label} htmlFor="google_form_url">
-              Application form URL
-            </label>
-            <input
-              id="google_form_url"
-              value={values.google_form_url ?? ""}
-              maxLength={500}
-              placeholder="https://docs.google.com/forms/..."
-              onChange={(event) => set("google_form_url", event.target.value)}
-              className={field}
-            />
-            {errors["google_form_url"] ? (
-              <p className="mt-1 text-xs text-destructive">{errors["google_form_url"]}</p>
-            ) : null}
-          </div>
+          {values.application_method === "google_form" ? (
+            <>
+              <div>
+                <label className={label} htmlFor="form_id">
+                  Linked application form
+                </label>
+                <select
+                  id="form_id"
+                  value={values.form_id ?? ""}
+                  onChange={(event) => set("form_id", event.target.value || null)}
+                  className={field}
+                >
+                  <option value="">Use custom URL below</option>
+                  {forms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={label} htmlFor="google_form_url">
+                  Application form URL
+                </label>
+                <input
+                  id="google_form_url"
+                  value={values.google_form_url ?? ""}
+                  maxLength={500}
+                  placeholder="https://docs.google.com/forms/..."
+                  onChange={(event) => set("google_form_url", event.target.value)}
+                  className={field}
+                />
+                {errors["google_form_url"] ? (
+                  <p className="mt-1 text-xs text-destructive">{errors["google_form_url"]}</p>
+                ) : null}
+              </div>
+            </>
+          ) : null}
+
           <div>
             <label className={label} htmlFor="status">
               Status
