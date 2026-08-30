@@ -68,6 +68,24 @@ const labelClass = "text-xs font-bold tracking-widest uppercase text-muted-foreg
 
 type FormState = Record<string, string>;
 
+const fieldLabels: Record<string, string> = {
+  first_name: "First name",
+  last_name: "Last name",
+  phone: "Phone number",
+  email: "Email address",
+  pan_number: "PAN number",
+  highest_qualification: "Highest qualification",
+  marks: "Marks / percentage / CGPA",
+  year_of_passing: "Year of passing",
+  primary_skills: "Primary technical skills",
+  total_experience: "Total years of experience",
+  resume_name: "Resume upload",
+  resume_base64: "Resume upload",
+  linkedin_url: "LinkedIn profile",
+  github_url: "GitHub profile",
+  portfolio_url: "Portfolio / website",
+};
+
 function Field({
   name,
   label,
@@ -184,7 +202,18 @@ function ApplyPage() {
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
-      setFormError("Please correct the highlighted fields.");
+      const missing = Object.keys(next);
+      setFormError(
+        `Please complete the required field${missing.length > 1 ? "s" : ""} highlighted below: ${missing
+          .map((key) => fieldLabels[key] ?? key.replace(/_/g, " "))
+          .join(", ")}.`,
+      );
+      const first = missing[0];
+      if (first) {
+        const element = document.getElementById(first);
+        element?.scrollIntoView({ behavior: "smooth", block: "center" });
+        (element as HTMLElement | null)?.focus?.();
+      }
       return;
     }
     setErrors({});
@@ -197,8 +226,10 @@ function ApplyPage() {
       }
       setSuccess(result.applicationCode);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setFormError("Could not submit your application. Please try again.");
+    } catch (submitError) {
+      const detail =
+        submitError instanceof Error && submitError.message ? ` (${submitError.message})` : "";
+      setFormError(`Could not submit your application. Please try again.${detail}`);
     } finally {
       setPending(false);
     }
@@ -337,7 +368,7 @@ function ApplyPage() {
                   onChange={(e) => set("preferred_location", e.target.value)}
                 />
               </Field>
-              <Field name="pan_number" label="PAN number" errors={errors}>
+              <Field name="pan_number" label="PAN number" required errors={errors}>
                 <input
                   id="pan_number"
                   className={`${field} uppercase`}

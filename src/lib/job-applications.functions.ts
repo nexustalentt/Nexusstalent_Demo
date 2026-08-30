@@ -40,7 +40,11 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       .from("resumes")
       .upload(path, bytes, { contentType: "application/octet-stream", upsert: false });
     if (uploadError) {
-      return { ok: false as const, error: "Could not upload your resume. Please try again." };
+      console.error("[job-application] resume upload failed", uploadError.message);
+      return {
+        ok: false as const,
+        error: `Could not upload your resume: ${uploadError.message}`,
+      };
     }
 
     const { data: inserted, error } = await supabaseAdmin
@@ -94,27 +98,36 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       if (error.code === "23505" || /duplicate/i.test(error.message)) {
         return { ok: false as const, error: "You have already applied for this position." };
       }
-      return { ok: false as const, error: "Could not submit your application. Please try again." };
+      console.error("[job-application] insert failed", error.code, error.message);
+      return {
+        ok: false as const,
+        error: `Could not submit your application: ${error.message}`,
+      };
     }
 
-    const { data: settings } = await supabaseAdmin
-      .from("site_settings")
-      .select("recruitment_email, company_email, notify_on_new_application")
-      .maybeSingle();
-    const recipient = settings?.recruitment_email ?? settings?.company_email;
-    if (recipient && settings?.notify_on_new_application !== false) {
-      const { sendNotificationEmail } = await import("./notifications.server");
-      await sendNotificationEmail({
-        to: recipient,
-        subject: `New Job Application – ${job.title}`,
-        lines: [
-          `Application ID: ${inserted.application_code}`,
-          `Candidate: ${data.first_name} ${data.last_name}`,
-          `Email: ${data.email}`,
-          `Phone: ${data.phone}`,
-          `Job applied for: ${job.title}`,
-        ],
-      });
+    // Notifications must never fail the submission: the application row is already stored.
+    try {
+      const { data: settings } = await supabaseAdmin
+        .from("site_settings")
+        .select("recruitment_email, company_email, notify_on_new_application")
+        .maybeSingle();
+      const recipient = settings?.recruitment_email ?? settings?.company_email;
+      if (recipient && settings?.notify_on_new_application !== false) {
+        const { sendNotificationEmail } = await import("./notifications.server");
+        await sendNotificationEmail({
+          to: recipient,
+          subject: `New Job Application – ${job.title}`,
+          lines: [
+            `Application ID: ${inserted.application_code}`,
+            `Candidate: ${data.first_name} ${data.last_name}`,
+            `Email: ${data.email}`,
+            `Phone: ${data.phone}`,
+            `Job applied for: ${job.title}`,
+          ],
+        });
+      }
+    } catch (notifyError) {
+      console.error("[job-application] notification failed", notifyError);
     }
 
     return { ok: true as const, applicationCode: inserted.application_code };
