@@ -17,7 +17,9 @@ import { supabase } from "@/integrations/supabase/client";
 const navItems = [
   { label: "Dashboard", to: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Jobs", to: "/admin/jobs", icon: Briefcase, exact: false },
+  { label: "Job Applies", to: "/admin/job-applies", icon: ClipboardCheck, exact: false },
   { label: "Applications", to: "/admin/applications", icon: Users, exact: false },
+
   { label: "Exam Creator", to: "/admin/exams", icon: ClipboardList, exact: false },
   { label: "Forms", to: "/admin/forms", icon: FileText, exact: false },
   { label: "Settings", to: "/admin/settings", icon: Settings, exact: false },
