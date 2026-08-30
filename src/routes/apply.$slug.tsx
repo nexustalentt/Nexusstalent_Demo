@@ -184,7 +184,18 @@ function ApplyPage() {
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
-      setFormError("Please correct the highlighted fields.");
+      const missing = Object.keys(next);
+      setFormError(
+        `Please complete the required field${missing.length > 1 ? "s" : ""} highlighted below: ${missing
+          .map((key) => fieldLabels[key] ?? key.replace(/_/g, " "))
+          .join(", ")}.`,
+      );
+      const first = missing[0];
+      if (first) {
+        const element = document.getElementById(first);
+        element?.scrollIntoView({ behavior: "smooth", block: "center" });
+        (element as HTMLElement | null)?.focus?.();
+      }
       return;
     }
     setErrors({});
