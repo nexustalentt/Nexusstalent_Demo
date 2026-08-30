@@ -98,7 +98,11 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       if (error.code === "23505" || /duplicate/i.test(error.message)) {
         return { ok: false as const, error: "You have already applied for this position." };
       }
-      return { ok: false as const, error: "Could not submit your application. Please try again." };
+      console.error("[job-application] insert failed", error.code, error.message);
+      return {
+        ok: false as const,
+        error: `Could not submit your application: ${error.message}`,
+      };
     }
 
     const { data: settings } = await supabaseAdmin
