@@ -189,6 +189,29 @@ export async function deleteExam(exam: ExamRow) {
   await recordAudit("exam_deleted", "exam", exam.id, { title: exam.title });
 }
 
+/** Removes one attempt plus its stored answers. Candidate credentials stay intact. */
+export async function deleteExamAttempt(attempt: { id: string; exam_id: string }) {
+  const answersResult = await supabase.from("exam_answers").delete().eq("attempt_id", attempt.id);
+  if (answersResult.error) throw new Error(answersResult.error.message);
+  const { error } = await supabase.from("exam_attempts").delete().eq("id", attempt.id);
+  if (error) throw new Error(error.message);
+  await recordAudit("exam_attempt_deleted", "exam_attempt", attempt.id, {
+    exam_id: attempt.exam_id,
+  });
+}
+
+/** Clears every submission for an exam. */
+export async function deleteAllExamAttempts(examId: string) {
+  const attempts = unwrap(
+    await supabase.from("exam_attempts").select("id, exam_id").eq("exam_id", examId),
+  );
+  for (const attempt of attempts) {
+    await deleteExamAttempt(attempt);
+  }
+  return attempts.length;
+}
+
+
 /** Recomputes attempt totals after manual grading. */
 export async function recalculateAttempt(attemptId: string) {
   const attempt = unwrap(
