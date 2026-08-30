@@ -74,6 +74,41 @@ export const adminSettingsQuery = queryOptions({
     unwrap<SettingsRow | null>(await supabase.from("site_settings").select("*").maybeSingle()),
 });
 
+export type JobApplyRow = Database["public"]["Tables"]["job_applications"]["Row"];
+
+export const jobAppliesQuery = queryOptions({
+  queryKey: ["admin", "job-applies"],
+  queryFn: async () =>
+    unwrap(
+      await supabase
+        .from("job_applications")
+        .select("*, jobs(title, slug)")
+        .order("created_at", { ascending: false }),
+    ) as (JobApplyRow & { jobs: { title: string; slug: string } | null })[],
+});
+
+export const jobApplyQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["admin", "job-apply", id],
+    queryFn: async () =>
+      unwrap(
+        await supabase.from("job_applications").select("*, jobs(title, slug)").eq("id", id).maybeSingle(),
+      ) as (JobApplyRow & { jobs: { title: string; slug: string } | null }) | null,
+  });
+
+export async function updateJobApply(
+  id: string,
+  patch: Partial<Pick<JobApplyRow, "status" | "admin_notes">>,
+) {
+  const { error } = await supabase.from("job_applications").update(patch).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteJobApply(id: string) {
+  const { error } = await supabase.from("job_applications").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export const auditLogsQuery = queryOptions({
   queryKey: ["admin", "audit"],
   queryFn: async () =>
@@ -81,6 +116,7 @@ export const auditLogsQuery = queryOptions({
       await supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(50),
     ),
 });
+
 
 export async function recordAudit(
   action: string,

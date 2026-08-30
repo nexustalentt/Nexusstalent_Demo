@@ -490,6 +490,155 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          admin_notes: string | null
+          application_code: string
+          availability_to_join: string | null
+          certifications: string | null
+          college: string | null
+          cover_letter: string | null
+          created_at: string
+          current_company: string | null
+          current_ctc: string | null
+          current_job_title: string | null
+          current_location: string | null
+          date_of_birth: string | null
+          email: string
+          expected_ctc: string | null
+          experience_type: string
+          first_name: string
+          gender: string | null
+          github_url: string | null
+          heard_about_us: string | null
+          highest_qualification: string
+          id: string
+          job_id: string | null
+          job_title: string
+          last_name: string
+          linkedin_url: string | null
+          marks: string
+          notice_period: string | null
+          pan_number: string | null
+          phone: string
+          portfolio_url: string | null
+          preferred_location: string | null
+          primary_skills: string
+          programming_languages: string | null
+          relevant_experience: string | null
+          resume_name: string | null
+          resume_path: string | null
+          secondary_skills: string | null
+          specialization: string | null
+          status: Database["public"]["Enums"]["job_application_status"]
+          tools_technologies: string | null
+          total_experience: string | null
+          updated_at: string
+          willing_to_relocate: boolean | null
+          year_of_passing: number
+        }
+        Insert: {
+          admin_notes?: string | null
+          application_code?: string
+          availability_to_join?: string | null
+          certifications?: string | null
+          college?: string | null
+          cover_letter?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_ctc?: string | null
+          current_job_title?: string | null
+          current_location?: string | null
+          date_of_birth?: string | null
+          email: string
+          expected_ctc?: string | null
+          experience_type?: string
+          first_name: string
+          gender?: string | null
+          github_url?: string | null
+          heard_about_us?: string | null
+          highest_qualification: string
+          id?: string
+          job_id?: string | null
+          job_title: string
+          last_name: string
+          linkedin_url?: string | null
+          marks: string
+          notice_period?: string | null
+          pan_number?: string | null
+          phone: string
+          portfolio_url?: string | null
+          preferred_location?: string | null
+          primary_skills: string
+          programming_languages?: string | null
+          relevant_experience?: string | null
+          resume_name?: string | null
+          resume_path?: string | null
+          secondary_skills?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["job_application_status"]
+          tools_technologies?: string | null
+          total_experience?: string | null
+          updated_at?: string
+          willing_to_relocate?: boolean | null
+          year_of_passing: number
+        }
+        Update: {
+          admin_notes?: string | null
+          application_code?: string
+          availability_to_join?: string | null
+          certifications?: string | null
+          college?: string | null
+          cover_letter?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_ctc?: string | null
+          current_job_title?: string | null
+          current_location?: string | null
+          date_of_birth?: string | null
+          email?: string
+          expected_ctc?: string | null
+          experience_type?: string
+          first_name?: string
+          gender?: string | null
+          github_url?: string | null
+          heard_about_us?: string | null
+          highest_qualification?: string
+          id?: string
+          job_id?: string | null
+          job_title?: string
+          last_name?: string
+          linkedin_url?: string | null
+          marks?: string
+          notice_period?: string | null
+          pan_number?: string | null
+          phone?: string
+          portfolio_url?: string | null
+          preferred_location?: string | null
+          primary_skills?: string
+          programming_languages?: string | null
+          relevant_experience?: string | null
+          resume_name?: string | null
+          resume_path?: string | null
+          secondary_skills?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["job_application_status"]
+          tools_technologies?: string | null
+          total_experience?: string | null
+          updated_at?: string
+          willing_to_relocate?: boolean | null
+          year_of_passing?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           application_method: string
@@ -774,6 +923,15 @@ export type Database = {
         | "interview"
         | "selected"
         | "rejected"
+      job_application_status:
+        | "new"
+        | "under_review"
+        | "shortlisted"
+        | "aptitude_test"
+        | "interview"
+        | "selected"
+        | "rejected"
+        | "on_hold"
       job_status: "draft" | "active" | "closed" | "archived"
     }
     CompositeTypes: {
@@ -910,6 +1068,16 @@ export const Constants = {
         "interview",
         "selected",
         "rejected",
+      ],
+      job_application_status: [
+        "new",
+        "under_review",
+        "shortlisted",
+        "aptitude_test",
+        "interview",
+        "selected",
+        "rejected",
+        "on_hold",
       ],
       job_status: ["draft", "active", "closed", "archived"],
     },

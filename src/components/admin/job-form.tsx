@@ -27,8 +27,10 @@ const jobSchema = z.object({
   requirements: z.string().trim().max(4000).optional(),
   preferred_qualifications: z.string().trim().max(4000).optional(),
   benefits: z.string().trim().max(4000).optional(),
+  application_method: z.enum(["google_form", "internal_form"]),
   google_form_url: z.string().trim().url("Enter a valid URL").max(500).optional().or(z.literal("")),
   form_id: z.string().uuid().nullable(),
+
   status: z.enum(["draft", "active", "closed", "archived"]),
   published_at: z.date().nullable(),
   updated_at: z.date().nullable(),
@@ -68,8 +70,11 @@ export function JobForm({
     requirements: job?.requirements ?? "",
     preferred_qualifications: job?.preferred_qualifications ?? "",
     benefits: job?.benefits ?? "",
+    application_method:
+      job?.application_method === "internal_form" ? "internal_form" : "google_form",
     google_form_url: job?.google_form_url ?? "",
     form_id: job?.form_id ?? null,
+
     status: (job?.status as JobStatus) ?? "draft",
     published_at: job?.published_at ? new Date(job?.published_at) : null,
     updated_at: job?.updated_at ? new Date(job?.updated_at) : null,
@@ -123,10 +128,13 @@ export function JobForm({
       requirements: data.requirements || null,
       preferred_qualifications: data.preferred_qualifications || null,
       benefits: data.benefits || null,
-      google_form_url: data.google_form_url || null,
+      google_form_url:
+        data.application_method === "internal_form" ? null : data.google_form_url || null,
+      form_id: data.application_method === "internal_form" ? null : data.form_id,
       employment_type: data.employment_type || null,
       work_mode: data.work_mode || null,
-      application_method: "google_form",
+      application_method: data.application_method,
+
       published_at: publishedAtIso,
       ...(updatedAtIso ? { updated_at: updatedAtIso } : {}),
     };
@@ -348,40 +356,66 @@ export function JobForm({
       <section className="rounded-2xl border border-primary/5 bg-card p-6">
         <h2 className="font-bold text-primary">Application &amp; publishing</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <div>
-            <label className={label} htmlFor="form_id">
-              Linked application form
+          <div className="md:col-span-2">
+            <label className={label} htmlFor="application_method">
+              Application method
             </label>
             <select
-              id="form_id"
-              value={values.form_id ?? ""}
-              onChange={(event) => set("form_id", event.target.value || null)}
+              id="application_method"
+              value={values.application_method}
+              onChange={(event) =>
+                set("application_method", event.target.value as JobFormValues["application_method"])
+              }
               className={field}
             >
-              <option value="">Use custom URL below</option>
-              {forms.map((form) => (
-                <option key={form.id} value={form.id}>
-                  {form.name}
-                </option>
-              ))}
+              <option value="google_form">Google Form (external link)</option>
+              <option value="internal_form">Job Application Form (on this website)</option>
             </select>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {values.application_method === "internal_form"
+                ? "Candidates apply through the built-in application form and submissions appear under Job Applies."
+                : "Candidates are sent to the Google Form link below."}
+            </p>
           </div>
-          <div>
-            <label className={label} htmlFor="google_form_url">
-              Application form URL
-            </label>
-            <input
-              id="google_form_url"
-              value={values.google_form_url ?? ""}
-              maxLength={500}
-              placeholder="https://docs.google.com/forms/..."
-              onChange={(event) => set("google_form_url", event.target.value)}
-              className={field}
-            />
-            {errors["google_form_url"] ? (
-              <p className="mt-1 text-xs text-destructive">{errors["google_form_url"]}</p>
-            ) : null}
-          </div>
+          {values.application_method === "google_form" ? (
+            <>
+              <div>
+                <label className={label} htmlFor="form_id">
+                  Linked application form
+                </label>
+                <select
+                  id="form_id"
+                  value={values.form_id ?? ""}
+                  onChange={(event) => set("form_id", event.target.value || null)}
+                  className={field}
+                >
+                  <option value="">Use custom URL below</option>
+                  {forms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={label} htmlFor="google_form_url">
+                  Application form URL
+                </label>
+                <input
+                  id="google_form_url"
+                  value={values.google_form_url ?? ""}
+                  maxLength={500}
+                  placeholder="https://docs.google.com/forms/..."
+                  onChange={(event) => set("google_form_url", event.target.value)}
+                  className={field}
+                />
+                {errors["google_form_url"] ? (
+                  <p className="mt-1 text-xs text-destructive">{errors["google_form_url"]}</p>
+                ) : null}
+              </div>
+            </>
+          ) : null}
+
           <div>
             <label className={label} htmlFor="status">
               Status

@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import {
   Briefcase,
+  ClipboardCheck,
   ClipboardList,
   FileText,
   LayoutDashboard,
@@ -12,12 +13,15 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Dashboard", to: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Jobs", to: "/admin/jobs", icon: Briefcase, exact: false },
+  { label: "Job Applies", to: "/admin/job-applies", icon: ClipboardCheck, exact: false },
   { label: "Applications", to: "/admin/applications", icon: Users, exact: false },
+
   { label: "Exam Creator", to: "/admin/exams", icon: ClipboardList, exact: false },
   { label: "Forms", to: "/admin/forms", icon: FileText, exact: false },
   { label: "Settings", to: "/admin/settings", icon: Settings, exact: false },
@@ -138,7 +142,9 @@ export function StatusPill({ status }: { status: string }) {
     new: "bg-accent/10 text-accent",
     under_review: "bg-accent/10 text-accent",
     shortlisted: "bg-accent/10 text-accent",
+    aptitude_test: "bg-accent/10 text-accent",
     interview: "bg-warning/15 text-warning-foreground",
+    on_hold: "bg-warning/15 text-warning-foreground",
     closed: "bg-muted text-muted-foreground",
     archived: "bg-muted text-muted-foreground",
     rejected: "bg-destructive/10 text-destructive",
