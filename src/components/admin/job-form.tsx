@@ -128,10 +128,13 @@ export function JobForm({
       requirements: data.requirements || null,
       preferred_qualifications: data.preferred_qualifications || null,
       benefits: data.benefits || null,
-      google_form_url: data.google_form_url || null,
+      google_form_url:
+        data.application_method === "internal_form" ? null : data.google_form_url || null,
+      form_id: data.application_method === "internal_form" ? null : data.form_id,
       employment_type: data.employment_type || null,
       work_mode: data.work_mode || null,
-      application_method: "google_form",
+      application_method: data.application_method,
+
       published_at: publishedAtIso,
       ...(updatedAtIso ? { updated_at: updatedAtIso } : {}),
     };
