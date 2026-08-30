@@ -79,10 +79,9 @@ export const jobApplicationSchema = z
     pan_number: z
       .string()
       .trim()
+      .min(1, "PAN number is required")
       .toUpperCase()
-      .regex(panRegex, "PAN must look like ABCDE1234F")
-      .optional()
-      .or(z.literal("")),
+      .regex(panRegex, "PAN must look like ABCDE1234F"),
     highest_qualification: z.string().trim().min(1, "Highest qualification is required").max(80),
     specialization: optional(120),
     college: optional(160),
