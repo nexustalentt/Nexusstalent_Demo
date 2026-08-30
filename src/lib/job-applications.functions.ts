@@ -40,7 +40,11 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       .from("resumes")
       .upload(path, bytes, { contentType: "application/octet-stream", upsert: false });
     if (uploadError) {
-      return { ok: false as const, error: "Could not upload your resume. Please try again." };
+      console.error("[job-application] resume upload failed", uploadError.message);
+      return {
+        ok: false as const,
+        error: `Could not upload your resume: ${uploadError.message}`,
+      };
     }
 
     const { data: inserted, error } = await supabaseAdmin
