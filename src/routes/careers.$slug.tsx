@@ -89,10 +89,12 @@ function JobDetailPage() {
 
   if (!job) return <JobNotFound />;
 
+  const internalApply = job.application_method === "internal_form";
   const canApply =
-    job.application_method === "google_form" &&
-    !!job.google_form_url &&
-    isValidHttpUrl(job.google_form_url);
+    internalApply ||
+    (job.application_method === "google_form" &&
+      !!job.google_form_url &&
+      isValidHttpUrl(job.google_form_url));
 
   const facts = [
     { label: "Location", value: job.location },
@@ -112,16 +114,27 @@ function JobDetailPage() {
           <p className="mt-2 text-sm text-muted-foreground">
             Applications take a few minutes. No account or password required.
           </p>
-          <a
-            href={job.google_form_url!}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.02]"
-          >
-            Apply Now <ExternalLink className="size-4" aria-hidden="true" />
-          </a>
+          {internalApply ? (
+            <Link
+              to="/apply/$slug"
+              params={{ slug }}
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.02]"
+            >
+              Apply Now
+            </Link>
+          ) : (
+            <a
+              href={job.google_form_url!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.02]"
+            >
+              Apply Now <ExternalLink className="size-4" aria-hidden="true" />
+            </a>
+          )}
         </>
       ) : (
+
         <div className="mt-3 rounded-xl border border-dashed border-primary/15 bg-surface p-4">
           <p className="text-sm font-semibold text-primary">
             Applications are currently unavailable for this position.
