@@ -91,7 +91,7 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       .single();
 
     if (error) {
-      if (error.code === "23505" || error.code === "23'5" || /duplicate/i.test(error.message)) {
+      if (error.code === "23505" || /duplicate/i.test(error.message)) {
         return { ok: false as const, error: "You have already applied for this position." };
       }
       return { ok: false as const, error: "Could not submit your application. Please try again." };
