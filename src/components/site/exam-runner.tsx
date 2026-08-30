@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 import { formatDuration, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import { letterLabel } from "@/lib/question-bank-parser";
 import {
@@ -27,21 +27,91 @@ function isAnswered(value: StoredAnswer) {
   return Boolean(value && ((value.selected?.length ?? 0) > 0 || (value.text ?? "").trim()));
 }
 
-type Status = "answered" | "not_answered" | "review" | "answered_review";
+function pad2(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+type Status = "answered" | "not_visited" | "not_answered" | "review" | "answered_review";
 
 const statusClass: Record<Status, string> = {
-  answered: "bg-success text-success-foreground",
-  not_answered: "bg-surface text-muted-foreground border border-primary/10",
-  review: "bg-warning text-warning-foreground",
-  answered_review: "bg-accent text-accent-foreground",
+  answered: "bg-success text-success-foreground border border-success",
+  not_visited: "bg-card text-muted-foreground border border-primary/15",
+  not_answered: "bg-secondary text-primary border border-primary/40",
+  review: "bg-warning text-warning-foreground border border-warning",
+  answered_review: "bg-accent text-accent-foreground border border-accent",
 };
 
 const legend: { status: Status; label: string }[] = [
   { status: "answered", label: "Answered" },
-  { status: "not_answered", label: "Not answered" },
+  { status: "not_answered", label: "Visited, not answered" },
+  { status: "not_visited", label: "Not visited" },
   { status: "review", label: "Marked for review" },
   { status: "answered_review", label: "Answered & marked" },
 ];
+
+/**
+ * Deterrent-only protections: blocks copy/cut, the context menu and the common
+ * copy/save/print/view-source shortcuts inside the exam area, while leaving
+ * typing, option selection, scrolling, navigation and submission untouched.
+ */
+function useExamGuards(ref: RefObject<HTMLElement | null>, active: boolean) {
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || !active) return;
+
+    const isTypingTarget = (target: EventTarget | null) =>
+      target instanceof HTMLElement &&
+      (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+
+    const blockClipboard = (event: Event) => {
+      if (isTypingTarget(event.target)) return;
+      event.preventDefault();
+    };
+    const blockContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+    };
+    const blockKeys = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey)) return;
+      const key = event.key.toLowerCase();
+      if (key === "u" || key === "s" || key === "p") {
+        event.preventDefault();
+        return;
+      }
+      if ((key === "c" || key === "x" || key === "a") && !isTypingTarget(event.target)) {
+        event.preventDefault();
+      }
+    };
+
+    node.addEventListener("copy", blockClipboard);
+    node.addEventListener("cut", blockClipboard);
+    node.addEventListener("contextmenu", blockContextMenu);
+    node.addEventListener("keydown", blockKeys);
+    return () => {
+      node.removeEventListener("copy", blockClipboard);
+      node.removeEventListener("cut", blockClipboard);
+      node.removeEventListener("contextmenu", blockContextMenu);
+      node.removeEventListener("keydown", blockKeys);
+    };
+  }, [ref, active]);
+}
+
+/** Non-selectable diagonal watermark tiled behind the question content. */
+function Watermark({ label }: { label: string }) {
+  const text = `CONFIDENTIAL • APTITUDE TEST • DO NOT COPY${label ? ` • ${label}` : ""}`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="620" height="220"><text x="0" y="130" transform="rotate(-24 0 130)" font-family="Inter, sans-serif" font-size="19" font-weight="700" fill="rgba(15,23,42,0.055)" letter-spacing="2">${text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")}</text></svg>`;
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 select-none"
+      style={{
+        backgroundImage: `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`,
+        backgroundRepeat: "repeat",
+      }}
+    />
+  );
+}
 
 export function ExamRunner({
   sessionToken,
@@ -60,12 +130,14 @@ export function ExamRunner({
 
   const [answers, setAnswers] = useState<Record<string, StoredAnswer>>({});
   const [review, setReview] = useState<Record<string, boolean>>({});
+  const [visited, setVisited] = useState<Record<string, boolean>>({});
   const [current, setCurrent] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [confirming, setConfirming] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   const hydrated = useRef(false);
   const autoSubmitted = useRef(false);
+  const examAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (state.data && !hydrated.current) {
@@ -108,10 +180,11 @@ export function ExamRunner({
   const submitted = state.data && state.data.status !== "in_progress";
   const started = Boolean(state.data?.started);
 
+  useExamGuards(examAreaRef, Boolean(started && !submitted));
+
   useEffect(() => {
     if (submitted) onSubmitted?.();
   }, [submitted, onSubmitted]);
-
 
   useEffect(() => {
     if (!state.data || submitted || !started) return;
@@ -129,6 +202,14 @@ export function ExamRunner({
 
   const questions = state.data?.questions ?? [];
   const sections = useMemo(() => groupBySection(questions), [questions]);
+  const currentQuestionId = questions[current]?.id;
+
+  useEffect(() => {
+    if (!currentQuestionId) return;
+    setVisited((existing) =>
+      existing[currentQuestionId] ? existing : { ...existing, [currentQuestionId]: true },
+    );
+  }, [currentQuestionId]);
 
   if (state.isLoading) return <Shell>Loading your exam…</Shell>;
 
@@ -166,7 +247,6 @@ export function ExamRunner({
           Exit exam
         </button>
       </Shell>
-
     );
   }
 
@@ -188,13 +268,16 @@ export function ExamRunner({
   const answeredCount = questions.filter((item) => isAnswered(answers[item.id] ?? null)).length;
   const reviewCount = questions.filter((item) => review[item.id]).length;
   const notAnswered = questions.length - answeredCount;
+  const progress = questions.length ? Math.round((answeredCount / questions.length) * 100) : 0;
+  const watermarkLabel = state.data.candidateUsername ?? state.data.candidateName ?? "";
 
   function statusOf(questionId: string): Status {
     const answered = isAnswered(answers[questionId] ?? null);
     const marked = Boolean(review[questionId]);
     if (answered && marked) return "answered_review";
     if (marked) return "review";
-    return answered ? "answered" : "not_answered";
+    if (answered) return "answered";
+    return visited[questionId] ? "not_answered" : "not_visited";
   }
 
   function update(questionId: string, answer: StoredAnswer) {
@@ -208,27 +291,89 @@ export function ExamRunner({
     saveMutation.mutate({ questionId, markedForReview: next });
   }
 
+  function goTo(index: number) {
+    setCurrent(Math.min(Math.max(index, 0), Math.max(questions.length - 1, 0)));
+  }
+
+  function saveAndNext() {
+    if (!question) return;
+    saveMutation.mutate({ questionId: question.id, answer: answers[question.id] ?? null });
+    if (current < questions.length - 1) goTo(current + 1);
+  }
+
   const currentSection = question ? normalizeSection(question.section) : "";
   const sectionOfCurrent = sections.find((group) => group.name === currentSection);
   const indexInSection = sectionOfCurrent
     ? sectionOfCurrent.items.findIndex((item) => item.id === question?.id) + 1
     : 0;
 
+  const timeClass =
+    seconds <= 60
+      ? "border-destructive/30 bg-destructive/10 text-destructive"
+      : seconds <= 300
+        ? "border-warning/40 bg-warning/15 text-primary"
+        : "border-primary/10 bg-surface text-primary";
+
   const navPanel = (
-    <div className="space-y-5">
-      <div className="space-y-2 rounded-2xl border border-primary/5 bg-card p-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Question status
-        </p>
-        <ul className="space-y-1.5 text-sm">
+    <div className="space-y-4 lg:sticky lg:top-24">
+      <nav
+        aria-label="Question navigation"
+        className="rounded-2xl border border-primary/10 bg-card shadow-[var(--shadow-card)]"
+      >
+        <div className="border-b border-primary/10 px-5 py-3.5">
+          <p className="text-sm font-bold uppercase tracking-wider text-primary">Question Paper</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {questions.length} questions · {answeredCount} answered
+          </p>
+        </div>
+        <div className="space-y-5 p-5">
+          {sections.map((group) => (
+            <div key={group.name}>
+              <p className="mb-2.5 flex items-baseline justify-between gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+                <span className="truncate">{group.name}</span>
+                <span className="shrink-0 font-semibold normal-case tracking-normal text-muted-foreground">
+                  {pad2(group.startIndex + 1)}–{pad2(group.startIndex + group.items.length)}
+                </span>
+              </p>
+              <div className="grid grid-cols-5 gap-2">
+                {group.items.map((item, offset) => {
+                  const index = group.startIndex + offset;
+                  const active = index === current;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        goTo(index);
+                        setPanelOpen(false);
+                      }}
+                      aria-label={`${group.name} question ${index + 1}`}
+                      aria-current={active ? "true" : undefined}
+                      className={`grid h-9 place-items-center rounded-md text-xs font-bold transition-colors ${
+                        statusClass[statusOf(item.id)]
+                      } ${active ? "ring-2 ring-accent ring-offset-2 ring-offset-card" : ""}`}
+                    >
+                      {pad2(index + 1)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </nav>
+
+      <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-[var(--shadow-card)]">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</p>
+        <ul className="mt-2.5 space-y-1.5 text-sm">
           {legend.map((item) => (
             <li key={item.status} className="flex items-center gap-2">
-              <span className={`size-4 rounded ${statusClass[item.status]}`} aria-hidden="true" />
+              <span className={`size-4 shrink-0 rounded ${statusClass[item.status]}`} aria-hidden="true" />
               <span className="text-muted-foreground">{item.label}</span>
             </li>
           ))}
         </ul>
-        <dl className="mt-3 space-y-1 border-t border-primary/5 pt-3 text-sm">
+        <dl className="mt-4 space-y-1 border-t border-primary/10 pt-3 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Total questions</dt>
             <dd className="font-bold text-primary">{questions.length}</dd>
@@ -247,76 +392,77 @@ export function ExamRunner({
           </div>
         </dl>
       </div>
-
-      <nav aria-label="Question navigation" className="space-y-5 rounded-2xl border border-primary/5 bg-card p-5">
-        {sections.map((group) => (
-          <div key={group.name}>
-            <p className="mb-2 text-sm font-bold text-primary">
-              {group.name}
-              <span className="ml-2 text-xs font-semibold text-muted-foreground">
-                Q{group.startIndex + 1}–{group.startIndex + group.items.length}
-              </span>
-            </p>
-            <div className="grid grid-cols-5 gap-2">
-              {group.items.map((item, offset) => {
-                const index = group.startIndex + offset;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => {
-                      setCurrent(index);
-                      setPanelOpen(false);
-                    }}
-                    aria-label={`${group.name} question ${index + 1}`}
-                    aria-current={index === current ? "true" : undefined}
-                    className={`size-9 rounded-lg text-sm font-bold ${statusClass[statusOf(item.id)]} ${
-                      index === current ? "ring-2 ring-primary ring-offset-2 ring-offset-card" : ""
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
     </div>
   );
 
-  return (
-    <main className="min-h-screen bg-surface p-4 sm:p-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary/5 bg-card p-6">
-          <div>
-            <h1 className="text-xl font-bold text-primary">{state.data.exam.title}</h1>
-            {state.data.candidateName ? (
-              <p className="mt-0.5 text-sm font-semibold text-accent">
-                Candidate: {state.data.candidateName}
-                {state.data.candidateUsername &&
-                state.data.candidateUsername !== state.data.candidateName
-                  ? ` (${state.data.candidateUsername})`
-                  : ""}
-              </p>
-            ) : null}
-            <p className="text-sm text-muted-foreground">
-              {currentSection ? `${currentSection} – ` : ""}
-              Question {indexInSection || current + 1} of{" "}
-              {sectionOfCurrent?.items.length ?? questions.length}
-              {" · "}Answered {answeredCount} of {questions.length}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Time remaining
-            </p>
-            <p className="text-2xl font-bold text-primary">{formatDuration(seconds)}</p>
-          </div>
-        </header>
+  const optionRowClass = (selected: boolean) =>
+    `flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 text-sm transition-colors ${
+      selected
+        ? "border-accent bg-accent/8 text-primary"
+        : "border-primary/10 bg-surface hover:border-accent/50"
+    }`;
 
+  return (
+    <div ref={examAreaRef} className="min-h-screen bg-surface">
+      <header className="sticky top-0 z-30 border-b border-primary/10 bg-card/95 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-8">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-bold text-primary sm:text-lg">
+                {state.data.exam.title}
+              </h1>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">
+                {state.data.candidateName ? (
+                  <span className="font-semibold text-accent">
+                    {state.data.candidateName}
+                    {state.data.candidateUsername &&
+                    state.data.candidateUsername !== state.data.candidateName
+                      ? ` (${state.data.candidateUsername})`
+                      : ""}
+                  </span>
+                ) : (
+                  <span className="font-semibold text-accent">
+                    {state.data.candidateUsername ?? "Candidate"}
+                  </span>
+                )}
+                {" · "}
+                {state.data.exam.duration_minutes} min
+                {currentSection ? ` · ${currentSection}` : ""}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <span className="hidden rounded-full border border-success/30 bg-success/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-success sm:inline">
+                In progress
+              </span>
+              <div className={`rounded-xl border px-3 py-1.5 text-right ${timeClass}`}>
+                <p className="text-[10px] font-bold uppercase tracking-wider opacity-70">
+                  Time left
+                </p>
+                <p className="font-mono text-lg font-bold leading-tight tabular-nums">
+                  {formatDuration(seconds)}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-secondary"
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Answered progress"
+          >
+            <div
+              className="h-full rounded-full bg-success transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-8">
         {state.data.exam.instructions ? (
-          <details className="rounded-2xl border border-primary/5 bg-card p-5">
+          <details className="rounded-2xl border border-primary/10 bg-card p-5">
             <summary className="cursor-pointer text-sm font-bold text-primary">Instructions</summary>
             <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
               {state.data.exam.instructions}
@@ -329,141 +475,181 @@ export function ExamRunner({
           onClick={() => setPanelOpen((value) => !value)}
           className="w-full rounded-full border border-primary/10 bg-card px-5 py-2.5 text-sm font-bold text-primary lg:hidden"
         >
-          {panelOpen ? "Hide question panel" : "Show question panel"}
+          {panelOpen ? "Hide question paper" : "Show question paper"}
         </button>
 
-        <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[19rem_minmax(0,1fr)]">
           <aside className={panelOpen ? "block" : "hidden lg:block"}>{navPanel}</aside>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             {question ? (
-              <section className="space-y-5 rounded-2xl border border-primary/5 bg-card p-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  {currentSection} · Question {current + 1} of {questions.length} ·{" "}
-                  {questionTypeLabel(question.question_type)} · {question.marks}{" "}
-                  {question.marks === 1 ? "mark" : "marks"}
-                  {review[question.id] ? " · Marked for review" : ""}
-                </p>
-                <p className="text-lg font-semibold text-primary">
-                  Question {current + 1}. {question.prompt}
-                </p>
+              <section className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[var(--shadow-card)]">
+                <Watermark label={watermarkLabel} />
 
-                {question.question_type === "multiple_select" ? (
-                  <div className="space-y-2">
-                    {question.options.map((option, index) => {
-                      const selected = answers[question.id]?.selected ?? [];
-                      return (
-                        <label
-                          key={index}
-                          className="flex items-center gap-3 rounded-lg bg-surface p-3 text-sm"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selected.includes(index)}
-                            onChange={() =>
-                              update(question.id, {
-                                selected: selected.includes(index)
-                                  ? selected.filter((value) => value !== index)
-                                  : [...selected, index].sort((a, b) => a - b),
-                              })
-                            }
-                            className="size-4 accent-accent"
-                          />
-                          <span>
-                            <span className="font-bold text-primary">{letterLabel(index)}.</span>{" "}
-                            {option}
-                          </span>
-                        </label>
-                      );
-                    })}
+                <div className="relative flex flex-wrap items-center justify-between gap-3 border-b border-primary/10 bg-surface/60 px-6 py-3.5">
+                  <p className="text-sm font-bold uppercase tracking-wider text-primary">
+                    Question {pad2(current + 1)}
+                    <span className="ml-2 text-xs font-semibold normal-case tracking-normal text-muted-foreground">
+                      of {questions.length}
+                      {sectionOfCurrent
+                        ? ` · ${currentSection} ${indexInSection}/${sectionOfCurrent.items.length}`
+                        : ""}
+                    </span>
+                  </p>
+                  <p className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
+                    <span className="rounded-full border border-primary/10 bg-card px-2.5 py-1">
+                      {questionTypeLabel(question.question_type)}
+                    </span>
+                    <span className="rounded-full border border-primary/10 bg-card px-2.5 py-1">
+                      {question.marks} {question.marks === 1 ? "mark" : "marks"}
+                    </span>
+                    {review[question.id] ? (
+                      <span className="rounded-full bg-warning px-2.5 py-1 text-warning-foreground">
+                        Marked for review
+                      </span>
+                    ) : null}
+                  </p>
+                </div>
+
+                <div className="relative space-y-5 px-6 py-6">
+                  <p className="select-none text-lg font-semibold leading-relaxed text-primary sm:text-xl">
+                    {question.prompt}
+                  </p>
+
+                  {question.options.length > 0 ? (
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Select your answer
+                    </p>
+                  ) : null}
+
+                  {question.question_type === "multiple_select" ? (
+                    <div className="space-y-2.5">
+                      {question.options.map((option, index) => {
+                        const selected = answers[question.id]?.selected ?? [];
+                        const checked = selected.includes(index);
+                        return (
+                          <label key={index} className={optionRowClass(checked)}>
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() =>
+                                update(question.id, {
+                                  selected: checked
+                                    ? selected.filter((value) => value !== index)
+                                    : [...selected, index].sort((a, b) => a - b),
+                                })
+                              }
+                              className="mt-0.5 size-4 shrink-0 accent-accent"
+                            />
+                            <span className="select-none">
+                              <span className="font-bold text-primary">{letterLabel(index)}.</span>{" "}
+                              {option}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
+                  {question.question_type === "multiple_choice" ||
+                  question.question_type === "true_false" ? (
+                    <div className="space-y-2.5">
+                      {question.options.map((option, index) => {
+                        const checked = (answers[question.id]?.selected ?? []).includes(index);
+                        return (
+                          <label key={index} className={optionRowClass(checked)}>
+                            <input
+                              type="radio"
+                              name={`question-${question.id}`}
+                              checked={checked}
+                              onChange={() => update(question.id, { selected: [index] })}
+                              className="mt-0.5 size-4 shrink-0 accent-accent"
+                            />
+                            <span className="select-none">
+                              <span className="font-bold text-primary">{letterLabel(index)}.</span>{" "}
+                              {option}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
+                  {question.question_type === "short_answer" ? (
+                    <input
+                      value={answers[question.id]?.text ?? ""}
+                      maxLength={2000}
+                      onChange={(event) => update(question.id, { text: event.target.value })}
+                      className={fieldClass}
+                      placeholder="Your answer"
+                    />
+                  ) : null}
+
+                  {question.question_type === "long_answer" ? (
+                    <textarea
+                      rows={10}
+                      value={answers[question.id]?.text ?? ""}
+                      maxLength={20000}
+                      onChange={(event) => update(question.id, { text: event.target.value })}
+                      className={fieldClass}
+                      placeholder="Write your answer here"
+                    />
+                  ) : null}
+                </div>
+
+                <div className="relative border-t border-primary/10 bg-surface/60 px-6 py-4">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <button
+                      type="button"
+                      disabled={current === 0}
+                      onClick={() => goTo(current - 1)}
+                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      type="button"
+                      onClick={saveAndNext}
+                      className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+                    >
+                      Save &amp; Next
+                    </button>
+                    <button
+                      type="button"
+                      disabled={current >= questions.length - 1}
+                      onClick={() => goTo(current + 1)}
+                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                    <span className="mx-1 hidden h-6 w-px bg-primary/10 sm:block" aria-hidden="true" />
+                    <button
+                      type="button"
+                      onClick={() => toggleReview(question.id)}
+                      className={`rounded-full px-5 py-2.5 text-sm font-bold ${
+                        review[question.id]
+                          ? "bg-warning text-warning-foreground"
+                          : "border border-primary/15 bg-card text-primary hover:border-accent hover:text-accent"
+                      }`}
+                    >
+                      {review[question.id] ? "Unmark review" : "Mark for review"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => update(question.id, null)}
+                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:border-destructive hover:text-destructive"
+                    >
+                      Clear answer
+                    </button>
+                    <span className="text-xs text-muted-foreground">
+                      {saveMutation.isPending ? "Saving…" : "Answers save automatically"}
+                    </span>
                   </div>
-                ) : null}
-
-                {question.question_type === "multiple_choice" ||
-                question.question_type === "true_false" ? (
-                  <div className="space-y-2">
-                    {question.options.map((option, index) => (
-                      <label
-                        key={index}
-                        className="flex items-center gap-3 rounded-lg bg-surface p-3 text-sm"
-                      >
-                        <input
-                          type="radio"
-                          name={`question-${question.id}`}
-                          checked={(answers[question.id]?.selected ?? []).includes(index)}
-                          onChange={() => update(question.id, { selected: [index] })}
-                          className="size-4 accent-accent"
-                        />
-                        <span className="font-bold text-primary">{letterLabel(index)}.</span> {option}
-                      </label>
-                    ))}
-                  </div>
-                ) : null}
-
-                {question.question_type === "short_answer" ? (
-                  <input
-                    value={answers[question.id]?.text ?? ""}
-                    maxLength={2000}
-                    onChange={(event) => update(question.id, { text: event.target.value })}
-                    className={fieldClass}
-                    placeholder="Your answer"
-                  />
-                ) : null}
-
-                {question.question_type === "long_answer" ? (
-                  <textarea
-                    rows={10}
-                    value={answers[question.id]?.text ?? ""}
-                    maxLength={20000}
-                    onChange={(event) => update(question.id, { text: event.target.value })}
-                    className={fieldClass}
-                    placeholder="Write your answer here"
-                  />
-                ) : null}
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    disabled={current === 0}
-                    onClick={() => setCurrent((value) => Math.max(0, value - 1))}
-                    className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    disabled={current >= questions.length - 1}
-                    onClick={() => setCurrent((value) => Math.min(questions.length - 1, value + 1))}
-                    className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
-                  >
-                    Next
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleReview(question.id)}
-                    className={`rounded-full px-5 py-2.5 text-sm font-bold ${
-                      review[question.id]
-                        ? "bg-warning text-warning-foreground"
-                        : "border border-primary/10 text-primary hover:border-accent hover:text-accent"
-                    }`}
-                  >
-                    {review[question.id] ? "Unmark review" : "Mark for review"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => update(question.id, null)}
-                    className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:border-destructive hover:text-destructive"
-                  >
-                    Clear answer
-                  </button>
-                  <span className="text-xs text-muted-foreground">
-                    {saveMutation.isPending ? "Saving…" : "Answers save automatically"}
-                  </span>
                 </div>
               </section>
             ) : null}
 
-            <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
+            <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-[var(--shadow-card)]">
               {confirming ? (
                 <div className="space-y-3">
                   <p className="font-semibold text-primary">Are you sure you want to submit the exam?</p>
@@ -479,7 +665,7 @@ export function ExamRunner({
                     <button
                       type="button"
                       onClick={() => setConfirming(false)}
-                      className="rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary"
+                      className="rounded-full border border-primary/15 px-5 py-2.5 text-sm font-semibold text-primary"
                     >
                       Cancel
                     </button>
@@ -494,10 +680,11 @@ export function ExamRunner({
                   </div>
                 </div>
               ) : (
-                <>
+                <div className="flex flex-wrap items-center justify-between gap-4">
                   <p className="text-sm text-muted-foreground">
-                    Answered: {answeredCount} · Not answered: {notAnswered} · Marked for review:{" "}
-                    {reviewCount}
+                    Answered: <span className="font-bold text-success">{answeredCount}</span> · Not
+                    answered: <span className="font-bold text-primary">{notAnswered}</span> · Marked
+                    for review: <span className="font-bold text-primary">{reviewCount}</span>
                   </p>
                   <button
                     type="button"
@@ -506,13 +693,18 @@ export function ExamRunner({
                   >
                     Submit Exam
                   </button>
-                </>
+                </div>
               )}
             </section>
+
+            <p className="pb-4 text-center text-xs text-muted-foreground">
+              Confidential aptitude assessment · Copying or distributing this question paper is
+              prohibited.
+            </p>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 
@@ -579,6 +771,7 @@ function InstructionsGate({
               <li>Your answers are saved automatically as you go.</li>
               <li>The exam is submitted automatically when the timer reaches zero.</li>
               <li>Keep your camera on for the entire exam.</li>
+              <li>Copying, printing or sharing the question paper is strictly prohibited.</li>
             </ul>
           )}
         </div>
