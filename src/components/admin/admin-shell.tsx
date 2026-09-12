@@ -5,11 +5,13 @@ import {
   Briefcase,
   ClipboardCheck,
   ClipboardList,
+  ExternalLink,
   FileText,
   LayoutDashboard,
   LogOut,
   Menu,
   Settings,
+  Sparkles,
   UserRound,
   Users,
 } from "lucide-react";
@@ -77,8 +79,45 @@ export function AdminShell({
             </Link>
           );
         })}
+
+        <div className="pt-4 pb-1">
+          <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-sidebar-foreground/40">
+            External Tools
+          </p>
+        </div>
+
+        <a
+          href="https://zozii-iota.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          className="group flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          title="Open Zozii Control"
+        >
+          <div className="flex items-center gap-3">
+            <Sparkles className="size-4 text-accent transition-transform group-hover:scale-110" aria-hidden="true" />
+            <span>Zozii Control</span>
+          </div>
+          <ExternalLink className="size-3.5 opacity-50 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+        </a>
       </nav>
-      <div className="border-t border-sidebar-border p-3">
+      <div className="border-t border-sidebar-border p-3 space-y-2">
+        <a
+          href="https://zozii-iota.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          className="flex items-center justify-between rounded-lg bg-sidebar-accent/50 px-3 py-2 text-xs font-semibold text-sidebar-foreground transition-all hover:bg-sidebar-accent"
+        >
+          <div className="flex items-center gap-2">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+            </span>
+            <span>Zozii Control</span>
+          </div>
+          <ExternalLink className="size-3 text-sidebar-foreground/60" aria-hidden="true" />
+        </a>
         <button
           type="button"
           onClick={handleSignOut}

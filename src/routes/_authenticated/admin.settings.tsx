@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { ExternalLink, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell, LoadingBlock } from "@/components/admin/admin-shell";
 import { adminSettingsQuery, recordAudit, type SettingsRow } from "@/lib/admin-api";
@@ -144,6 +145,46 @@ function SettingsAdmin() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="rounded-2xl border border-primary/5 bg-card p-6 lg:col-span-2">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+                <Sparkles className="size-5 text-accent" aria-hidden="true" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h2 className="font-bold text-primary">Zozii Control</h2>
+                  <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+                    External System
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Invisible AI meeting assistant control center.
+                </p>
+                <div className="pt-1">
+                  <a
+                    href="https://zozii-iota.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-xs font-semibold text-accent underline-offset-2 hover:underline"
+                  >
+                    https://zozii-iota.vercel.app/
+                  </a>
+                </div>
+              </div>
+            </div>
+            <a
+              href="https://zozii-iota.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-xs transition-all hover:bg-accent self-start sm:self-auto"
+            >
+              <span>Launch Zozii Control</span>
+              <ExternalLink className="size-3.5" aria-hidden="true" />
+            </a>
+          </div>
         </section>
       </div>
     </AdminShell>

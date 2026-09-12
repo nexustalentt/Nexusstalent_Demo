@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Briefcase, CheckCircle2, Clock, Users } from "lucide-react";
+import { useState } from "react";
+import {
+  Briefcase,
+  Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  ExternalLink,
+  Sparkles,
+  Users,
+} from "lucide-react";
+import { toast } from "sonner";
 import { AdminShell, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import {
   adminApplicationsQuery,
@@ -41,6 +52,18 @@ function AdminDashboard() {
     }),
   );
   const maxCount = Math.max(1, ...byStatus.map((s) => s.count));
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText("https://zozii-iota.vercel.app/");
+      setCopied(true);
+      toast.success("Zozii URL copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy URL");
+    }
+  };
 
   return (
     <AdminShell title="Dashboard" description="Live overview of hiring activity">
@@ -50,6 +73,66 @@ function AdminDashboard() {
         <StatCard label="Pending Review" value={pending} hint="New + under review" icon={Clock} />
         <StatCard label="Selected" value={selected} hint="Offers extended" icon={CheckCircle2} />
       </div>
+
+      {/* Zozii Control Section */}
+      <section className="mt-6 rounded-2xl border border-primary/10 bg-card p-6 shadow-xs">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Sparkles className="size-6 text-accent" aria-hidden="true" />
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2 className="text-lg font-bold text-primary">Zozii Control</h2>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600">
+                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Active Service
+                </span>
+                <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent">
+                  AI Meeting Assistant
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-2xl">
+                Invisible AI meeting assistant control center. Monitor real-time meeting answers, live session intelligence, and administrative oversight.
+              </p>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Control URL:
+                </span>
+                <a
+                  href="https://zozii-iota.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs font-semibold text-accent underline-offset-2 hover:underline inline-flex items-center gap-1"
+                >
+                  https://zozii-iota.vercel.app/
+                  <ExternalLink className="size-3" aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={handleCopyUrl}
+                  className="inline-flex items-center gap-1 rounded-md border border-primary/10 bg-surface px-2 py-0.5 text-xs font-medium text-muted-foreground hover:bg-card hover:text-primary transition-colors cursor-pointer"
+                  title="Copy URL"
+                >
+                  {copied ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
+                  <span>{copied ? "Copied" : "Copy"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <a
+              href="https://zozii-iota.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:bg-accent"
+            >
+              <span>Open Zozii Control</span>
+              <ExternalLink className="size-4" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section className="rounded-2xl border border-primary/5 bg-card p-6">
