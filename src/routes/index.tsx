@@ -353,12 +353,14 @@ function HomePage() {
                 </p>
               </div>
               <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/zozii"
+                <a
+                  href="https://zozii-iota.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-105"
                 >
                   Explore Zozii <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
+                </a>
                 <a
                   href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
                   download
