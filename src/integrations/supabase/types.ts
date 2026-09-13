@@ -786,6 +786,8 @@ export type Database = {
           twitter_url: string | null
           updated_at: string
           years_experience: string | null
+          zozii_download_url: string | null
+          zozii_version: string | null
         }
         Insert: {
           address?: string | null
@@ -808,6 +810,8 @@ export type Database = {
           twitter_url?: string | null
           updated_at?: string
           years_experience?: string | null
+          zozii_download_url?: string | null
+          zozii_version?: string | null
         }
         Update: {
           address?: string | null
@@ -830,6 +834,8 @@ export type Database = {
           twitter_url?: string | null
           updated_at?: string
           years_experience?: string | null
+          zozii_download_url?: string | null
+          zozii_version?: string | null
         }
         Relationships: []
       }
