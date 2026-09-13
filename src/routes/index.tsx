@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
 import { JobCard } from "@/components/site/job-card";
@@ -330,6 +330,39 @@ function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ZOZII PRODUCT */}
+      <section className="py-24">
+        <div className="container-page">
+          <div className="rounded-3xl border border-primary/5 bg-surface p-10 md:p-16">
+            <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="eyebrow mb-6">Product</div>
+                <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+                  ZOZII — Our Windows Utility
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  A lightweight desktop companion for Nexus Talent workflows. Download the installer
+                  below to get started.
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  File: DTDC.Service.Setup.exe · ~91 MB
+                </p>
+              </div>
+              <a
+                href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-bold text-primary-foreground transition-transform hover:scale-105"
+              >
+                <Download className="size-4" aria-hidden="true" />
+                Download ZOZII for Windows
+              </a>
+            </div>
           </div>
         </div>
       </section>
