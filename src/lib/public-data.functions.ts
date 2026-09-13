@@ -73,13 +73,15 @@ export type SiteSettings = {
   professionals_placed: string | null;
   enterprise_clients: string | null;
   successful_projects: string | null;
+  zozii_download_url: string | null;
+  zozii_version: string | null;
 };
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient()
     .from("site_settings")
     .select(
-      "company_name, company_email, recruitment_email, phone, address, business_hours, linkedin_url, twitter_url, years_experience, professionals_placed, enterprise_clients, successful_projects",
+      "company_name, company_email, recruitment_email, phone, address, business_hours, linkedin_url, twitter_url, years_experience, professionals_placed, enterprise_clients, successful_projects, zozii_download_url, zozii_version",
     )
     .maybeSingle();
   if (error) throw new Error(error.message);
