@@ -362,7 +362,7 @@ function HomePage() {
                   Explore Zozii <ArrowRight className="size-4" aria-hidden="true" />
                 </a>
                 <a
-                  href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
+                  href={zoziiDownloadUrl}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
