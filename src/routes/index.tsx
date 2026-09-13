@@ -349,7 +349,7 @@ function HomePage() {
                   questions, and receive instant streaming answers invisible to screen shares.
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  File: DTDC.Service.Setup.exe · v1.09.01 · ~91 MB
+                  Windows installer (.exe){zoziiVersion ? ` · ${zoziiVersion}` : ""}
                 </p>
               </div>
               <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
