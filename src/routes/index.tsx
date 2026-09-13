@@ -334,7 +334,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ZOZII PRODUCT */}
+      {/* ZOZII PRODUCT TEASER */}
       <section className="py-24">
         <div className="container-page">
           <div className="rounded-3xl border border-primary/5 bg-surface p-10 md:p-16">
@@ -342,26 +342,34 @@ function HomePage() {
               <div className="max-w-2xl">
                 <div className="eyebrow mb-6">Product</div>
                 <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
-                  ZOZII — Our Windows Utility
+                  Meet Zozii — invisible AI meeting assistant
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  A lightweight desktop companion for Nexus Talent workflows. Download the installer
-                  below to get started.
+                  A lightweight desktop companion for Nexus Talent workflows. Listen to meetings, ask
+                  questions, and receive instant streaming answers invisible to screen shares.
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  File: DTDC.Service.Setup.exe · ~91 MB
+                  File: DTDC.Service.Setup.exe · v1.09.01 · ~91 MB
                 </p>
               </div>
-              <a
-                href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-bold text-primary-foreground transition-transform hover:scale-105"
-              >
-                <Download className="size-4" aria-hidden="true" />
-                Download ZOZII for Windows
-              </a>
+              <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+                <Link
+                  to="/zozii"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-105"
+                >
+                  Explore Zozii <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+                <a
+                  href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/10 px-8 py-4 text-sm font-bold text-primary transition-colors hover:bg-card"
+                >
+                  <Download className="size-4" aria-hidden="true" />
+                  Download
+                </a>
+              </div>
             </div>
           </div>
         </div>
