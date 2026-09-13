@@ -34,6 +34,8 @@ const textFields: { key: keyof SettingsRow; label: string; max: number }[] = [
   { key: "successful_projects", label: "Stat: successful projects", max: 20 },
   { key: "seo_title", label: "Default SEO title", max: 70 },
   { key: "seo_description", label: "Default SEO description", max: 180 },
+  { key: "zozii_download_url", label: "Zozii download link (GitHub release .exe URL)", max: 500 },
+  { key: "zozii_version", label: "Zozii version label (e.g. v1.09.01)", max: 40 },
 ];
 
 const toggles: { key: keyof SettingsRow; label: string; hint: string }[] = [
