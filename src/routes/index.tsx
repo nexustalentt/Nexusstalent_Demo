@@ -46,9 +46,7 @@ function HomePage() {
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const latestJobs = jobs.slice(0, 6);
 
-  const zoziiDownloadUrl =
-    settings?.zozii_download_url?.trim() ||
-    "https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe";
+  const zoziiDownloadUrl = "/api/public/zozii-download";
   const zoziiVersion = settings?.zozii_version?.trim() || "v1.09.01";
 
   const stats = [

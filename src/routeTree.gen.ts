@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as ApiPublicZoziiDownloadRouteImport } from './routes/api/public/zozii-download'
 import { Route as AuthenticatedAdminApplicationsIndexRouteImport } from './routes/_authenticated/admin.applications.index'
 import { Route as AuthenticatedAdminApplicationsIdRouteImport } from './routes/_authenticated/admin.applications.$id'
 import { Route as AuthenticatedAdminExamsIndexRouteImport } from './routes/_authenticated/admin.exams.index'
@@ -144,6 +145,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/admin/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicZoziiDownloadRoute = ApiPublicZoziiDownloadRouteImport.update({
+  id: '/api/public/zozii-download',
+  path: '/api/public/zozii-download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminApplicationsIndexRoute =
   AuthenticatedAdminApplicationsIndexRouteImport.update({
     id: '/admin/applications/',
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
   '/admin/exams/$examId': typeof AuthenticatedAdminExamsExamIdRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
   '/admin/exams/$examId': typeof AuthenticatedAdminExamsExamIdRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
   '/_authenticated/admin/exams/$examId': typeof AuthenticatedAdminExamsExamIdRoute
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/forms'
     | '/admin/profile'
     | '/admin/settings'
+    | '/api/public/zozii-download'
     | '/admin/'
     | '/admin/applications/$id'
     | '/admin/exams/$examId'
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/admin/forms'
     | '/admin/profile'
     | '/admin/settings'
+    | '/api/public/zozii-download'
     | '/admin'
     | '/admin/applications/$id'
     | '/admin/exams/$examId'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/profile'
     | '/_authenticated/admin/settings'
+    | '/api/public/zozii-download'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/applications/$id'
     | '/_authenticated/admin/exams/$examId'
@@ -450,6 +462,7 @@ export interface RootRouteChildren {
   ExamTokenRoute: typeof ExamTokenRoute
   CareersIndexRoute: typeof CareersIndexRoute
   ExamIndexRoute: typeof ExamIndexRoute
+  ApiPublicZoziiDownloadRoute: typeof ApiPublicZoziiDownloadRoute
   ApiPublicApplicationsIntakeRoute: typeof ApiPublicApplicationsIntakeRoute
 }
 
@@ -594,6 +607,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/zozii-download': {
+      id: '/api/public/zozii-download'
+      path: '/api/public/zozii-download'
+      fullPath: '/api/public/zozii-download'
+      preLoaderRoute: typeof ApiPublicZoziiDownloadRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/applications/': {
       id: '/_authenticated/admin/applications/'
@@ -751,6 +771,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExamTokenRoute: ExamTokenRoute,
   CareersIndexRoute: CareersIndexRoute,
   ExamIndexRoute: ExamIndexRoute,
+  ApiPublicZoziiDownloadRoute: ApiPublicZoziiDownloadRoute,
   ApiPublicApplicationsIntakeRoute: ApiPublicApplicationsIntakeRoute,
 }
 export const routeTree = rootRouteImport

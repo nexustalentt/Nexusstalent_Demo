@@ -20,7 +20,7 @@ import {
 import { PublicShell } from "@/components/site/public-shell";
 
 const DOWNLOAD_URL =
-  "https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe";
+  "/api/public/zozii-download";
 
 export const Route = createFileRoute("/zozii")({
   head: () => ({
