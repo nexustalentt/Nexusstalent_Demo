@@ -5,7 +5,9 @@ import {
   Briefcase,
   ClipboardCheck,
   ClipboardList,
+  ExternalLink,
   FileText,
+  Globe,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -24,9 +26,16 @@ const navItems = [
 
   { label: "Exam Creator", to: "/admin/exams", icon: ClipboardList, exact: false },
   { label: "Forms", to: "/admin/forms", icon: FileText, exact: false },
+  { label: "ZOZII control", href: "https://zozii-iota.vercel.app/", icon: Globe, external: true },
   { label: "Settings", to: "/admin/settings", icon: Settings, exact: false },
   { label: "Profile", to: "/admin/profile", icon: UserRound, exact: false },
 ] as const;
+
+function isExternalNavItem(
+  item: (typeof navItems)[number],
+): item is Extract<(typeof navItems)[number], { external: true }> {
+  return "external" in item && item.external === true;
+}
 
 export function AdminShell({
   title,
@@ -60,6 +69,23 @@ export function AdminShell({
       </div>
       <nav className="flex-1 space-y-1 px-3">
         {navItems.map((item) => {
+          if (isExternalNavItem(item)) {
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <item.icon className="size-4" aria-hidden="true" />
+                <span>{item.label}</span>
+                <ExternalLink className="ml-auto size-3.5 opacity-60" aria-hidden="true" />
+              </a>
+            );
+          }
+
           const isActive = item.exact ? pathname === item.to : pathname.startsWith(item.to);
           return (
             <Link
