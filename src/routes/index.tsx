@@ -46,6 +46,11 @@ function HomePage() {
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const latestJobs = jobs.slice(0, 6);
 
+  const zoziiDownloadUrl =
+    settings?.zozii_download_url?.trim() ||
+    "https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe";
+  const zoziiVersion = settings?.zozii_version?.trim() || "v1.09.01";
+
   const stats = [
     { value: settings?.years_experience ?? "15", label: "Years of Experience" },
     { value: settings?.professionals_placed ?? "12,000+", label: "Professionals Placed" },
@@ -349,7 +354,7 @@ function HomePage() {
                   questions, and receive instant streaming answers invisible to screen shares.
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  File: DTDC.Service.Setup.exe · v1.09.01 · ~91 MB
+                  Windows installer (.exe){zoziiVersion ? ` · ${zoziiVersion}` : ""}
                 </p>
               </div>
               <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
@@ -362,7 +367,7 @@ function HomePage() {
                   Explore Zozii <ArrowRight className="size-4" aria-hidden="true" />
                 </a>
                 <a
-                  href="https://github.com/nexustalentt/ZOZII/releases/download/v1.09.01/DTDC.Service.Setup.exe"
+                  href={zoziiDownloadUrl}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
