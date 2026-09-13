@@ -9,6 +9,7 @@ const navItems = [
   { label: "Services", to: "/services" },
   { label: "Industries", to: "/industries" },
   { label: "Careers", to: "/careers" },
+  { label: "Zozii", to: "/zozii" },
 ] as const;
 
 
