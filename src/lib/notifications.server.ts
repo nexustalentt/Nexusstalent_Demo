@@ -2,7 +2,7 @@
  * Email notification transport.
  *
  * Notifications are intentionally isolated behind this module so the delivery
- * provider can be swapped (Resend today, managed Lovable email later) without
+ * provider can be swapped (e.g. Resend, Sendgrid, etc.) without
  * touching application logic. When no provider key is configured the payload is
  * logged instead of dropped, so nothing is lost during setup.
  */

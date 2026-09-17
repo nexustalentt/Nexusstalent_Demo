@@ -34,17 +34,19 @@ export const ALREADY_TAKEN = "You already took an exam. Thank you!";
 /**
  * All candidate-side exam operations run through SECURITY DEFINER database
  * functions, so the flow only needs the publishable key and works on any host
- * (Lovable, Vercel, custom domain) without a service-role key.
+ * (Vercel, Netlify, custom domain) without a service-role key.
  */
 async function callRpc<T>(name: string, args?: Record<string, unknown>): Promise<T> {
   const client = publicClient() as unknown as {
-    rpc: (fn: string, params?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>;
+    rpc: (
+      fn: string,
+      params?: Record<string, unknown>,
+    ) => Promise<{ data: unknown; error: { message: string } | null }>;
   };
   const { data, error } = await client.rpc(name, args);
   if (error) throw new Error(cleanMessage(error.message));
   return data as T;
 }
-
 
 /** Postgres prefixes raised messages in some clients; keep the candidate-facing text. */
 function cleanMessage(message: string) {
@@ -85,7 +87,6 @@ export async function login(input: { token: string; username: string; password: 
 export async function loginByUsername(input: { username: string; password: string }) {
   return attemptLogin({ username: input.username, password: input.password, token: null });
 }
-
 
 export async function attemptState(sessionToken: string): Promise<AttemptState> {
   const state = await callRpc<AttemptState & { secondsRemaining: number | string }>(

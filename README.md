@@ -1746,16 +1746,6 @@ The admin should have complete control over jobs and application configuration.
 
 Build this as a scalable production-ready application rather than a static prototype.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/08c3b8d5-8d8b-4a4a-9821-213e6d9f16e7).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
@@ -1773,18 +1763,18 @@ Before deploying to Vercel, add the following environment variables in **Project
 
 ### Required Environment Variables Checklist
 
-| Variable | Value | Where to find it | Why it matters |
-| --- | --- | --- | --- |
-| `SUPABASE_SERVICE_ROLE_KEY` | `service_role_...` | Lovable Cloud → Backend → API settings | Server functions (contact form, admin portal, application intake API) need this to bypass RLS. Without it, pages that fetch data server-side render blank between the header and footer. |
-| `RESEND_API_KEY` | `re_...` | Resend dashboard → API Keys | Sends email notifications for new applications and inquiries. If omitted, emails are silently logged to the console instead of sent. |
+| Variable                    | Value              | Where to find it                            | Why it matters                                                                                                                                                                           |
+| --------------------------- | ------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_SERVICE_ROLE_KEY` | `service_role_...` | Supabase Dashboard → Project Settings → API | Server functions (contact form, admin portal, application intake API) need this to bypass RLS. Without it, pages that fetch data server-side render blank between the header and footer. |
+| `RESEND_API_KEY`            | `re_...`           | Resend dashboard → API Keys                 | Sends email notifications for new applications and inquiries. If omitted, emails are silently logged to the console instead of sent.                                                     |
 
 ### Optional but recommended
 
-| Variable | Value | Notes |
-| --- | --- | --- |
-| `SUPABASE_URL` | `https://<project-ref>.supabase.co` | Backend URL. Usually set automatically; only override if different from the publishable URL. |
-| `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_...` | Public client key. The build also inlines `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from the repo, so this is mainly needed if you run server functions in a separate environment. |
-| `APPLICATION_INTAKE_TOKEN` | A strong random string | Used to verify Google Forms application submissions to `/api/public/applications/intake`. If not set, the endpoint rejects submissions. |
+| Variable                   | Value                               | Notes                                                                                                                                                                                            |
+| -------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SUPABASE_URL`             | `https://<project-ref>.supabase.co` | Backend URL. Usually set automatically; only override if different from the publishable URL.                                                                                                     |
+| `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_...`                | Public client key. The build also inlines `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from the repo, so this is mainly needed if you run server functions in a separate environment. |
+| `APPLICATION_INTAKE_TOKEN` | A strong random string              | Used to verify Google Forms application submissions to `/api/public/applications/intake`. If not set, the endpoint rejects submissions.                                                          |
 
 ### Verification steps
 
@@ -1794,4 +1784,4 @@ Before deploying to Vercel, add the following environment variables in **Project
 4. Redeploy the project.
 5. Open the live URL and visit `/careers`. If the job list renders, the backend is connected correctly.
 
-> **Note:** Publishing on Lovable instead of Vercel wires these variables up automatically. If you self-host on Vercel, you must add them manually.
+> **Note:** When deploying, ensure these environment variables are properly configured in your hosting platform.
