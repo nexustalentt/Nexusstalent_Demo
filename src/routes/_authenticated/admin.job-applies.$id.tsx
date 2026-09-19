@@ -36,7 +36,7 @@ import { getResumeDownloadUrl } from "@/lib/job-applications.functions";
 import { examsQuery } from "@/lib/exams-api";
 import { createCandidateAccess } from "@/lib/exams.functions";
 import { candidateAccessSchema } from "@/lib/exam-schemas";
-import { formatIst, isoToIstLocal } from "@/lib/exam-utils";
+import { formatCandidateCredentials, formatIst, isoToIstLocal } from "@/lib/exam-utils";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/job-applies/$id")({
@@ -240,22 +240,15 @@ function JobApplyDetail() {
         ? `${window.location.origin}/exam/${creds.publicToken}`
         : `/exam/${creds.publicToken}`;
 
-    return [
-      `Nexus Talent - Assessment Invitation`,
-      `==================================`,
-      `Candidate: ${creds.fullName}`,
-      `Exam: ${creds.examTitle}`,
-      `Exam Link: ${examUrl}`,
-      `Username: ${creds.username}`,
-      `Password: ${creds.password}`,
-      creds.accessStart ? `Access From: ${creds.accessStart.replace("T", " ")} IST` : null,
-      creds.accessEnd ? `Access Until: ${creds.accessEnd.replace("T", " ")} IST` : null,
-      `Duration: ${creds.duration} minutes`,
-      `==================================`,
-      `Please ensure a stable internet connection during the assessment. Good luck!`,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    return formatCandidateCredentials({
+      candidateName: creds.fullName,
+      examTitle: creds.examTitle,
+      examLink: examUrl,
+      username: creds.username,
+      password: creds.password,
+      accessStart: creds.accessStart,
+      accessEnd: creds.accessEnd,
+    });
   }
 
   const assignMutation = useMutation({
@@ -508,6 +501,43 @@ function JobApplyDetail() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const isSha256 =
+                            typeof item.password_hash === "string" &&
+                            /^[0-9a-f]{64}$/i.test(item.password_hash);
+                          const itemPassword =
+                            (item as { password_note?: string }).password_note ||
+                            (!isSha256 && item.password_hash ? item.password_hash : null) ||
+                            getStoredCandidatePasswords()[item.username?.toLowerCase() || ""];
+                          const examUrl = item.exams?.public_token
+                            ? `${window.location.origin}/exam/${item.exams.public_token}`
+                            : null;
+                          const allText = formatCandidateCredentials({
+                            candidateName: `${data.first_name} ${data.last_name}`,
+                            examTitle: item.exams?.title,
+                            examLink: examUrl,
+                            username: item.username,
+                            password: itemPassword,
+                            accessStart: item.access_start_at,
+                            accessEnd: item.access_end_at,
+                          });
+                          void copyToClipboard(allText, `all-${item.id}`);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent px-3 py-1 text-xs font-bold transition-colors"
+                        title="Copy all candidate assessment credentials"
+                      >
+                        {copiedField === `all-${item.id}` ? (
+                          <>
+                            <Check className="size-3 text-emerald-600" /> Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="size-3" /> Copy
+                          </>
+                        )}
+                      </button>
                       {item.exams?.public_token ? (
                         <button
                           type="button"
@@ -518,7 +548,7 @@ function JobApplyDetail() {
                           className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
                         >
                           <Copy className="size-3" />
-                          {copiedField === `url-${item.id}` ? "Copied" : "Copy exam link"}
+                          {copiedField === `url-${item.id}` ? "Copied" : "Copy link"}
                         </button>
                       ) : null}
                       {item.exams?.id ? (

@@ -22,7 +22,13 @@ import { letterLabel, type ParsedQuestion } from "@/lib/question-bank-parser";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
 import { candidateAccessSchema, examDetailsSchema } from "@/lib/exam-schemas";
-import { formatIst, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
+import {
+  formatCandidateCredentials,
+  formatIst,
+  groupBySection,
+  normalizeSection,
+  questionTypeLabel,
+} from "@/lib/exam-utils";
 import {
   deleteQuestion,
   duplicateQuestion,
@@ -869,21 +875,15 @@ function ExamBuilder() {
                   (!isSha256 && candidate.password_hash ? candidate.password_hash : null) ||
                   shownPasswords[candidate.username.toLowerCase()];
                 const isHidden = hiddenCandidatePasswords[candidate.id] === true;
-                const candidateEmailText = [
-                  `Nexus Talent - Assessment Credentials`,
-                  `==================================`,
-                  candidate.full_name ? `Candidate: ${candidate.full_name}` : null,
-                  `Exam: ${exam.data?.title}`,
-                  examLink ? `Exam Link: ${examLink}` : null,
-                  `Username: ${candidate.username}`,
-                  shown ? `Password: ${shown}` : null,
-                  candidate.access_start_at || candidate.access_end_at
-                    ? `Access Window: ${formatIst(candidate.access_start_at) || "Anytime"} to ${formatIst(candidate.access_end_at) || "No end"}`
-                    : null,
-                  `==================================`,
-                ]
-                  .filter(Boolean)
-                  .join("\n");
+                const candidateEmailText = formatCandidateCredentials({
+                  candidateName: candidate.full_name,
+                  examTitle: exam.data?.title,
+                  examLink,
+                  username: candidate.username,
+                  password: shown,
+                  accessStart: candidate.access_start_at,
+                  accessEnd: candidate.access_end_at,
+                });
 
                 return (
                   <li
@@ -924,14 +924,19 @@ function ExamBuilder() {
                                 type="button"
                                 onClick={() => void copyCandidateText(shown, `pwd-${candidate.id}`)}
                                 className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-semibold ml-0.5"
-                                title="Copy password"
+                                title="Copy password only"
                               >
                                 {copiedCandidateField === `pwd-${candidate.id}` ? (
-                                  <Check className="size-3 text-emerald-600" />
+                                  <>
+                                    <Check className="size-3 text-emerald-600" />
+                                    <span className="text-emerald-600">Copied</span>
+                                  </>
                                 ) : (
-                                  <Copy className="size-3" />
+                                  <>
+                                    <Copy className="size-3" />
+                                    <span>Copy password</span>
+                                  </>
                                 )}
-                                {copiedCandidateField === `pwd-${candidate.id}` ? "Copied" : "Copy"}
                               </button>
                             </>
                           ) : null}
@@ -966,21 +971,21 @@ function ExamBuilder() {
                       </button>
                     </div>
 
-                    {/* Quick action: Copy credentials to email candidate */}
+                    {/* Quick action: Copy all credentials in the requested format */}
                     <div className="mt-2.5 pt-2 border-t border-primary/5 flex items-center justify-between">
                       <button
                         type="button"
-                        onClick={() => void copyCandidateText(candidateEmailText, `email-${candidate.id}`)}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
-                        title="Copy username, password and exam link to email candidate"
+                        onClick={() => void copyCandidateText(candidateEmailText, `all-${candidate.id}`)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent px-3 py-1 text-xs font-bold transition-colors"
+                        title="Copy all candidate assessment credentials"
                       >
-                        {copiedCandidateField === `email-${candidate.id}` ? (
+                        {copiedCandidateField === `all-${candidate.id}` ? (
                           <>
-                            <Check className="size-3.5 text-emerald-600" /> Copied for Email!
+                            <Check className="size-3.5 text-emerald-600" /> Copied!
                           </>
                         ) : (
                           <>
-                            <Copy className="size-3.5" /> Copy Credentials for Email
+                            <Copy className="size-3.5" /> Copy
                           </>
                         )}
                       </button>

@@ -132,3 +132,40 @@ export function isoToIstLocal(value?: string | null) {
   const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 }
+
+/** Formats candidate credentials into the standard Nexus Talent text format for copy/email. */
+export function formatCandidateCredentials(params: {
+  candidateName?: string | null | undefined;
+  examTitle?: string | null | undefined;
+  examLink?: string | null | undefined;
+  username: string;
+  password?: string | null | undefined;
+  accessStart?: string | null | undefined;
+  accessEnd?: string | null | undefined;
+}) {
+  const startStr = params.accessStart ? formatIst(params.accessStart) : "";
+  const endStr = params.accessEnd ? formatIst(params.accessEnd) : "";
+
+  let windowStr = "Anytime";
+  if (startStr && endStr) {
+    windowStr = `${startStr} to ${endStr}`;
+  } else if (startStr) {
+    windowStr = `${startStr} to No end`;
+  } else if (endStr) {
+    windowStr = `Anytime to ${endStr}`;
+  }
+
+  const lines = [
+    "Nexus Talent - Assessment Credentials",
+    "==================================",
+    `Candidate: ${params.candidateName?.trim() || params.username}`,
+    `Exam: ${params.examTitle?.trim() || "Assessment"}`,
+    params.examLink ? `Exam Link: ${params.examLink}` : null,
+    `Username: ${params.username}`,
+    params.password ? `Password: ${params.password}` : null,
+    `Access Window: ${windowStr}`,
+    "==================================",
+  ].filter(Boolean);
+
+  return lines.join("\n");
+}
