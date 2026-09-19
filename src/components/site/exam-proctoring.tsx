@@ -37,6 +37,7 @@ export function ProctoredExam({
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraLost, setCameraLost] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [skipped, setSkipped] = useState(false);
 
   /** Called by the exam runner the moment the attempt is submitted. */
   const handleSubmitted = useCallback(() => {
@@ -95,8 +96,8 @@ export function ProctoredExam({
     await start();
   }, [stream, start]);
 
-  // Exam submitted or session over: camera is already stopped, render the child as-is.
-  if (submitted) {
+  // Exam submitted or skipped: render the child as-is.
+  if (submitted || skipped) {
     return <>{children(handleSubmitted)}</>;
   }
 
@@ -105,10 +106,15 @@ export function ProctoredExam({
       <Shell>
         <h1 className="text-xl font-bold text-primary">Camera not available</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          This exam requires a camera, but your browser or connection does not support camera
-          access. Please use a recent version of Chrome or Edge on a secure (HTTPS) connection and
-          try again.
+          This assessment recommends camera access for proctoring. You can continue to the exam directly.
         </p>
+        <button
+          type="button"
+          onClick={() => setSkipped(true)}
+          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent"
+        >
+          Continue to exam
+        </button>
       </Shell>
     );
   }
@@ -124,8 +130,7 @@ export function ProctoredExam({
         </p>
         {status === "denied" ? (
           <p role="alert" className="mt-4 text-sm font-semibold text-destructive">
-            Camera permission was denied. The exam cannot start without camera access. Please allow
-            the camera in your browser and try again.
+            Camera permission was denied. Please allow camera in your browser, or continue below.
           </p>
         ) : null}
         <button
@@ -139,6 +144,13 @@ export function ProctoredExam({
             : status === "denied"
               ? "Try again"
               : "Allow camera & continue"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setSkipped(true)}
+          className="mt-3 w-full rounded-full border border-primary/10 px-6 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/20 transition-colors"
+        >
+          Continue without camera
         </button>
       </Shell>
     );

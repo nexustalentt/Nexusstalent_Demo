@@ -89,31 +89,64 @@ export async function loginByUsername(input: { username: string; password: strin
 }
 
 export async function attemptState(sessionToken: string): Promise<AttemptState> {
-  const state = await callRpc<AttemptState & { secondsRemaining: number | string }>(
-    "exam_attempt_state",
-    { p_session_token: sessionToken },
+  const raw = await callRpc<any>("exam_attempt_state", { p_session_token: sessionToken });
+
+  // Map answers: if raw.answers is an array (e.g. from older RPC), convert to dictionary { [questionId]: answer }
+  let answersDict: Record<string, StoredAnswer> = {};
+  if (Array.isArray(raw.answers)) {
+    for (const ans of raw.answers) {
+      if (ans && ans.question_id) {
+        answersDict[ans.question_id] = ans.answer ?? null;
+      }
+    }
+  } else if (raw.answers && typeof raw.answers === "object") {
+    answersDict = raw.answers;
+  }
+
+  // Construct exam object safely regardless of RPC version
+  const exam = raw.exam ?? {
+    title: raw.exam_title ?? "Assessment",
+    description: raw.description ?? raw.exam_description ?? null,
+    instructions: raw.instructions ?? null,
+    duration_minutes: Number(raw.duration_minutes) || 30,
+  };
+
+  const candidateName = raw.candidateName ?? raw.candidate_name ?? null;
+  const candidateUsername = raw.candidateUsername ?? raw.candidate_username ?? null;
+  const started = Boolean(raw.started || raw.exam_started_at);
+  const secondsRemaining = Math.max(
+    0,
+    Math.floor(Number(raw.secondsRemaining ?? raw.remaining_seconds) || 0),
   );
+
   return {
-    ...state,
-    questions: (state.questions ?? []).map((question) => ({
+    exam,
+    candidateName,
+    candidateUsername,
+    questions: (raw.questions ?? []).map((question: any) => ({
       id: question.id,
-      position: question.position,
+      position: Number(question.position) || 0,
       section: question.section ?? null,
-      question_type: question.question_type,
-      prompt: question.prompt,
+      question_type: question.question_type ?? "multiple_choice",
+      prompt: question.prompt ?? "",
       options: Array.isArray(question.options) ? (question.options as string[]) : [],
-      marks: Number(question.marks) || 0,
+      marks: Number(question.marks) || 1,
     })),
-    answers: state.answers ?? {},
-    reviewFlags: state.reviewFlags ?? [],
-    started: Boolean(state.started),
-    secondsRemaining: Math.max(0, Math.floor(Number(state.secondsRemaining) || 0)),
+    answers: answersDict,
+    reviewFlags: Array.isArray(raw.reviewFlags) ? raw.reviewFlags : [],
+    started,
+    secondsRemaining,
+    status: raw.status ?? "in_progress",
+    submittedAt: raw.submittedAt ?? raw.submitted_at ?? null,
   };
 }
 
 /** Starts the countdown from the moment the candidate clicks "Start Exam". */
 export async function startAttempt(sessionToken: string) {
-  return callRpc<{ ok: boolean }>("exam_start_attempt", { p_session_token: sessionToken });
+  const res = await callRpc<{ ok?: boolean; started?: boolean }>("exam_start_attempt", {
+    p_session_token: sessionToken,
+  });
+  return { ok: Boolean(res?.ok || res?.started) };
 }
 
 export async function saveAnswer(input: {
