@@ -154,6 +154,7 @@ function ApplyPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const [alreadyExists, setAlreadyExists] = useState(false);
 
   const experienced = values["experience_type"] === "experienced";
 
@@ -221,13 +222,12 @@ function ApplyPage() {
     try {
       const result = await submitJobApplication({ data: parsed.data });
       if (!result.ok) {
-        setFormError(result.error);
-        if (result.error === "Your application already exists.") {
-          setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
-          const element = document.getElementById("pan_number");
-          element?.scrollIntoView({ behavior: "smooth", block: "center" });
-          (element as HTMLElement | null)?.focus?.();
+        if (/already exists/i.test(result.error)) {
+          setAlreadyExists(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
         }
+        setFormError(result.error);
         return;
       }
       setSuccess(result.applicationCode);
@@ -247,11 +247,8 @@ function ApplyPage() {
             .limit(1)
             .maybeSingle();
           if (panExists) {
-            setFormError("Your application already exists.");
-            setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
-            const element = document.getElementById("pan_number");
-            element?.scrollIntoView({ behavior: "smooth", block: "center" });
-            (element as HTMLElement | null)?.focus?.();
+            setAlreadyExists(true);
+            window.scrollTo({ top: 0, behavior: "smooth" });
             return;
           }
         }
@@ -267,11 +264,8 @@ function ApplyPage() {
             .limit(1)
             .maybeSingle();
           if (comboExists) {
-            setFormError("Your application already exists.");
-            setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
-            const element = document.getElementById("pan_number");
-            element?.scrollIntoView({ behavior: "smooth", block: "center" });
-            (element as HTMLElement | null)?.focus?.();
+            setAlreadyExists(true);
+            window.scrollTo({ top: 0, behavior: "smooth" });
             return;
           }
         }
@@ -284,7 +278,8 @@ function ApplyPage() {
           .ilike("email", parsed.data.email.trim())
           .maybeSingle();
         if (emailExists) {
-          setFormError("Your application already exists.");
+          setAlreadyExists(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
 
@@ -340,7 +335,8 @@ function ApplyPage() {
 
         if (insertError) {
           if (insertError.code === "23505" || /duplicate|already exists/i.test(insertError.message)) {
-            setFormError("Your application already exists.");
+            setAlreadyExists(true);
+            window.scrollTo({ top: 0, behavior: "smooth" });
             return;
           }
           setFormError(`Could not submit your application: ${insertError.message}`);
@@ -360,6 +356,29 @@ function ApplyPage() {
   }
 
   if (!job) return null;
+
+  if (alreadyExists) {
+    return (
+      <PublicShell>
+        <div className="container-page py-24">
+          <div className="mx-auto max-w-xl rounded-2xl border border-primary/5 bg-card p-10 text-center shadow-card">
+            <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden="true" />
+            <h1 className="mt-5 text-2xl font-bold text-primary">Application already exists</h1>
+            <p className="mt-3 text-muted-foreground">
+              Your application has already been received and is currently in our system. Our recruitment team
+              will review your profile and contact you if shortlisted.
+            </p>
+            <Link
+              to="/careers"
+              className="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-accent"
+            >
+              Browse more openings
+            </Link>
+          </div>
+        </div>
+      </PublicShell>
+    );
+  }
 
   if (success) {
     return (
