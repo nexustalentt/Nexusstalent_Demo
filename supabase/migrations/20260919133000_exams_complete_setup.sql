@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS public.exam_candidates (
   username text NOT NULL,
   password_hash text NOT NULL,
   password_crypt text,
+  password_note text,
   full_name text,
   email text,
   access_enabled boolean NOT NULL DEFAULT true,
@@ -67,6 +68,14 @@ CREATE TABLE IF NOT EXISTS public.exam_candidates (
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (exam_id, username)
 );
+
+-- Safely add password_note if privileges allow; if not, password is saved in password_hash
+DO $$
+BEGIN
+  ALTER TABLE public.exam_candidates ADD COLUMN IF NOT EXISTS password_note text;
+EXCEPTION WHEN insufficient_privilege THEN
+  NULL;
+END $$;
 
 -- 6. Create public.exam_attempts table
 CREATE TABLE IF NOT EXISTS public.exam_attempts (
@@ -106,13 +115,7 @@ CREATE TABLE IF NOT EXISTS public.exam_answers (
   UNIQUE (attempt_id, question_id)
 );
 
--- 8. Ownership and Permissions
-ALTER TABLE public.exams OWNER TO postgres;
-ALTER TABLE public.exam_questions OWNER TO postgres;
-ALTER TABLE public.exam_candidates OWNER TO postgres;
-ALTER TABLE public.exam_attempts OWNER TO postgres;
-ALTER TABLE public.exam_answers OWNER TO postgres;
-
+-- 8. Permissions
 GRANT ALL ON TABLE public.exams TO postgres, authenticated, service_role;
 GRANT ALL ON TABLE public.exam_questions TO postgres, authenticated, service_role;
 GRANT ALL ON TABLE public.exam_candidates TO postgres, authenticated, service_role;
@@ -125,11 +128,16 @@ GRANT SELECT, INSERT, UPDATE ON TABLE public.exam_attempts TO anon;
 GRANT SELECT, INSERT, UPDATE ON TABLE public.exam_answers TO anon;
 
 -- 9. Row Level Security
-ALTER TABLE public.exams ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.exam_questions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.exam_candidates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.exam_attempts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.exam_answers ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+  ALTER TABLE public.exams ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE public.exam_questions ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE public.exam_candidates ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE public.exam_attempts ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE public.exam_answers ENABLE ROW LEVEL SECURITY;
+EXCEPTION WHEN insufficient_privilege THEN
+  NULL;
+END $$;
 
 DROP POLICY IF EXISTS "staff manage exams" ON public.exams;
 CREATE POLICY "staff manage exams" ON public.exams FOR ALL TO authenticated USING (true) WITH CHECK (true);
@@ -651,16 +659,17 @@ BEGIN
   v_crypt := crypt(p_password, gen_salt('bf', 10));
 
   INSERT INTO public.exam_candidates AS ec (
-    exam_id, username, password_hash, password_crypt, full_name, email,
+    exam_id, username, password_hash, password_crypt, password_note, full_name, email,
     access_start_at, access_end_at, duration_minutes
   )
   VALUES (
-    p_exam_id, p_username, 'crypt', v_crypt, p_full_name, p_email,
+    p_exam_id, p_username, 'crypt', v_crypt, p_password, p_full_name, p_email,
     p_access_start_at, p_access_end_at, p_duration_minutes
   )
   ON CONFLICT (exam_id, username) DO UPDATE
   SET password_hash = 'crypt',
       password_crypt = v_crypt,
+      password_note = p_password,
       full_name = excluded.full_name,
       email = excluded.email,
       access_start_at = excluded.access_start_at,

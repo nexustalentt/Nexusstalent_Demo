@@ -1,7 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowDown, ArrowUp, Copy, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowDown,
+  ArrowUp,
+  Check,
+  Copy,
+  Eye,
+  EyeOff,
+  Key,
+  Plus,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import { QuestionEditor, type QuestionDraft } from "@/components/admin/question-editor";
@@ -48,6 +60,29 @@ function answerLetters(question: ExamQuestionRow) {
   return correct.map(letterLabel).join(" / ");
 }
 
+const CANDIDATE_PASSWORDS_KEY = "nexus_candidate_passwords";
+
+function getStoredCandidatePasswords(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(CANDIDATE_PASSWORDS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveStoredCandidatePassword(username: string, pass: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const current = getStoredCandidatePasswords();
+    current[username.toLowerCase()] = pass;
+    localStorage.setItem(CANDIDATE_PASSWORDS_KEY, JSON.stringify(current));
+  } catch {
+    // Ignore
+  }
+}
+
 function ExamBuilder() {
   const { examId } = Route.useParams();
   const queryClient = useQueryClient();
@@ -67,12 +102,28 @@ function ExamBuilder() {
   }>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showInputPassword, setShowInputPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [accessError, setAccessError] = useState<string | null>(null);
   const [accessStart, setAccessStart] = useState("");
   const [accessEnd, setAccessEnd] = useState("");
   const [candidateDuration, setCandidateDuration] = useState("");
-  const [shownPasswords, setShownPasswords] = useState<Record<string, string>>({});
+  const [shownPasswords, setShownPasswords] = useState<Record<string, string>>(() =>
+    getStoredCandidatePasswords(),
+  );
+  const [copiedCandidateField, setCopiedCandidateField] = useState<string | null>(null);
+  const [hiddenCandidatePasswords, setHiddenCandidatePasswords] = useState<Record<string, boolean>>({});
+
+  async function copyCandidateText(text: string, fieldId: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedCandidateField(fieldId);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopiedCandidateField(null), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  }
 
   useEffect(() => {
     if (exam.data && !details) {
@@ -218,6 +269,7 @@ function ExamBuilder() {
     },
     onSuccess: (created) => {
       toast.success("Candidate access created");
+      saveStoredCandidatePassword(created.username, created.password);
       setShownPasswords((current) => ({
         ...current,
         [created.username.toLowerCase()]: created.password,
@@ -717,18 +769,43 @@ function ExamBuilder() {
               />
             </div>
             <div>
-              <label className={labelClass} htmlFor="candidate-password">
-                Password
-              </label>
-              <input
-                id="candidate-password"
-                type="password"
-                value={password}
-                maxLength={100}
-                autoComplete="new-password"
-                onChange={(event) => setPassword(event.target.value)}
-                className={fieldClass}
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={labelClass} htmlFor="candidate-password">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const randomChars = Math.random().toString(36).slice(-4).toUpperCase();
+                    const num = Math.floor(1000 + Math.random() * 9000);
+                    setPassword(`Nexus@${randomChars}${num}!`);
+                    setShowInputPassword(true);
+                  }}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
+                >
+                  <RefreshCw className="size-3" /> Auto-generate
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  id="candidate-password"
+                  type={showInputPassword ? "text" : "password"}
+                  value={password}
+                  maxLength={100}
+                  autoComplete="new-password"
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Min 8 characters"
+                  className={`${fieldClass} pr-10 font-mono`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowInputPassword(!showInputPassword)}
+                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                  title={showInputPassword ? "Hide password" : "Show password"}
+                >
+                  {showInputPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -782,53 +859,140 @@ function ExamBuilder() {
             >
               {accessMutation.isPending ? "Creating…" : "Create access"}
             </button>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-sm">
               {(candidates.data ?? []).map((candidate) => {
+                const isSha256 =
+                  typeof candidate.password_hash === "string" &&
+                  /^[0-9a-f]{64}$/i.test(candidate.password_hash);
                 const shown =
-                  candidate.password_note ?? shownPasswords[candidate.username.toLowerCase()];
+                  (candidate as { password_note?: string }).password_note ||
+                  (!isSha256 && candidate.password_hash ? candidate.password_hash : null) ||
+                  shownPasswords[candidate.username.toLowerCase()];
+                const isHidden = hiddenCandidatePasswords[candidate.id] === true;
+                const candidateEmailText = [
+                  `Nexus Talent - Assessment Credentials`,
+                  `==================================`,
+                  candidate.full_name ? `Candidate: ${candidate.full_name}` : null,
+                  `Exam: ${exam.data?.title}`,
+                  examLink ? `Exam Link: ${examLink}` : null,
+                  `Username: ${candidate.username}`,
+                  shown ? `Password: ${shown}` : null,
+                  candidate.access_start_at || candidate.access_end_at
+                    ? `Access Window: ${formatIst(candidate.access_start_at) || "Anytime"} to ${formatIst(candidate.access_end_at) || "No end"}`
+                    : null,
+                  `==================================`,
+                ]
+                  .filter(Boolean)
+                  .join("\n");
+
                 return (
                   <li
                     key={candidate.id}
-                    className="flex items-start justify-between gap-3 rounded-lg bg-surface px-3 py-2"
+                    className="rounded-xl border border-primary/10 bg-surface p-3 transition-colors hover:border-primary/20"
                   >
-                    <div className="min-w-0">
-                      <p className="truncate">
-                        <span className="font-semibold text-primary">{candidate.username}</span>
-                        {candidate.full_name ? (
-                          <span className="text-muted-foreground"> · {candidate.full_name}</span>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono font-bold text-primary">{candidate.username}</span>
+                          {candidate.full_name ? (
+                            <span className="text-xs text-muted-foreground">({candidate.full_name})</span>
+                          ) : null}
+                        </div>
+
+                        {/* Password display: Clearly visible by default, with copy and eye toggle */}
+                        <div className="mt-1.5 flex items-center gap-1.5 flex-wrap text-xs">
+                          <span className="text-muted-foreground font-medium">Password:</span>
+                          <span className="font-mono font-bold text-foreground bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
+                            {shown ? (isHidden ? "••••••••" : shown) : (shownPasswords[candidate.username.toLowerCase()] ?? "not stored yet")}
+                          </span>
+                          {shown ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setHiddenCandidatePasswords((prev) => ({
+                                    ...prev,
+                                    [candidate.id]: !isHidden,
+                                  }))
+                                }
+                                className="p-1 text-muted-foreground hover:text-foreground"
+                                title={isHidden ? "Show password" : "Hide password"}
+                              >
+                                {isHidden ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void copyCandidateText(shown, `pwd-${candidate.id}`)}
+                                className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-semibold ml-0.5"
+                                title="Copy password"
+                              >
+                                {copiedCandidateField === `pwd-${candidate.id}` ? (
+                                  <Check className="size-3 text-emerald-600" />
+                                ) : (
+                                  <Copy className="size-3" />
+                                )}
+                                {copiedCandidateField === `pwd-${candidate.id}` ? "Copied" : "Copy"}
+                              </button>
+                            </>
+                          ) : null}
+                        </div>
+
+                        {candidate.access_start_at || candidate.access_end_at ? (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Window: {formatIst(candidate.access_start_at) || "Anytime"} →{" "}
+                            {formatIst(candidate.access_end_at) || "No end"}
+                          </p>
                         ) : null}
-                      </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        Password:{" "}
-                        <span className="font-mono text-foreground">{shown ?? "not stored yet"}</span>
-                        {shown ? null : " (reset it once to store and show it)"}
-                      </p>
-                      {candidate.access_start_at || candidate.access_end_at ? (
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          Window: {formatIst(candidate.access_start_at) || "any time"} →{" "}
-                          {formatIst(candidate.access_end_at) || "no end"}
-                        </p>
-                      ) : null}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Delete ${candidate.username}? Their attempt and answers will be removed.`,
+                            )
+                          ) {
+                            deleteCandidateMutation.mutate({
+                              id: candidate.id,
+                              username: candidate.username,
+                            });
+                          }
+                        }}
+                        disabled={deleteCandidateMutation.isPending}
+                        className="shrink-0 rounded-full border border-destructive/30 px-2.5 py-1 text-xs font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60"
+                      >
+                        Delete
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Delete ${candidate.username}? Their attempt and answers will be removed.`,
-                          )
-                        ) {
-                          deleteCandidateMutation.mutate({
-                            id: candidate.id,
-                            username: candidate.username,
-                          });
-                        }
-                      }}
-                      disabled={deleteCandidateMutation.isPending}
-                      className="shrink-0 rounded-full border border-destructive/30 px-3 py-1 text-xs font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60"
-                    >
-                      Delete
-                    </button>
+
+                    {/* Quick action: Copy credentials to email candidate */}
+                    <div className="mt-2.5 pt-2 border-t border-primary/5 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => void copyCandidateText(candidateEmailText, `email-${candidate.id}`)}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
+                        title="Copy username, password and exam link to email candidate"
+                      >
+                        {copiedCandidateField === `email-${candidate.id}` ? (
+                          <>
+                            <Check className="size-3.5 text-emerald-600" /> Copied for Email!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="size-3.5" /> Copy Credentials for Email
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void copyCandidateText(candidate.username, `user-${candidate.id}`)}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                        title="Copy username only"
+                      >
+                        {copiedCandidateField === `user-${candidate.id}` ? "User copied" : "Copy username"}
+                      </button>
+                    </div>
                   </li>
                 );
               })}

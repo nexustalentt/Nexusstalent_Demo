@@ -81,6 +81,29 @@ function generateCandidateCredentials(candidate: {
   };
 }
 
+const CANDIDATE_PASSWORDS_KEY = "nexus_candidate_passwords";
+
+function getStoredCandidatePasswords(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(CANDIDATE_PASSWORDS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveStoredCandidatePassword(username: string, pass: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const current = getStoredCandidatePasswords();
+    current[username.toLowerCase()] = pass;
+    localStorage.setItem(CANDIDATE_PASSWORDS_KEY, JSON.stringify(current));
+  } catch {
+    // Ignore
+  }
+}
+
 function Row({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
@@ -275,6 +298,7 @@ function JobApplyDetail() {
     },
     onSuccess: (result) => {
       toast.success("Exam assigned successfully!");
+      saveStoredCandidatePassword(result.username, result.password);
       setCreatedCredentials(result);
       setAssignError(null);
       void invalidate();
@@ -442,15 +466,40 @@ function JobApplyDetail() {
                           <StatusPill status={item.exams.status} />
                         ) : null}
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                         <span>
                           Username: <strong className="font-mono text-foreground">{item.username}</strong>
                         </span>
-                        {item.password_note ? (
-                          <span>
-                            Password: <strong className="font-mono text-foreground">{item.password_note}</strong>
-                          </span>
-                        ) : null}
+                        {(() => {
+                          const isSha256 =
+                            typeof item.password_hash === "string" &&
+                            /^[0-9a-f]{64}$/i.test(item.password_hash);
+                          const itemPassword =
+                            (item as { password_note?: string }).password_note ||
+                            (!isSha256 && item.password_hash ? item.password_hash : null) ||
+                            getStoredCandidatePasswords()[item.username?.toLowerCase() || ""];
+                          return itemPassword ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              Password:{" "}
+                              <strong className="font-mono text-foreground bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
+                                {itemPassword}
+                              </strong>
+                              <button
+                                type="button"
+                                onClick={() => void copyToClipboard(itemPassword, `pwd-${item.id}`)}
+                                className="inline-flex items-center gap-1 font-semibold text-accent hover:underline ml-0.5"
+                                title="Copy password"
+                              >
+                                {copiedField === `pwd-${item.id}` ? (
+                                  <Check className="size-3 text-emerald-600 inline" />
+                                ) : (
+                                  <Copy className="size-3 inline" />
+                                )}
+                                {copiedField === `pwd-${item.id}` ? "Copied" : "Copy"}
+                              </button>
+                            </span>
+                          ) : null;
+                        })()}
                         {item.access_start_at || item.access_end_at ? (
                           <span>
                             Window: {formatIst(item.access_start_at) || "Anytime"} → {formatIst(item.access_end_at) || "No end"}

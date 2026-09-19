@@ -141,6 +141,30 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
       }
       throw new Error(error.message);
     }
+
+    // Ensure password is persisted for admin viewing & email sending
+    try {
+      const res = await supabaseClient
+        .from("exam_candidates")
+        .update({
+          password_hash: data.credentials.password,
+          password_note: data.credentials.password,
+        })
+        .eq("exam_id", data.examId)
+        .ilike("username", data.credentials.username.trim());
+
+      if (res.error) {
+        // Fallback: update password_hash directly (always exists in table)
+        await supabaseClient
+          .from("exam_candidates")
+          .update({ password_hash: data.credentials.password })
+          .eq("exam_id", data.examId)
+          .ilike("username", data.credentials.username.trim());
+      }
+    } catch {
+      // Non-blocking
+    }
+
     return { ok: true };
   });
 
