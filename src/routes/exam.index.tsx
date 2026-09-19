@@ -26,7 +26,12 @@ function ExamLoginPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setSessionToken(window.localStorage.getItem(STORAGE_KEY));
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored && stored !== "undefined" && stored !== "null") {
+      setSessionToken(stored);
+    } else {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
     setReady(true);
   }, []);
 
@@ -54,6 +59,7 @@ function ExamLoginPage() {
   return (
     <LoginCard
       onAuthenticated={(value) => {
+        if (!value || value === "undefined" || value === "null") return;
         window.localStorage.setItem(STORAGE_KEY, value);
         setSessionToken(value);
       }}
@@ -69,8 +75,11 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
   const mutation = useMutation({
     mutationFn: () => candidateLoginGlobal({ data: { username: username.trim(), password } }),
     onSuccess: (result) => {
-      if (result.ok) onAuthenticated(result.sessionToken);
-      else setError(result.error);
+      if (result.ok && result.sessionToken) {
+        onAuthenticated(result.sessionToken);
+      } else {
+        setError(result.ok ? "Unable to start exam session. Please try again." : result.error);
+      }
     },
     onError: (mutationError: Error) => setError(mutationError.message),
   });

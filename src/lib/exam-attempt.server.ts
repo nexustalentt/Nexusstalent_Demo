@@ -68,12 +68,27 @@ async function attemptLogin(args: {
   token: string | null;
 }): Promise<LoginResult> {
   try {
-    const result = await callRpc<{ sessionToken: string }>("exam_candidate_login", {
-      p_username: args.username,
-      p_password: args.password,
-      p_token: args.token,
-    });
-    return { ok: true, sessionToken: result.sessionToken };
+    const raw = await callRpc<any>(
+      "exam_candidate_login",
+      {
+        p_username: args.username.trim(),
+        p_password: args.password,
+        p_token: args.token,
+      },
+    );
+    let result = raw;
+    if (typeof result === "string") {
+      try {
+        result = JSON.parse(result);
+      } catch {
+        // ignore
+      }
+    }
+    const sessionToken = result?.sessionToken || result?.session_token;
+    if (!sessionToken) {
+      return { ok: false, error: "Unable to start exam session. Please try again." };
+    }
+    return { ok: true, sessionToken };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : "Login failed." };
   }

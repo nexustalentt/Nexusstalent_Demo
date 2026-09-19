@@ -189,8 +189,8 @@ function JobApplyDetail() {
     setCandFullName(creds.fullName);
     setCandUsername(creds.username);
     setCandPassword(creds.password);
-    setShowCandPassword(false);
-    setCandAccessStart(isoToIstLocal(new Date().toISOString()));
+    // Allow immediate access by setting start window slightly before now
+    setCandAccessStart(isoToIstLocal(new Date(Date.now() - 10 * 60 * 1000).toISOString()));
     setCandAccessEnd(
       isoToIstLocal(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()),
     );
