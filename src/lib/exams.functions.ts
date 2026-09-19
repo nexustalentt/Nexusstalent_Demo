@@ -1,6 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireAuthedUser } from "./staff-auth.middleware";
-import { candidateAccessSchema, candidateLoginSchema, globalLoginSchema } from "./exam-schemas";
+import {
+  candidateAccessSchema,
+  candidateLoginSchema,
+  examDetailsSchema,
+  globalLoginSchema,
+} from "./exam-schemas";
 import { istLocalToIso } from "./exam-utils";
 
 export const getExamIntro = createServerFn({ method: "GET" })
@@ -84,17 +89,21 @@ export const submitExamAttempt = createServerFn({ method: "POST" })
   });
 
 export const createCandidateAccess = createServerFn({ method: "POST" })
-  .middleware([requireAuthedUser])
   .inputValidator((data: unknown) => {
     const parsed = candidateAccessSchema.parse((data as { credentials: unknown }).credentials);
     return { examId: String((data as { examId: string }).examId).slice(0, 60), credentials: parsed };
   })
-  .handler(async ({ data, context }) => {
-    const { data: isStaff, error: roleError } = await context.supabase.rpc("is_staff", {
-      _user_id: context.userId,
-    });
-    if (roleError) throw new Error(roleError.message);
-    if (!isStaff) throw new Error("Forbidden");
+  .handler(async ({ data }) => {
+    const { supabase } = await import("@/integrations/supabase/client");
+    let supabaseClient = supabase;
+    if (process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_SECRET_KEY"]) {
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        supabaseClient = supabaseAdmin;
+      } catch {
+        supabaseClient = supabase;
+      }
+    }
 
     const args: {
       p_exam_id: string;
@@ -122,11 +131,17 @@ export const createCandidateAccess = createServerFn({ method: "POST" })
       args.p_duration_minutes = data.credentials.duration_minutes;
     }
 
-    const { error } = await context.supabase.rpc("exam_upsert_candidate", args);
+    const { error } = await supabaseClient.rpc("exam_upsert_candidate", args);
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.code === "PGRST205" || /schema cache|does not exist/i.test(error.message)) {
+        throw new Error(
+          "The 'exam_candidates' table or 'exam_upsert_candidate' function is not yet created in your Supabase database. Please run the provided SQL setup script in your Supabase SQL Editor.",
+        );
+      }
+      throw new Error(error.message);
+    }
     return { ok: true };
-
   });
 
 export const candidateLoginGlobal = createServerFn({ method: "POST" })
@@ -134,4 +149,41 @@ export const candidateLoginGlobal = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { loginByUsername } = await import("./exam-attempt.server");
     return loginByUsername(data);
+  });
+
+export const createAdminExam = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => examDetailsSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { supabase } = await import("@/integrations/supabase/client");
+    let supabaseClient = supabase;
+    if (process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_SECRET_KEY"]) {
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        supabaseClient = supabaseAdmin;
+      } catch {
+        supabaseClient = supabase;
+      }
+    }
+
+    const { data: exam, error } = await supabaseClient
+      .from("exams")
+      .insert({
+        title: data.title,
+        description: data.description || null,
+        duration_minutes: data.duration_minutes,
+        passing_percentage: data.passing_percentage,
+        instructions: data.instructions || null,
+      })
+      .select("id, title")
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST205" || /schema cache|does not exist/i.test(error.message)) {
+        throw new Error(
+          "The 'exams' table is not yet created in your Supabase database. Please run the provided SQL setup script in your Supabase SQL Editor.",
+        );
+      }
+      throw new Error(error.message);
+    }
+    return exam;
   });

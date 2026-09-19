@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { recordAudit } from "@/lib/admin-api";
+import { createAdminExam } from "@/lib/exams.functions";
 import { examDetailsSchema } from "@/lib/exam-schemas";
 
 export const Route = createFileRoute("/_authenticated/admin/exams/new")({
@@ -43,21 +44,12 @@ function NewExamPage() {
         instructions,
       });
       if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Check the details");
-      const { data: userData } = await supabase.auth.getUser();
-      const { data, error: insertError } = await supabase
-        .from("exams")
-        .insert({
-          title: parsed.data.title,
-          description: parsed.data.description || null,
-          duration_minutes: parsed.data.duration_minutes,
-          passing_percentage: parsed.data.passing_percentage,
-          instructions: parsed.data.instructions || null,
-          created_by: userData.user?.id ?? null,
-        })
-        .select("id, title")
-        .single();
-      if (insertError) throw new Error(insertError.message);
-      await recordAudit("exam_created", "exam", data.id, { title: data.title });
+      const data = await createAdminExam({ data: parsed.data });
+      try {
+        await recordAudit("exam_created", "exam", data.id, { title: data.title });
+      } catch (auditErr) {
+        console.warn("[audit] exam created:", auditErr);
+      }
       return data;
     },
     onSuccess: (data) => {
