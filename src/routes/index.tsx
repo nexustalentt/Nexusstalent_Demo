@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const { data: jobs } = useSuspenseQuery(activeJobsQuery);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
-  const latestJobs = jobs.slice(0, 6);
+  const latestJobs = (jobs ?? []).slice(0, 6);
 
   const zoziiDownloadUrl = "/api/public/zozii-download";
   const zoziiVersion = settings?.zozii_version?.trim() || "v1.09.01";

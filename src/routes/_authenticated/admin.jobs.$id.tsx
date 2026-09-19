@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock } from "@/components/admin/admin-shell";
 import { JobForm } from "@/components/admin/job-form";
 import { adminFormsQuery, adminJobQuery, recordAudit, type JobInsert } from "@/lib/admin-api";
+import { updateAdminJob } from "@/lib/admin-jobs.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/jobs/$id")({
@@ -28,18 +29,19 @@ function EditJobPage() {
   const mutation = useMutation({
     mutationFn: async (values: JobInsert) => {
       const { data: userData } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("jobs")
-        .update({
-          ...values,
-          updated_by: userData.user?.id ?? null,
-          published_at:
-            values.published_at ??
-            (values.status === "active" ? new Date().toISOString() : null),
-        })
-        .eq("id", id);
-      if (error) throw new Error(error.message);
-      await recordAudit("job_updated", "job", id, { title: values.title });
+      const payload: Partial<JobInsert> = {
+        ...values,
+        updated_by: userData.user?.id ?? null,
+        published_at:
+          values.published_at ??
+          (values.status === "active" ? new Date().toISOString() : null),
+      };
+      await updateAdminJob({ data: { id, values: payload } });
+      try {
+        await recordAudit("job_updated", "job", id, { title: values.title });
+      } catch (auditErr) {
+        console.warn("[audit] log warning:", auditErr);
+      }
     },
     onSuccess: () => {
       toast.success("Job updated");

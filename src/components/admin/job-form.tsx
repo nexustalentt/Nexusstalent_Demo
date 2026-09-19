@@ -81,13 +81,33 @@ export function JobForm({
   });
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   function set<K extends keyof JobFormValues>(key: K, value: JobFormValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
+    if (errors[key as string]) {
+      setErrors((current) => {
+        const next = { ...current };
+        delete next[key as string];
+        return next;
+      });
+    }
+  }
+
+  function handleSkillsChange(text: string) {
+    setSkillsText(text);
+    if (errors["skills"]) {
+      setErrors((current) => {
+        const next = { ...current };
+        delete next["skills"];
+        return next;
+      });
+    }
   }
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setFormError(null);
     const candidate: JobFormValues = {
       ...values,
       slug: values.slug.trim() || slugify(values.title),
@@ -105,9 +125,17 @@ export function JobForm({
         if (!nextErrors[key]) nextErrors[key] = issue.message;
       }
       setErrors(nextErrors);
+      setFormError("Please fill in all mandatory fields highlighted in red below.");
+      const firstKey = Object.keys(nextErrors)[0];
+      if (firstKey) {
+        const el = document.getElementById(firstKey);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        (el as HTMLElement | null)?.focus?.();
+      }
       return;
     }
     setErrors({});
+    setFormError(null);
     const data = parsed.data;
     const { published_at, updated_at, ...dataWithoutDates } = data;
     const publishedAtIso = published_at
@@ -141,18 +169,35 @@ export function JobForm({
     onSubmit(payload);
   }
 
-  const field =
-    "mt-2 w-full rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-sm text-primary outline-none focus:border-accent";
-  const label = "text-xs font-bold tracking-widest uppercase text-muted-foreground";
+  const getFieldClass = (hasError: boolean) =>
+    cn(
+      "mt-2 w-full rounded-lg border bg-background px-4 py-2.5 text-sm text-primary outline-none transition-colors",
+      hasError
+        ? "border-destructive ring-1 ring-destructive focus:border-destructive text-destructive placeholder:text-destructive/60"
+        : "border-primary/10 focus:border-accent",
+    );
+
+  const getLabelClass = (hasError: boolean) =>
+    cn(
+      "text-xs font-bold tracking-widest uppercase transition-colors",
+      hasError ? "text-destructive font-bold" : "text-muted-foreground",
+    );
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      {formError ? (
+        <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm font-semibold text-destructive">
+          <span className="size-2 rounded-full bg-destructive" />
+          {formError}
+        </div>
+      ) : null}
+
       <section className="rounded-2xl border border-primary/5 bg-card p-6">
         <h2 className="font-bold text-primary">Role basics</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
-            <label className={label} htmlFor="title">
-              Job title *
+            <label className={getLabelClass(Boolean(errors["title"]))} htmlFor="title">
+              Job title <span className="text-destructive">*</span>
             </label>
             <input
               id="title"
@@ -162,25 +207,25 @@ export function JobForm({
                 set("title", event.target.value);
                 if (!job) set("slug", slugify(event.target.value));
               }}
-              className={field}
+              className={getFieldClass(Boolean(errors["title"]))}
             />
-            {errors["title"] ? <p className="mt-1 text-xs text-destructive">{errors["title"]}</p> : null}
+            {errors["title"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["title"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="slug">
-              URL slug *
+            <label className={getLabelClass(Boolean(errors["slug"]))} htmlFor="slug">
+              URL slug <span className="text-destructive">*</span>
             </label>
             <input
               id="slug"
               value={values.slug}
               maxLength={90}
               onChange={(event) => set("slug", slugify(event.target.value))}
-              className={field}
+              className={getFieldClass(Boolean(errors["slug"]))}
             />
-            {errors["slug"] ? <p className="mt-1 text-xs text-destructive">{errors["slug"]}</p> : null}
+            {errors["slug"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["slug"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="job_code">
+            <label className={getLabelClass(Boolean(errors["job_code"]))} htmlFor="job_code">
               Job code
             </label>
             <input
@@ -188,11 +233,12 @@ export function JobForm({
               value={values.job_code ?? ""}
               maxLength={60}
               onChange={(event) => set("job_code", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["job_code"]))}
             />
+            {errors["job_code"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["job_code"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="department">
+            <label className={getLabelClass(Boolean(errors["department"]))} htmlFor="department">
               Department
             </label>
             <input
@@ -200,11 +246,12 @@ export function JobForm({
               value={values.department ?? ""}
               maxLength={80}
               onChange={(event) => set("department", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["department"]))}
             />
+            {errors["department"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["department"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="location">
+            <label className={getLabelClass(Boolean(errors["location"]))} htmlFor="location">
               Location
             </label>
             <input
@@ -212,18 +259,19 @@ export function JobForm({
               value={values.location ?? ""}
               maxLength={120}
               onChange={(event) => set("location", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["location"]))}
             />
+            {errors["location"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["location"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="employment_type">
+            <label className={getLabelClass(Boolean(errors["employment_type"]))} htmlFor="employment_type">
               Employment type
             </label>
             <select
               id="employment_type"
               value={values.employment_type ?? ""}
               onChange={(event) => set("employment_type", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["employment_type"]))}
             >
               {employmentTypes.map((type) => (
                 <option key={type} value={type}>
@@ -231,16 +279,17 @@ export function JobForm({
                 </option>
               ))}
             </select>
+            {errors["employment_type"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["employment_type"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="work_mode">
+            <label className={getLabelClass(Boolean(errors["work_mode"]))} htmlFor="work_mode">
               Work mode
             </label>
             <select
               id="work_mode"
               value={values.work_mode ?? ""}
               onChange={(event) => set("work_mode", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["work_mode"]))}
             >
               {workModes.map((mode) => (
                 <option key={mode} value={mode}>
@@ -248,9 +297,10 @@ export function JobForm({
                 </option>
               ))}
             </select>
+            {errors["work_mode"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["work_mode"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="experience_min">
+            <label className={getLabelClass(Boolean(errors["experience_min"]))} htmlFor="experience_min">
               Experience min (years)
             </label>
             <input
@@ -262,11 +312,12 @@ export function JobForm({
               onChange={(event) =>
                 set("experience_min", event.target.value === "" ? null : Number(event.target.value))
               }
-              className={field}
+              className={getFieldClass(Boolean(errors["experience_min"]))}
             />
+            {errors["experience_min"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["experience_min"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="experience_max">
+            <label className={getLabelClass(Boolean(errors["experience_max"]))} htmlFor="experience_max">
               Experience max (years)
             </label>
             <input
@@ -278,11 +329,12 @@ export function JobForm({
               onChange={(event) =>
                 set("experience_max", event.target.value === "" ? null : Number(event.target.value))
               }
-              className={field}
+              className={getFieldClass(Boolean(errors["experience_max"]))}
             />
+            {errors["experience_max"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["experience_max"]}</p> : null}
           </div>
           <div>
-            <label className={label} htmlFor="salary">
+            <label className={getLabelClass(Boolean(errors["salary"]))} htmlFor="salary">
               Salary range
             </label>
             <input
@@ -290,20 +342,22 @@ export function JobForm({
               value={values.salary ?? ""}
               maxLength={120}
               onChange={(event) => set("salary", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["salary"]))}
             />
+            {errors["salary"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["salary"]}</p> : null}
           </div>
           <div className="md:col-span-2">
-            <label className={label} htmlFor="skills">
+            <label className={getLabelClass(Boolean(errors["skills"]))} htmlFor="skills">
               Skills (comma separated)
             </label>
             <input
               id="skills"
               value={skillsText}
               maxLength={600}
-              onChange={(event) => setSkillsText(event.target.value)}
-              className={field}
+              onChange={(event) => handleSkillsChange(event.target.value)}
+              className={getFieldClass(Boolean(errors["skills"]))}
             />
+            {errors["skills"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["skills"]}</p> : null}
           </div>
         </div>
       </section>
@@ -315,7 +369,7 @@ export function JobForm({
         </p>
         <div className="mt-5 space-y-5">
           <div>
-            <label className={label} htmlFor="short_description">
+            <label className={getLabelClass(Boolean(errors["short_description"]))} htmlFor="short_description">
               Summary (listing card)
             </label>
             <textarea
@@ -324,8 +378,9 @@ export function JobForm({
               maxLength={300}
               value={values.short_description ?? ""}
               onChange={(event) => set("short_description", event.target.value)}
-              className={field}
+              className={getFieldClass(Boolean(errors["short_description"]))}
             />
+            {errors["short_description"] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors["short_description"]}</p> : null}
           </div>
           {(
             [
@@ -337,7 +392,7 @@ export function JobForm({
             ] as const
           ).map(([key, labelText, rows]) => (
             <div key={key}>
-              <label className={label} htmlFor={key}>
+              <label className={getLabelClass(Boolean(errors[key]))} htmlFor={key}>
                 {labelText}
               </label>
               <textarea
@@ -346,8 +401,9 @@ export function JobForm({
                 maxLength={6000}
                 value={values[key] ?? ""}
                 onChange={(event) => set(key, event.target.value)}
-                className={field}
+                className={getFieldClass(Boolean(errors[key]))}
               />
+              {errors[key] ? <p className="mt-1 text-xs font-semibold text-destructive">{errors[key]}</p> : null}
             </div>
           ))}
         </div>
@@ -357,7 +413,7 @@ export function JobForm({
         <h2 className="font-bold text-primary">Application &amp; publishing</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
-            <label className={label} htmlFor="application_method">
+            <label className={getLabelClass(Boolean(errors["application_method"]))} htmlFor="application_method">
               Application method
             </label>
             <select
@@ -366,7 +422,7 @@ export function JobForm({
               onChange={(event) =>
                 set("application_method", event.target.value as JobFormValues["application_method"])
               }
-              className={field}
+              className={getFieldClass(Boolean(errors["application_method"]))}
             >
               <option value="google_form">Google Form (external link)</option>
               <option value="internal_form">Job Application Form (on this website)</option>
@@ -380,14 +436,14 @@ export function JobForm({
           {values.application_method === "google_form" ? (
             <>
               <div>
-                <label className={label} htmlFor="form_id">
+                <label className={getLabelClass(Boolean(errors["form_id"]))} htmlFor="form_id">
                   Linked application form
                 </label>
                 <select
                   id="form_id"
                   value={values.form_id ?? ""}
                   onChange={(event) => set("form_id", event.target.value || null)}
-                  className={field}
+                  className={getFieldClass(Boolean(errors["form_id"]))}
                 >
                   <option value="">Use custom URL below</option>
                   {forms.map((form) => (
@@ -398,8 +454,8 @@ export function JobForm({
                 </select>
               </div>
               <div>
-                <label className={label} htmlFor="google_form_url">
-                  Application form URL
+                <label className={getLabelClass(Boolean(errors["google_form_url"]))} htmlFor="google_form_url">
+                  Application form URL <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="google_form_url"
@@ -407,24 +463,24 @@ export function JobForm({
                   maxLength={500}
                   placeholder="https://docs.google.com/forms/..."
                   onChange={(event) => set("google_form_url", event.target.value)}
-                  className={field}
+                  className={getFieldClass(Boolean(errors["google_form_url"]))}
                 />
                 {errors["google_form_url"] ? (
-                  <p className="mt-1 text-xs text-destructive">{errors["google_form_url"]}</p>
+                  <p className="mt-1 text-xs font-semibold text-destructive">{errors["google_form_url"]}</p>
                 ) : null}
               </div>
             </>
           ) : null}
 
           <div>
-            <label className={label} htmlFor="status">
+            <label className={getLabelClass(Boolean(errors["status"]))} htmlFor="status">
               Status
             </label>
             <select
               id="status"
               value={values.status}
               onChange={(event) => set("status", event.target.value as JobStatus)}
-              className={field}
+              className={getFieldClass(Boolean(errors["status"]))}
             >
               {jobStatuses.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -432,9 +488,12 @@ export function JobForm({
                 </option>
               ))}
             </select>
+            {errors["status"] ? (
+              <p className="mt-1 text-xs font-semibold text-destructive">{errors["status"]}</p>
+            ) : null}
           </div>
           <div>
-            <label className={label} htmlFor="published_at">
+            <label className={getLabelClass(false)} htmlFor="published_at">
               Published date
             </label>
             <Popover>
@@ -467,7 +526,7 @@ export function JobForm({
             </Popover>
           </div>
           <div>
-            <label className={label} htmlFor="updated_at">
+            <label className={getLabelClass(false)} htmlFor="updated_at">
               Last updated date
             </label>
             <Popover>

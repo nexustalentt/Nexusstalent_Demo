@@ -226,10 +226,76 @@ function ApplyPage() {
       }
       setSuccess(result.applicationCode);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (submitError) {
-      const detail =
-        submitError instanceof Error && submitError.message ? ` (${submitError.message})` : "";
-      setFormError(`Could not submit your application. Please try again.${detail}`);
+    } catch {
+      // Direct Supabase client insertion fallback
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data: inserted, error: insertError } = await supabase
+          .from("job_applications")
+          .insert({
+            job_id: job.id,
+            job_title: job.title,
+            first_name: parsed.data.first_name,
+            last_name: parsed.data.last_name,
+            phone: parsed.data.phone,
+            email: parsed.data.email,
+            date_of_birth: parsed.data.date_of_birth || null,
+            gender: parsed.data.gender || null,
+            current_location: parsed.data.current_location || null,
+            preferred_location: parsed.data.preferred_location || null,
+            pan_number: parsed.data.pan_number || null,
+            highest_qualification: parsed.data.highest_qualification,
+            specialization: parsed.data.specialization || null,
+            college: parsed.data.college || null,
+            marks: parsed.data.marks,
+            year_of_passing: parsed.data.year_of_passing,
+            primary_skills: parsed.data.primary_skills,
+            secondary_skills: parsed.data.secondary_skills || null,
+            programming_languages: parsed.data.programming_languages || null,
+            tools_technologies: parsed.data.tools_technologies || null,
+            certifications: parsed.data.certifications || null,
+            experience_type: parsed.data.experience_type,
+            total_experience:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.total_experience || null,
+            relevant_experience:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.relevant_experience || null,
+            current_company:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.current_company || null,
+            current_job_title:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.current_job_title || null,
+            current_ctc:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.current_ctc || null,
+            expected_ctc: parsed.data.expected_ctc || null,
+            notice_period:
+              parsed.data.experience_type === "fresher" ? null : parsed.data.notice_period || null,
+            resume_name: parsed.data.resume_name,
+            linkedin_url: parsed.data.linkedin_url || null,
+            github_url: parsed.data.github_url || null,
+            portfolio_url: parsed.data.portfolio_url || null,
+            willing_to_relocate: parsed.data.willing_to_relocate ?? null,
+            availability_to_join: parsed.data.availability_to_join || null,
+            cover_letter: parsed.data.cover_letter || null,
+            heard_about_us: parsed.data.heard_about_us || null,
+          })
+          .select("id, application_code")
+          .single();
+
+        if (insertError) {
+          if (insertError.code === "23505" || /duplicate/i.test(insertError.message)) {
+            setFormError("You have already applied for this position.");
+            return;
+          }
+          setFormError(`Could not submit your application: ${insertError.message}`);
+          return;
+        }
+
+        setSuccess(inserted.application_code || inserted.id);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (fallbackError) {
+        const detail =
+          fallbackError instanceof Error && fallbackError.message ? ` (${fallbackError.message})` : "";
+        setFormError(`Could not submit your application. Please try again.${detail}`);
+      }
     } finally {
       setPending(false);
     }

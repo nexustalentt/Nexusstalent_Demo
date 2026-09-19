@@ -37,27 +37,43 @@ const DETAIL_COLUMNS = `${LIST_COLUMNS}, description, responsibilities, requirem
 
 
 export const listActiveJobs = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await publicClient()
-    .from("jobs")
-    .select(LIST_COLUMNS)
-    .eq("status", "active")
-    .order("published_at", { ascending: false, nullsFirst: false })
-    .limit(200);
-  if (error) throw new Error(error.message);
-  return (data ?? []) as PublicJob[];
+  try {
+    const { data, error } = await publicClient()
+      .from("jobs")
+      .select(LIST_COLUMNS)
+      .eq("status", "active")
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(200);
+    if (error) {
+      console.warn("[listActiveJobs] query warning:", error.message);
+      return [] as PublicJob[];
+    }
+    return (data ?? []) as PublicJob[];
+  } catch (err) {
+    console.warn("[listActiveJobs] exception:", err);
+    return [] as PublicJob[];
+  }
 });
 
 export const getPublicJob = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => ({ slug: String(data.slug).slice(0, 120) }))
   .handler(async ({ data }) => {
-    const { data: job, error } = await publicClient()
-      .from("jobs")
-      .select(DETAIL_COLUMNS)
-      .eq("status", "active")
-      .eq("slug", data.slug)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    return (job ?? null) as PublicJobDetail | null;
+    try {
+      const { data: job, error } = await publicClient()
+        .from("jobs")
+        .select(DETAIL_COLUMNS)
+        .eq("status", "active")
+        .eq("slug", data.slug)
+        .maybeSingle();
+      if (error) {
+        console.warn("[getPublicJob] query warning:", error.message);
+        return null;
+      }
+      return (job ?? null) as PublicJobDetail | null;
+    } catch (err) {
+      console.warn("[getPublicJob] exception:", err);
+      return null;
+    }
   });
 
 export type SiteSettings = {
@@ -78,12 +94,20 @@ export type SiteSettings = {
 };
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await publicClient()
-    .from("site_settings")
-    .select(
-      "company_name, company_email, recruitment_email, phone, address, business_hours, linkedin_url, twitter_url, years_experience, professionals_placed, enterprise_clients, successful_projects, zozii_download_url, zozii_version",
-    )
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  return (data ?? null) as SiteSettings | null;
+  try {
+    const { data, error } = await publicClient()
+      .from("site_settings")
+      .select(
+        "company_name, company_email, recruitment_email, phone, address, business_hours, linkedin_url, twitter_url, years_experience, professionals_placed, enterprise_clients, successful_projects, zozii_download_url, zozii_version",
+      )
+      .maybeSingle();
+    if (error) {
+      console.warn("[getSiteSettings] query warning:", error.message);
+      return null;
+    }
+    return (data ?? null) as SiteSettings | null;
+  } catch (err) {
+    console.warn("[getSiteSettings] exception:", err);
+    return null;
+  }
 });

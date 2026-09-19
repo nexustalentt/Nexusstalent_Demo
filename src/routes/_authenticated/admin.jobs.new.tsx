@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { JobForm } from "@/components/admin/job-form";
 import { adminFormsQuery, recordAudit, type JobInsert } from "@/lib/admin-api";
+import { createAdminJob } from "@/lib/admin-jobs.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/jobs/new")({
@@ -26,20 +27,20 @@ function NewJobPage() {
   const mutation = useMutation({
     mutationFn: async (values: JobInsert) => {
       const { data: userData } = await supabase.auth.getUser();
-      const { data, error } = await supabase
-        .from("jobs")
-        .insert({
-          ...values,
-          created_by: userData.user?.id ?? null,
-          updated_by: userData.user?.id ?? null,
-          published_at:
-            values.published_at ??
-            (values.status === "active" ? new Date().toISOString() : null),
-        })
-        .select("id, title")
-        .single();
-      if (error) throw new Error(error.message);
-      await recordAudit("job_created", "job", data.id, { title: data.title });
+      const payload: JobInsert = {
+        ...values,
+        created_by: userData.user?.id ?? null,
+        updated_by: userData.user?.id ?? null,
+        published_at:
+          values.published_at ??
+          (values.status === "active" ? new Date().toISOString() : null),
+      };
+      const data = await createAdminJob({ data: payload });
+      try {
+        await recordAudit("job_created", "job", data.id, { title: data.title });
+      } catch (auditErr) {
+        console.warn("[audit] log warning:", auditErr);
+      }
       return data;
     },
     onSuccess: () => {

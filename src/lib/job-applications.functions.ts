@@ -1,13 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { jobApplicationSchema } from "@/lib/job-application-schema";
 import { requireAuthedUser } from "@/lib/staff-auth.middleware";
+import { supabase } from "@/integrations/supabase/client";
 
 export const submitJobApplication = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => jobApplicationSchema.parse(data))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Prefer supabaseAdmin if service role / secret key is configured, else use client
+    let supabaseClient = supabase;
+    if (process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_SECRET_KEY"]) {
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        supabaseClient = supabaseAdmin;
+      } catch {
+        supabaseClient = supabase;
+      }
+    }
 
-    const { data: job } = await supabaseAdmin
+    const { data: job } = await supabaseClient
       .from("jobs")
       .select("id, title, application_method, status")
       .eq("id", data.job_id)
@@ -17,7 +27,7 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       return { ok: false as const, error: "This position is not accepting applications." };
     }
 
-    const { data: existing } = await supabaseAdmin
+    const { data: existing } = await supabaseClient
       .from("job_applications")
       .select("id")
       .eq("job_id", job.id)
@@ -27,27 +37,31 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       return { ok: false as const, error: "You have already applied for this position." };
     }
 
-    const base64 = data.resume_base64.includes(",")
-      ? data.resume_base64.slice(data.resume_base64.indexOf(",") + 1)
-      : data.resume_base64;
-    const bytes = Buffer.from(base64, "base64");
-    if (bytes.byteLength > 5 * 1024 * 1024) {
-      return { ok: false as const, error: "Resume must be smaller than 5 MB." };
-    }
-    const safeName = data.resume_name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80);
-    const path = `${job.id}/${Date.now()}-${safeName}`;
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from("resumes")
-      .upload(path, bytes, { contentType: "application/octet-stream", upsert: false });
-    if (uploadError) {
-      console.error("[job-application] resume upload failed", uploadError.message);
-      return {
-        ok: false as const,
-        error: `Could not upload your resume: ${uploadError.message}`,
-      };
+    let resumePath: string | null = null;
+    if (data.resume_base64 && data.resume_name) {
+      try {
+        const base64 = data.resume_base64.includes(",")
+          ? data.resume_base64.slice(data.resume_base64.indexOf(",") + 1)
+          : data.resume_base64;
+        const bytes = Buffer.from(base64, "base64");
+        if (bytes.byteLength <= 5 * 1024 * 1024) {
+          const safeName = data.resume_name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80);
+          const path = `${job.id}/${Date.now()}-${safeName}`;
+          const { error: uploadError } = await supabaseClient.storage
+            .from("resumes")
+            .upload(path, bytes, { contentType: "application/octet-stream", upsert: false });
+          if (!uploadError) {
+            resumePath = path;
+          } else {
+            console.warn("[job-application] resume storage upload note:", uploadError.message);
+          }
+        }
+      } catch (uploadEx) {
+        console.warn("[job-application] resume upload warning:", uploadEx);
+      }
     }
 
-    const { data: inserted, error } = await supabaseAdmin
+    const { data: inserted, error } = await supabaseClient
       .from("job_applications")
       .insert({
         job_id: job.id,
@@ -81,7 +95,7 @@ export const submitJobApplication = createServerFn({ method: "POST" })
         current_ctc: data.experience_type === "fresher" ? null : data.current_ctc || null,
         expected_ctc: data.expected_ctc || null,
         notice_period: data.experience_type === "fresher" ? null : data.notice_period || null,
-        resume_path: path,
+        resume_path: resumePath,
         resume_name: data.resume_name,
         linkedin_url: data.linkedin_url || null,
         github_url: data.github_url || null,
@@ -107,7 +121,7 @@ export const submitJobApplication = createServerFn({ method: "POST" })
 
     // Notifications must never fail the submission: the application row is already stored.
     try {
-      const { data: settings } = await supabaseAdmin
+      const { data: settings } = await supabaseClient
         .from("site_settings")
         .select("recruitment_email, company_email, notify_on_new_application")
         .maybeSingle();

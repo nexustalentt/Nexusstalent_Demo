@@ -137,21 +137,24 @@ export async function recordAudit(
 
 export async function setJobStatus(job: JobRow, status: JobStatus) {
   const { data: userData } = await supabase.auth.getUser();
-  const { error } = await supabase
-    .from("jobs")
-    .update({
-      status,
-      updated_by: userData.user?.id ?? null,
-      published_at: status === "active" ? (job.published_at ?? new Date().toISOString()) : job.published_at,
-    })
-    .eq("id", job.id);
-  if (error) throw new Error(error.message);
+  const { updateAdminJob } = await import("./admin-jobs.functions");
+  await updateAdminJob({
+    data: {
+      id: job.id,
+      values: {
+        status,
+        updated_by: userData.user?.id ?? null,
+        published_at:
+          status === "active" ? (job.published_at ?? new Date().toISOString()) : job.published_at,
+      },
+    },
+  });
   await recordAudit(`job_${status}`, "job", job.id, { title: job.title });
 }
 
 export async function deleteJob(job: JobRow) {
-  const { error } = await supabase.from("jobs").delete().eq("id", job.id);
-  if (error) throw new Error(error.message);
+  const { deleteAdminJob } = await import("./admin-jobs.functions");
+  await deleteAdminJob({ data: { id: job.id } });
   await recordAudit("job_deleted", "job", job.id, { title: job.title });
 }
 
