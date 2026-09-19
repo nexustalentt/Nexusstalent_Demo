@@ -222,6 +222,12 @@ function ApplyPage() {
       const result = await submitJobApplication({ data: parsed.data });
       if (!result.ok) {
         setFormError(result.error);
+        if (result.error === "Your application already exists.") {
+          setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
+          const element = document.getElementById("pan_number");
+          element?.scrollIntoView({ behavior: "smooth", block: "center" });
+          (element as HTMLElement | null)?.focus?.();
+        }
         return;
       }
       setSuccess(result.applicationCode);
@@ -230,6 +236,58 @@ function ApplyPage() {
       // Direct Supabase client insertion fallback
       try {
         const { supabase } = await import("@/integrations/supabase/client");
+
+        // 1. Check if same PAN number already exists
+        const cleanPan = parsed.data.pan_number?.trim().toUpperCase();
+        if (cleanPan) {
+          const { data: panExists } = await supabase
+            .from("job_applications")
+            .select("id")
+            .ilike("pan_number", cleanPan)
+            .limit(1)
+            .maybeSingle();
+          if (panExists) {
+            setFormError("Your application already exists.");
+            setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
+            const element = document.getElementById("pan_number");
+            element?.scrollIntoView({ behavior: "smooth", block: "center" });
+            (element as HTMLElement | null)?.focus?.();
+            return;
+          }
+        }
+
+        // 2. Check if same PAN number + phone number + email address exists together
+        if (cleanPan && parsed.data.phone?.trim() && parsed.data.email?.trim()) {
+          const { data: comboExists } = await supabase
+            .from("job_applications")
+            .select("id")
+            .ilike("pan_number", cleanPan)
+            .eq("phone", parsed.data.phone.trim())
+            .ilike("email", parsed.data.email.trim())
+            .limit(1)
+            .maybeSingle();
+          if (comboExists) {
+            setFormError("Your application already exists.");
+            setErrors((e) => ({ ...e, pan_number: "Your application already exists." }));
+            const element = document.getElementById("pan_number");
+            element?.scrollIntoView({ behavior: "smooth", block: "center" });
+            (element as HTMLElement | null)?.focus?.();
+            return;
+          }
+        }
+
+        // 3. Check if email already applied for this position
+        const { data: emailExists } = await supabase
+          .from("job_applications")
+          .select("id")
+          .eq("job_id", job.id)
+          .ilike("email", parsed.data.email.trim())
+          .maybeSingle();
+        if (emailExists) {
+          setFormError("Your application already exists.");
+          return;
+        }
+
         const { data: inserted, error: insertError } = await supabase
           .from("job_applications")
           .insert({
@@ -243,7 +301,7 @@ function ApplyPage() {
             gender: parsed.data.gender || null,
             current_location: parsed.data.current_location || null,
             preferred_location: parsed.data.preferred_location || null,
-            pan_number: parsed.data.pan_number || null,
+            pan_number: cleanPan || null,
             highest_qualification: parsed.data.highest_qualification,
             specialization: parsed.data.specialization || null,
             college: parsed.data.college || null,
@@ -281,8 +339,8 @@ function ApplyPage() {
           .single();
 
         if (insertError) {
-          if (insertError.code === "23505" || /duplicate/i.test(insertError.message)) {
-            setFormError("You have already applied for this position.");
+          if (insertError.code === "23505" || /duplicate|already exists/i.test(insertError.message)) {
+            setFormError("Your application already exists.");
             return;
           }
           setFormError(`Could not submit your application: ${insertError.message}`);

@@ -27,14 +27,50 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       return { ok: false as const, error: "This position is not accepting applications." };
     }
 
+    // 1. Check if the same PAN number already exists in the database
+    if (data.pan_number?.trim()) {
+      const cleanPan = data.pan_number.trim().toUpperCase();
+      const { data: panMatch } = await supabaseClient
+        .from("job_applications")
+        .select("id")
+        .ilike("pan_number", cleanPan)
+        .limit(1)
+        .maybeSingle();
+
+      if (panMatch) {
+        return { ok: false as const, error: "Your application already exists." };
+      }
+    }
+
+    // 2. Check if the same PAN number + phone number + email address already exists together
+    if (data.pan_number?.trim() && data.phone?.trim() && data.email?.trim()) {
+      const cleanPan = data.pan_number.trim().toUpperCase();
+      const cleanPhone = data.phone.trim();
+      const cleanEmail = data.email.trim();
+
+      const { data: comboMatch } = await supabaseClient
+        .from("job_applications")
+        .select("id")
+        .ilike("pan_number", cleanPan)
+        .eq("phone", cleanPhone)
+        .ilike("email", cleanEmail)
+        .limit(1)
+        .maybeSingle();
+
+      if (comboMatch) {
+        return { ok: false as const, error: "Your application already exists." };
+      }
+    }
+
+    // 3. Check if email already applied for this job
     const { data: existing } = await supabaseClient
       .from("job_applications")
       .select("id")
       .eq("job_id", job.id)
-      .ilike("email", data.email)
+      .ilike("email", data.email.trim())
       .maybeSingle();
     if (existing) {
-      return { ok: false as const, error: "You have already applied for this position." };
+      return { ok: false as const, error: "Your application already exists." };
     }
 
     let resumePath: string | null = null;
@@ -109,8 +145,8 @@ export const submitJobApplication = createServerFn({ method: "POST" })
       .single();
 
     if (error) {
-      if (error.code === "23505" || /duplicate/i.test(error.message)) {
-        return { ok: false as const, error: "You have already applied for this position." };
+      if (error.code === "23505" || /duplicate|already exists/i.test(error.message)) {
+        return { ok: false as const, error: "Your application already exists." };
       }
       console.error("[job-application] insert failed", error.code, error.message);
       return {

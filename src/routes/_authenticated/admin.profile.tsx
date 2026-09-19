@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Eye, EyeOff } from "lucide-react";
 import { AdminShell, LoadingBlock } from "@/components/admin/admin-shell";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,6 +22,8 @@ function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const account = useQuery({
@@ -127,29 +130,59 @@ function ProfilePage() {
               <label className={label} htmlFor="new-password">
                 New password
               </label>
-              <input
-                id="new-password"
-                type="password"
-                autoComplete="new-password"
-                value={password}
-                maxLength={72}
-                onChange={(event) => setPassword(event.target.value)}
-                className={field}
-              />
+              <div className="relative mt-2">
+                <input
+                  id="new-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={password}
+                  maxLength={72}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="w-full rounded-lg border border-primary/10 bg-background pl-4 pr-11 py-2.5 text-sm outline-none focus:border-accent transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-accent focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="size-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             </div>
             <div>
               <label className={label} htmlFor="confirm-password">
                 Confirm password
               </label>
-              <input
-                id="confirm-password"
-                type="password"
-                autoComplete="new-password"
-                value={confirm}
-                maxLength={72}
-                onChange={(event) => setConfirm(event.target.value)}
-                className={field}
-              />
+              <div className="relative mt-2">
+                <input
+                  id="confirm-password"
+                  type={showConfirm ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={confirm}
+                  maxLength={72}
+                  onChange={(event) => setConfirm(event.target.value)}
+                  className="w-full rounded-lg border border-primary/10 bg-background pl-4 pr-11 py-2.5 text-sm outline-none focus:border-accent transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-accent focus:outline-none"
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
+                  title={showConfirm ? "Hide password" : "Show password"}
+                >
+                  {showConfirm ? (
+                    <EyeOff className="size-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="size-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             </div>
             {passwordError ? <p className="text-sm text-destructive">{passwordError}</p> : null}
             <button
