@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode, RefObject } from "react";
 import { formatDuration, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
 import { letterLabel } from "@/lib/question-bank-parser";
+import { ShieldAlert, X } from "lucide-react";
 import {
   getAttemptState,
   saveExamAnswer,
@@ -110,6 +111,142 @@ function Watermark({ label }: { label: string }) {
         backgroundRepeat: "repeat",
       }}
     />
+  );
+}
+
+const PROCTORING_WARNINGS = [
+  "Warning: Please stay active and remain visible on camera.",
+  "Please stay on camera. Don't move away from the screen.",
+  "Warning: Your camera presence is being monitored. Please remain visible.",
+  "Proctoring Alert: Ensure your face remains clearly visible in the camera frame.",
+  "Warning: Do not look away from the screen or leave the camera view.",
+];
+
+/**
+ * Camera monitoring reminder popup:
+ * Periodically displays a real online exam proctoring warning every 2-4 minutes (randomized)
+ * regardless of whether the candidate is moving or sitting still.
+ * Automatically closes after a few seconds without interfering with exam timer or state.
+ */
+function CameraMonitorReminder({ active }: { active: boolean }) {
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState(PROCTORING_WARNINGS[0]);
+  const timerRef = useRef<number | null>(null);
+  const autoCloseRef = useRef<number | null>(null);
+  const activeRef = useRef(active);
+
+  activeRef.current = active;
+
+  const showReminder = useCallback(() => {
+    if (!activeRef.current) return;
+
+    const nextMsg =
+      PROCTORING_WARNINGS[Math.floor(Math.random() * PROCTORING_WARNINGS.length)] ??
+      PROCTORING_WARNINGS[0];
+    setMessage(nextMsg);
+    setVisible(true);
+
+    if (autoCloseRef.current) window.clearTimeout(autoCloseRef.current);
+    autoCloseRef.current = window.setTimeout(() => {
+      setVisible(false);
+      scheduleNext();
+    }, 7000);
+  }, []);
+
+  const scheduleNext = useCallback(() => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    if (!activeRef.current) return;
+
+    // Randomized interval between 2 and 4 minutes (120,000ms - 240,000ms)
+    const minMs = 2 * 60 * 1000;
+    const maxMs = 4 * 60 * 1000;
+    const interval = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+
+    timerRef.current = window.setTimeout(() => {
+      showReminder();
+    }, interval);
+  }, [showReminder]);
+
+  useEffect(() => {
+    if (!active) {
+      setVisible(false);
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+      if (autoCloseRef.current) window.clearTimeout(autoCloseRef.current);
+      return;
+    }
+
+    scheduleNext();
+
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+      if (autoCloseRef.current) window.clearTimeout(autoCloseRef.current);
+    };
+  }, [active, scheduleNext]);
+
+  const handleDismiss = () => {
+    setVisible(false);
+    if (autoCloseRef.current) window.clearTimeout(autoCloseRef.current);
+    scheduleNext();
+  };
+
+  if (!visible) return null;
+
+  return (
+    <aside
+      role="alert"
+      aria-live="assertive"
+      className="pointer-events-none fixed top-5 left-1/2 -translate-x-1/2 z-[70] w-[94vw] max-w-lg transition-all duration-300 ease-out"
+    >
+      <div className="pointer-events-auto relative overflow-hidden rounded-2xl border-2 border-amber-500/80 bg-card/95 p-4 shadow-[0_12px_40px_rgba(245,158,11,0.25)] backdrop-blur-md ring-4 ring-amber-500/15 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="flex items-start gap-3.5">
+          <div className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400">
+            <ShieldAlert className="size-5" />
+            <span className="absolute -top-1 -right-1 flex size-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+              <span className="relative inline-flex size-3 rounded-full bg-red-500" />
+            </span>
+          </div>
+
+          <div className="min-w-0 flex-1 pt-0.5">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                <span className="size-1.5 rounded-full bg-amber-600 animate-pulse" />
+                Proctoring Notice
+              </span>
+              <span className="text-[11px] font-semibold text-muted-foreground">Live Monitoring</span>
+            </div>
+            <p className="mt-1.5 text-sm font-semibold text-foreground leading-snug">
+              {message}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleDismiss}
+            aria-label="Dismiss proctoring warning"
+            className="shrink-0 rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        {/* Visual auto-close countdown bar */}
+        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-amber-500/20">
+          <div
+            className="h-full bg-gradient-to-r from-amber-500 to-red-500"
+            style={{
+              animation: "proctoring-countdown 7s linear forwards",
+            }}
+          />
+        </div>
+      </div>
+      <style>{`
+        @keyframes proctoring-countdown {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+      `}</style>
+    </aside>
   );
 }
 
@@ -404,6 +541,7 @@ export function ExamRunner({
 
   return (
     <div ref={examAreaRef} className="min-h-screen bg-surface">
+      <CameraMonitorReminder active={Boolean(started && !submitted)} />
       <header className="sticky top-0 z-30 border-b border-primary/10 bg-card/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-8">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">

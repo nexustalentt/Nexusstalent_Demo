@@ -77,3 +77,23 @@ export const deleteAdminJob = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+export const extractJobFromUrl = createServerFn({ method: "POST" })
+  .inputValidator((data: { url: string }) => {
+    return {
+      url: String(data?.url || "").trim(),
+    };
+  })
+  .handler(async ({ data }) => {
+    if (!data.url || !/^https?:\/\//i.test(data.url)) {
+      throw new Error("Please enter a valid URL starting with http:// or https://");
+    }
+    const { extractJobDetails } = await import("./job-extractor.server");
+    try {
+      const extracted = await extractJobDetails(data.url);
+      return { ok: true, data: extracted };
+    } catch (err: any) {
+      throw new Error(err?.message || "Failed to extract job details from the provided URL.");
+    }
+  });
+

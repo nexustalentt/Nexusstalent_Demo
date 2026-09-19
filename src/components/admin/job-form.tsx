@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { z } from "zod";
 import { format } from "date-fns";
-import { Loader2, CalendarIcon } from "lucide-react";
+import { Loader2, CalendarIcon, Sparkles, Globe, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { JobInsert, JobRow, FormRow } from "@/lib/admin-api";
 import { jobStatuses, slugify, type JobStatus } from "@/lib/job-utils";
+import { extractJobFromUrl } from "@/lib/admin-jobs.functions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -82,6 +85,61 @@ export function JobForm({
   const [skillsText, setSkillsText] = useState((job?.skills ?? []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [extractUrl, setExtractUrl] = useState("");
+  const [extractError, setExtractError] = useState<string | null>(null);
+  const [extractSuccess, setExtractSuccess] = useState<string | null>(null);
+
+  const extractMutation = useMutation({
+    mutationFn: async (url: string) => {
+      return extractJobFromUrl({ data: { url } });
+    },
+    onSuccess: (res) => {
+      if (!res.ok || !res.data) {
+        setExtractError("Unable to extract details from this URL. You can continue filling the form manually.");
+        toast.error("Unable to extract job details");
+        return;
+      }
+      const d = res.data;
+      setExtractError(null);
+
+      // Populate values intelligently without clobbering fields with empty/undefined
+      setValues((current) => {
+        const next = { ...current };
+        if (d.title) {
+          next.title = d.title;
+          if (!job) next.slug = slugify(d.title);
+        }
+        if (d.department) next.department = d.department;
+        if (d.location) next.location = d.location;
+        if (d.employment_type) next.employment_type = d.employment_type;
+        if (d.work_mode) next.work_mode = d.work_mode;
+        if (d.salary) next.salary = d.salary;
+        if (typeof d.experience_min === "number") next.experience_min = d.experience_min;
+        if (typeof d.experience_max === "number") next.experience_max = d.experience_max;
+        if (d.short_description) next.short_description = d.short_description;
+        if (d.description) next.description = d.description;
+        if (d.responsibilities) next.responsibilities = d.responsibilities;
+        if (d.requirements) next.requirements = d.requirements;
+        if (d.preferred_qualifications) next.preferred_qualifications = d.preferred_qualifications;
+        if (d.benefits) next.benefits = d.benefits;
+        if (d.google_form_url) next.google_form_url = d.google_form_url;
+        return next;
+      });
+
+      if (d.skills && d.skills.length > 0) {
+        setSkillsText(d.skills.join(", "));
+      }
+
+      setExtractSuccess("Job details extracted! Please review and edit the fields below before saving.");
+      toast.success("Job details extracted! Review the populated fields below.");
+    },
+    onError: (err: Error) => {
+      setExtractSuccess(null);
+      setExtractError(err.message || "Failed to extract job details. Please enter details manually.");
+      toast.error(err.message || "Failed to extract job details");
+    },
+  });
 
   function set<K extends keyof JobFormValues>(key: K, value: JobFormValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -191,6 +249,90 @@ export function JobForm({
           {formError}
         </div>
       ) : null}
+
+      <section className="rounded-2xl border border-accent/20 bg-accent/5 p-6 transition-colors">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex size-7 items-center justify-center rounded-lg bg-accent/15 text-accent">
+                <Sparkles className="size-4" />
+              </span>
+              <h2 className="font-bold text-primary">Job URL Auto-Extract</h2>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Paste a job posting URL (LinkedIn, Indeed, company careers page, etc.) to automatically populate the form fields below.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
+          <div className="relative flex-1">
+            <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <input
+              type="url"
+              value={extractUrl}
+              placeholder="https://example.com/careers/senior-software-engineer"
+              onChange={(e) => {
+                setExtractUrl(e.target.value);
+                if (extractError) setExtractError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const trimmed = extractUrl.trim();
+                  if (trimmed && !extractMutation.isPending) {
+                    setExtractError(null);
+                    setExtractSuccess(null);
+                    extractMutation.mutate(trimmed);
+                  }
+                }
+              }}
+              className="w-full rounded-lg border border-primary/10 bg-background pl-10 pr-4 py-2.5 text-sm text-primary outline-none transition-colors focus:border-accent"
+            />
+          </div>
+          <Button
+            type="button"
+            disabled={extractMutation.isPending || !extractUrl.trim()}
+            onClick={() => {
+              const trimmed = extractUrl.trim();
+              if (!trimmed) {
+                setExtractError("Please enter a valid job URL.");
+                return;
+              }
+              setExtractError(null);
+              setExtractSuccess(null);
+              extractMutation.mutate(trimmed);
+            }}
+            className="shrink-0 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent disabled:opacity-60"
+          >
+            {extractMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" />
+                Extracting…
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 size-4" />
+                Search &amp; Extract
+              </>
+            )}
+          </Button>
+        </div>
+
+        {extractError ? (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-xs font-semibold text-destructive">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>{extractError}</span>
+          </div>
+        ) : null}
+
+        {extractSuccess ? (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-success/30 bg-success/10 p-3 text-xs font-semibold text-success">
+            <CheckCircle2 className="size-4 shrink-0" />
+            <span>{extractSuccess}</span>
+          </div>
+        ) : null}
+      </section>
 
       <section className="rounded-2xl border border-primary/5 bg-card p-6">
         <h2 className="font-bold text-primary">Role basics</h2>
