@@ -18,11 +18,12 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { NexusLogo, NexusLogoNavIcon } from "@/components/brand/nexus-logo";
 
 const navItems = [
   { label: "Dashboard", to: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Jobs", to: "/admin/jobs", icon: Briefcase, exact: false },
-  { label: "Job Applies", to: "/admin/job-applies", icon: ClipboardCheck, exact: false },
+  { label: "Job Applies", to: "/admin/job-applies", icon: NexusLogoNavIcon, exact: false },
   { label: "Referrals", to: "/admin/referrals", icon: UserPlus, exact: false },
   { label: "Applications", to: "/admin/applications", icon: Users, exact: false },
 
@@ -64,7 +65,8 @@ export function AdminShell({
 
   const sidebar = (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex h-20 items-center px-6">
+      <div className="flex h-20 items-center gap-3 px-6">
+        <NexusLogo size={32} className="rounded-xl shadow-md" />
         <span className="text-lg font-bold tracking-tight text-sidebar-accent-foreground">
           NEXUS<span className="text-sidebar-primary">TALENT</span>
         </span>
@@ -146,11 +148,16 @@ export function AdminShell({
               >
                 <Menu className="size-4" aria-hidden="true" />
               </button>
-              <div>
-                <h1 className="text-xl font-bold text-primary">{title}</h1>
-                {description ? (
-                  <p className="text-sm text-muted-foreground">{description}</p>
-                ) : null}
+              <div className="flex items-center gap-3">
+                {title === "Job Applies" && (
+                  <NexusLogo size={32} showText={false} className="rounded-lg shadow-sm" />
+                )}
+                <div>
+                  <h1 className="text-xl font-bold text-primary">{title}</h1>
+                  {description ? (
+                    <p className="text-sm text-muted-foreground">{description}</p>
+                  ) : null}
+                </div>
               </div>
             </div>
             {actions ? <div className="flex items-center gap-2">{actions}</div> : null}

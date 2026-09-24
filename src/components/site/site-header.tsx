@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { NexusLogo } from "@/components/brand/nexus-logo";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -12,11 +13,16 @@ const navItems = [
   { label: "Zozii", to: "/zozii" },
 ] as const;
 
-
 export function SiteLogo({ className = "text-xl" }: { className?: string }) {
   return (
-    <Link to="/" className={`${className} font-bold tracking-tight text-primary`}>
-      NEXUS<span className="text-accent">TALENT</span>
+    <Link
+      to="/"
+      className={`inline-flex items-center gap-2.5 ${className} font-bold tracking-tight text-primary`}
+    >
+      <NexusLogo size={32} className="rounded-xl shadow-sm" />
+      <span>
+        NEXUS<span className="text-accent">TALENT</span>
+      </span>
     </Link>
   );
 }

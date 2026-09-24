@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Download, ExternalLink, FileText, Loader2, Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
+import { NexusLogo } from "@/components/brand/nexus-logo";
 import {
   adminJobsQuery,
   adminReferralsQuery,
@@ -160,18 +161,24 @@ function AdminReferralsPage() {
       }
     >
       {/* Sub-menu / Navigation tabs: Job Applies | Referrals */}
-      <div className="mb-6 flex border-b border-primary/10">
+      <div className="mb-6 flex flex-wrap items-center gap-2 border-b border-primary/10 pb-4">
         <Link
           to="/admin/job-applies"
-          className="border-b-2 border-transparent px-5 py-3 text-sm font-medium text-muted-foreground hover:border-primary/20 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-2.5 rounded-xl border border-transparent px-4 py-2 text-sm font-medium text-muted-foreground hover:border-primary/10 hover:bg-card hover:text-primary transition-all group"
         >
-          Job Applies
+          <NexusLogo
+            size={22}
+            showText={false}
+            className="rounded-md shadow-sm opacity-80 group-hover:opacity-100"
+          />
+          <span>Job Applies</span>
         </Link>
         <Link
           to="/admin/referrals"
-          className="border-b-2 border-accent px-5 py-3 text-sm font-bold text-accent"
+          className="inline-flex items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-4 py-2 text-sm font-bold text-accent shadow-sm transition-all"
         >
-          Referrals
+          <UserPlus className="size-4" />
+          <span>Referrals</span>
         </Link>
       </div>
 
