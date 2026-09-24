@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, UserPlus } from "lucide-react";
 import { PublicShell } from "@/components/site/public-shell";
+import { ReferralModal } from "@/components/site/referral-modal";
 import { publicJobQuery } from "@/lib/queries";
 import { experienceLabel, formatDate, isValidHttpUrl, toLines } from "@/lib/job-utils";
 
@@ -14,7 +16,10 @@ export const Route = createFileRoute("/careers/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Position unavailable — Nexus Talent" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Position unavailable — Nexus Talent" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
     const title = `${loaderData.title}${loaderData.location ? ` — ${loaderData.location}` : ""} | Nexus Talent Careers`;
@@ -86,6 +91,7 @@ function Section({ title, body }: { title: string; body?: string | null }) {
 function JobDetailPage() {
   const { slug } = Route.useParams();
   const { data: job } = useSuspenseQuery(publicJobQuery(slug));
+  const [referralOpen, setReferralOpen] = useState(false);
 
   if (!job) return <JobNotFound />;
 
@@ -132,9 +138,16 @@ function JobDetailPage() {
               Apply Now <ExternalLink className="size-4" aria-hidden="true" />
             </a>
           )}
+          <button
+            type="button"
+            onClick={() => setReferralOpen(true)}
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-primary/20 bg-background px-6 py-3.5 text-sm font-bold text-primary transition-all hover:border-accent hover:text-accent hover:bg-accent/5 hover:scale-[1.01] cursor-pointer"
+          >
+            <UserPlus className="size-4" aria-hidden="true" />
+            Refer Someone
+          </button>
         </>
       ) : (
-
         <div className="mt-3 rounded-xl border border-dashed border-primary/15 bg-surface p-4">
           <p className="text-sm font-semibold text-primary">
             Applications are currently unavailable for this position.
@@ -212,6 +225,11 @@ function JobDetailPage() {
           </aside>
         </div>
       </section>
+      <ReferralModal
+        open={referralOpen}
+        onOpenChange={setReferralOpen}
+        job={{ id: job.id, title: job.title, location: job.location }}
+      />
     </PublicShell>
   );
 }

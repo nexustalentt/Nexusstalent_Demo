@@ -24,9 +24,7 @@ export const adminJobQuery = (id: string) =>
   queryOptions({
     queryKey: ["admin", "job", id],
     queryFn: async () =>
-      unwrap<JobRow | null>(
-        await supabase.from("jobs").select("*").eq("id", id).maybeSingle(),
-      ),
+      unwrap<JobRow | null>(await supabase.from("jobs").select("*").eq("id", id).maybeSingle()),
   });
 
 export const adminApplicationsQuery = queryOptions({
@@ -45,7 +43,11 @@ export const adminApplicationQuery = (id: string) =>
     queryKey: ["admin", "application", id],
     queryFn: async () =>
       unwrap(
-        await supabase.from("applications").select("*, jobs(title, slug)").eq("id", id).maybeSingle(),
+        await supabase
+          .from("applications")
+          .select("*, jobs(title, slug)")
+          .eq("id", id)
+          .maybeSingle(),
       ) as (ApplicationRow & { jobs: { title: string; slug: string } | null }) | null,
   });
 
@@ -92,7 +94,11 @@ export const jobApplyQuery = (id: string) =>
     queryKey: ["admin", "job-apply", id],
     queryFn: async () =>
       unwrap(
-        await supabase.from("job_applications").select("*, jobs(title, slug)").eq("id", id).maybeSingle(),
+        await supabase
+          .from("job_applications")
+          .select("*, jobs(title, slug)")
+          .eq("id", id)
+          .maybeSingle(),
       ) as (JobApplyRow & { jobs: { title: string; slug: string } | null }) | null,
   });
 
@@ -109,14 +115,56 @@ export async function deleteJobApply(id: string) {
   if (error) throw new Error(error.message);
 }
 
+export type JobReferralRow = Database["public"]["Tables"]["job_referrals"]["Row"];
+
+export const adminReferralsQuery = queryOptions({
+  queryKey: ["admin", "referrals"],
+  queryFn: async () =>
+    unwrap(
+      await supabase
+        .from("job_referrals")
+        .select("*, jobs(title, slug)")
+        .order("created_at", { ascending: false }),
+    ) as (JobReferralRow & { jobs: { title: string; slug: string } | null })[],
+});
+
+export const adminReferralQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["admin", "referral", id],
+    queryFn: async () =>
+      unwrap(
+        await supabase
+          .from("job_referrals")
+          .select("*, jobs(title, slug)")
+          .eq("id", id)
+          .maybeSingle(),
+      ) as (JobReferralRow & { jobs: { title: string; slug: string } | null }) | null,
+  });
+
+export async function updateReferral(
+  id: string,
+  patch: Partial<Pick<JobReferralRow, "status" | "admin_notes">>,
+) {
+  const { error } = await supabase.from("job_referrals").update(patch).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteReferral(id: string) {
+  const { error } = await supabase.from("job_referrals").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export const auditLogsQuery = queryOptions({
   queryKey: ["admin", "audit"],
   queryFn: async () =>
     unwrap(
-      await supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(50),
+      await supabase
+        .from("audit_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50),
     ),
 });
-
 
 export async function recordAudit(
   action: string,

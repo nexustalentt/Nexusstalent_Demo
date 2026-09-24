@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as ApiPublicReferralsRouteImport } from './routes/api/public/referrals'
 import { Route as ApiPublicZoziiDownloadRouteImport } from './routes/api/public/zozii-download'
 import { Route as AuthenticatedAdminApplicationsIndexRouteImport } from './routes/_authenticated/admin.applications.index'
 import { Route as AuthenticatedAdminApplicationsIdRouteImport } from './routes/_authenticated/admin.applications.$id'
@@ -40,6 +41,7 @@ import { Route as AuthenticatedAdminJobAppliesIdRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminJobsIndexRouteImport } from './routes/_authenticated/admin.jobs.index'
 import { Route as AuthenticatedAdminJobsIdRouteImport } from './routes/_authenticated/admin.jobs.$id'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
+import { Route as AuthenticatedAdminReferralsIndexRouteImport } from './routes/_authenticated/admin.referrals.index'
 import { Route as ApiPublicApplicationsIntakeRouteImport } from './routes/api/public/applications/intake'
 import { Route as AuthenticatedAdminExamsAttemptsAttemptIdRouteImport } from './routes/_authenticated/admin.exams.attempts.$attemptId'
 import { Route as AuthenticatedAdminExamsSubmissionsExamIdRouteImport } from './routes/_authenticated/admin.exams.submissions.$examId'
@@ -145,6 +147,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/admin/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicReferralsRoute = ApiPublicReferralsRouteImport.update({
+  id: '/api/public/referrals',
+  path: '/api/public/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicZoziiDownloadRoute = ApiPublicZoziiDownloadRouteImport.update({
   id: '/api/public/zozii-download',
   path: '/api/public/zozii-download',
@@ -210,6 +217,12 @@ const AuthenticatedAdminJobsNewRoute =
     path: '/admin/jobs/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminReferralsIndexRoute =
+  AuthenticatedAdminReferralsIndexRouteImport.update({
+    id: '/admin/referrals/',
+    path: '/admin/referrals/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicApplicationsIntakeRoute =
   ApiPublicApplicationsIntakeRouteImport.update({
     id: '/api/public/applications/intake',
@@ -248,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/referrals': typeof ApiPublicReferralsRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -261,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
   '/admin/job-applies/': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
+  '/admin/referrals/': typeof AuthenticatedAdminReferralsIndexRoute
   '/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
 }
@@ -283,6 +298,7 @@ export interface FileRoutesByTo {
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/referrals': typeof ApiPublicReferralsRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -296,6 +312,7 @@ export interface FileRoutesByTo {
   '/admin/exams': typeof AuthenticatedAdminExamsIndexRoute
   '/admin/job-applies': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsIndexRoute
+  '/admin/referrals': typeof AuthenticatedAdminReferralsIndexRoute
   '/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
 }
@@ -320,6 +337,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/referrals': typeof ApiPublicReferralsRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -333,6 +351,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
   '/_authenticated/admin/job-applies/': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/_authenticated/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
+  '/_authenticated/admin/referrals/': typeof AuthenticatedAdminReferralsIndexRoute
   '/_authenticated/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/_authenticated/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
 }
@@ -357,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin/forms'
     | '/admin/profile'
     | '/admin/settings'
+    | '/api/public/referrals'
     | '/api/public/zozii-download'
     | '/admin/'
     | '/admin/applications/$id'
@@ -370,6 +390,7 @@ export interface FileRouteTypes {
     | '/admin/exams/'
     | '/admin/job-applies/'
     | '/admin/jobs/'
+    | '/admin/referrals/'
     | '/admin/exams/attempts/$attemptId'
     | '/admin/exams/submissions/$examId'
   fileRoutesByTo: FileRoutesByTo
@@ -392,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/forms'
     | '/admin/profile'
     | '/admin/settings'
+    | '/api/public/referrals'
     | '/api/public/zozii-download'
     | '/admin'
     | '/admin/applications/$id'
@@ -405,6 +427,7 @@ export interface FileRouteTypes {
     | '/admin/exams'
     | '/admin/job-applies'
     | '/admin/jobs'
+    | '/admin/referrals'
     | '/admin/exams/attempts/$attemptId'
     | '/admin/exams/submissions/$examId'
   id:
@@ -428,6 +451,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/profile'
     | '/_authenticated/admin/settings'
+    | '/api/public/referrals'
     | '/api/public/zozii-download'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/applications/$id'
@@ -441,6 +465,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/exams/'
     | '/_authenticated/admin/job-applies/'
     | '/_authenticated/admin/jobs/'
+    | '/_authenticated/admin/referrals/'
     | '/_authenticated/admin/exams/attempts/$attemptId'
     | '/_authenticated/admin/exams/submissions/$examId'
   fileRoutesById: FileRoutesById
@@ -462,6 +487,7 @@ export interface RootRouteChildren {
   ExamTokenRoute: typeof ExamTokenRoute
   CareersIndexRoute: typeof CareersIndexRoute
   ExamIndexRoute: typeof ExamIndexRoute
+  ApiPublicReferralsRoute: typeof ApiPublicReferralsRoute
   ApiPublicZoziiDownloadRoute: typeof ApiPublicZoziiDownloadRoute
   ApiPublicApplicationsIntakeRoute: typeof ApiPublicApplicationsIntakeRoute
 }
@@ -608,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/referrals': {
+      id: '/api/public/referrals'
+      path: '/api/public/referrals'
+      fullPath: '/api/public/referrals'
+      preLoaderRoute: typeof ApiPublicReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/zozii-download': {
       id: '/api/public/zozii-download'
       path: '/api/public/zozii-download'
@@ -685,6 +718,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/referrals/': {
+      id: '/_authenticated/admin/referrals/'
+      path: '/admin/referrals'
+      fullPath: '/admin/referrals/'
+      preLoaderRoute: typeof AuthenticatedAdminReferralsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/applications/intake': {
       id: '/api/public/applications/intake'
       path: '/api/public/applications/intake'
@@ -724,6 +764,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminExamsIndexRoute: typeof AuthenticatedAdminExamsIndexRoute
   AuthenticatedAdminJobAppliesIndexRoute: typeof AuthenticatedAdminJobAppliesIndexRoute
   AuthenticatedAdminJobsIndexRoute: typeof AuthenticatedAdminJobsIndexRoute
+  AuthenticatedAdminReferralsIndexRoute: typeof AuthenticatedAdminReferralsIndexRoute
   AuthenticatedAdminExamsAttemptsAttemptIdRoute: typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   AuthenticatedAdminExamsSubmissionsExamIdRoute: typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
 }
@@ -745,6 +786,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminJobAppliesIndexRoute:
     AuthenticatedAdminJobAppliesIndexRoute,
   AuthenticatedAdminJobsIndexRoute: AuthenticatedAdminJobsIndexRoute,
+  AuthenticatedAdminReferralsIndexRoute: AuthenticatedAdminReferralsIndexRoute,
   AuthenticatedAdminExamsAttemptsAttemptIdRoute:
     AuthenticatedAdminExamsAttemptsAttemptIdRoute,
   AuthenticatedAdminExamsSubmissionsExamIdRoute:
@@ -771,6 +813,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExamTokenRoute: ExamTokenRoute,
   CareersIndexRoute: CareersIndexRoute,
   ExamIndexRoute: ExamIndexRoute,
+  ApiPublicReferralsRoute: ApiPublicReferralsRoute,
   ApiPublicZoziiDownloadRoute: ApiPublicZoziiDownloadRoute,
   ApiPublicApplicationsIntakeRoute: ApiPublicApplicationsIntakeRoute,
 }

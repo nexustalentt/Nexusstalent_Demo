@@ -5,10 +5,7 @@ import { Download } from "lucide-react";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import { adminJobsQuery, jobAppliesQuery } from "@/lib/admin-api";
 import { formatDate } from "@/lib/job-utils";
-import {
-  jobApplicationStatuses,
-  type JobApplicationStatus,
-} from "@/lib/job-application-schema";
+import { jobApplicationStatuses, type JobApplicationStatus } from "@/lib/job-application-schema";
 
 export const Route = createFileRoute("/_authenticated/admin/job-applies/")({
   head: () => ({
@@ -102,6 +99,22 @@ function JobAppliesPage() {
         </button>
       }
     >
+      {/* Sub-menu / Navigation tabs: Job Applies | Referrals */}
+      <div className="mb-6 flex border-b border-primary/10">
+        <Link
+          to="/admin/job-applies"
+          className="border-b-2 border-accent px-5 py-3 text-sm font-bold text-accent"
+        >
+          Job Applies
+        </Link>
+        <Link
+          to="/admin/referrals"
+          className="border-b-2 border-transparent px-5 py-3 text-sm font-medium text-muted-foreground hover:border-primary/20 hover:text-primary transition-colors"
+        >
+          Referrals
+        </Link>
+      </div>
+
       <div className="flex flex-wrap gap-3">
         <input
           value={search}
@@ -196,7 +209,9 @@ function JobAppliesPage() {
                     <td className="px-5 py-4">
                       <StatusPill status={row.status} />
                     </td>
-                    <td className="px-5 py-4 text-muted-foreground">{formatDate(row.created_at)}</td>
+                    <td className="px-5 py-4 text-muted-foreground">
+                      {formatDate(row.created_at)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
