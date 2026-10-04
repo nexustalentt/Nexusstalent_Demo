@@ -270,6 +270,10 @@ function HomePage() {
                   </Link>
                   <Link
                     to="/contact"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.dispatchEvent(new CustomEvent("open-talk-modal"));
+                    }}
                     className="rounded-full border border-primary/15 bg-card px-8 py-4 text-sm font-bold text-primary transition-colors hover:bg-surface"
                   >
                     Talk to Us
@@ -804,6 +808,10 @@ function HomePage() {
                 </Link>
                 <Link
                   to="/contact"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.dispatchEvent(new CustomEvent("open-talk-modal"));
+                  }}
                   className="inline-flex items-center justify-center rounded-full border border-primary-foreground/20 px-8 py-4 text-sm font-bold text-primary-foreground transition-colors hover:bg-white/10"
                 >
                   Talk to Our Team

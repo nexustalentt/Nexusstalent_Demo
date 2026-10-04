@@ -1,13 +1,25 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
+import { TalkToUsModal, FloatingTalkButton } from "./talk-to-us-modal";
 
 export function PublicShell({ children }: { children: ReactNode }) {
+  const [talkOpen, setTalkOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpen = () => setTalkOpen(true);
+    window.addEventListener("open-talk-modal", handleOpen);
+    return () => window.removeEventListener("open-talk-modal", handleOpen);
+  }, []);
+
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+    <div className="flex min-h-screen flex-col bg-background relative selection:bg-accent/20">
+      <SiteHeader onOpenTalk={() => setTalkOpen(true)} />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      {/* Floating Talk to Us button & Interactive Agent Popup */}
+      <FloatingTalkButton onOpen={() => setTalkOpen(true)} />
+      <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />
     </div>
   );
 }
