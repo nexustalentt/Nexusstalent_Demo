@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, MessageSquare } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { NexusLogo } from "@/components/brand/nexus-logo";
 
@@ -31,13 +31,6 @@ export function SiteLogo({ className = "text-xl" }: { className?: string }) {
 export function SiteHeader({ onOpenTalk }: { onOpenTalk?: () => void }) {
   const [open, setOpen] = useState(false);
 
-  const handleTalkClick = (e: React.MouseEvent) => {
-    if (onOpenTalk) {
-      e.preventDefault();
-      onOpenTalk();
-    }
-  };
-
   return (
     <header className="sticky top-0 z-40 border-b border-primary/5 bg-background/90 backdrop-blur-md">
       <div className="container-page flex h-16 sm:h-20 items-center justify-between gap-4">
@@ -61,20 +54,10 @@ export function SiteHeader({ onOpenTalk }: { onOpenTalk?: () => void }) {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             to="/contact"
-            className="hidden px-3 py-2 text-sm font-semibold text-primary transition-colors hover:text-accent md:block"
+            className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-all hover:bg-accent sm:px-5 sm:py-2.5 sm:text-sm shadow-sm"
           >
             Contact Us
           </Link>
-
-          {/* Talk to Us Button with Responsive Sizing */}
-          <button
-            type="button"
-            onClick={handleTalkClick}
-            className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-accent sm:px-5 sm:py-2.5 sm:text-sm shadow-sm"
-          >
-            <MessageSquare className="size-3.5 hidden xs:inline-block" />
-            <span>Talk to Us</span>
-          </button>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -102,21 +85,10 @@ export function SiteHeader({ onOpenTalk }: { onOpenTalk?: () => void }) {
                   <Link
                     to="/contact"
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-surface"
+                    className="flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-accent transition-colors"
                   >
                     Contact Us
                   </Link>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      setOpen(false);
-                      handleTalkClick(e);
-                    }}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-xs font-bold text-accent-foreground shadow-accent"
-                  >
-                    <MessageSquare className="size-4" />
-                    <span>Talk to Us / Direct WhatsApp</span>
-                  </button>
                 </div>
               </div>
             </SheetContent>

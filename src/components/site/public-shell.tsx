@@ -18,7 +18,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
       <SiteFooter />
       {/* Floating Talk to Us button & Interactive Agent Popup */}
-      <FloatingTalkButton onOpen={() => setTalkOpen(true)} />
+      <FloatingTalkButton onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
       <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />
     </div>
   );
