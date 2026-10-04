@@ -188,9 +188,7 @@ function ApplyPage() {
       job_id: job.id,
       year_of_passing: values["year_of_passing"] ? Number(values["year_of_passing"]) : Number.NaN,
       willing_to_relocate:
-        values["willing_to_relocate"] === ""
-          ? undefined
-          : values["willing_to_relocate"] === "yes",
+        values["willing_to_relocate"] === "" ? undefined : values["willing_to_relocate"] === "yes",
       resume_name: resume?.name ?? "",
       resume_base64: resume?.base64 ?? "",
     };
@@ -309,13 +307,21 @@ function ApplyPage() {
             certifications: parsed.data.certifications || null,
             experience_type: parsed.data.experience_type,
             total_experience:
-              parsed.data.experience_type === "fresher" ? null : parsed.data.total_experience || null,
+              parsed.data.experience_type === "fresher"
+                ? null
+                : parsed.data.total_experience || null,
             relevant_experience:
-              parsed.data.experience_type === "fresher" ? null : parsed.data.relevant_experience || null,
+              parsed.data.experience_type === "fresher"
+                ? null
+                : parsed.data.relevant_experience || null,
             current_company:
-              parsed.data.experience_type === "fresher" ? null : parsed.data.current_company || null,
+              parsed.data.experience_type === "fresher"
+                ? null
+                : parsed.data.current_company || null,
             current_job_title:
-              parsed.data.experience_type === "fresher" ? null : parsed.data.current_job_title || null,
+              parsed.data.experience_type === "fresher"
+                ? null
+                : parsed.data.current_job_title || null,
             current_ctc:
               parsed.data.experience_type === "fresher" ? null : parsed.data.current_ctc || null,
             expected_ctc: parsed.data.expected_ctc || null,
@@ -334,7 +340,10 @@ function ApplyPage() {
           .single();
 
         if (insertError) {
-          if (insertError.code === "23505" || /duplicate|already exists/i.test(insertError.message)) {
+          if (
+            insertError.code === "23505" ||
+            /duplicate|already exists/i.test(insertError.message)
+          ) {
             setAlreadyExists(true);
             window.scrollTo({ top: 0, behavior: "smooth" });
             return;
@@ -347,7 +356,9 @@ function ApplyPage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (fallbackError) {
         const detail =
-          fallbackError instanceof Error && fallbackError.message ? ` (${fallbackError.message})` : "";
+          fallbackError instanceof Error && fallbackError.message
+            ? ` (${fallbackError.message})`
+            : "";
         setFormError(`Could not submit your application. Please try again.${detail}`);
       }
     } finally {
@@ -365,8 +376,8 @@ function ApplyPage() {
             <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden="true" />
             <h1 className="mt-5 text-2xl font-bold text-primary">Application already exists</h1>
             <p className="mt-3 text-muted-foreground">
-              Your application has already been received and is currently in our system. Our recruitment team
-              will review your profile and contact you if shortlisted.
+              Your application has already been received and is currently in our system. Our
+              recruitment team will review your profile and contact you if shortlisted.
             </p>
             <Link
               to="/careers"
@@ -388,8 +399,8 @@ function ApplyPage() {
             <CheckCircle2 className="mx-auto size-12 text-success" aria-hidden="true" />
             <h1 className="mt-5 text-2xl font-bold text-primary">Application submitted</h1>
             <p className="mt-3 text-muted-foreground">
-              Your application has been submitted successfully. Our recruitment team will review your
-              profile and contact you if shortlisted.
+              Your application has been submitted successfully. Our recruitment team will review
+              your profile and contact you if shortlisted.
             </p>
             <p className="mt-4 text-sm font-semibold text-primary">
               Application ID: <span className="text-accent">{success}</span>
@@ -591,7 +602,12 @@ function ApplyPage() {
           <div className="rounded-2xl border border-primary/5 bg-card p-6">
             <h2 className="font-bold text-primary">Technical details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
-              <Field name="primary_skills" label="Primary technical skills" required errors={errors}>
+              <Field
+                name="primary_skills"
+                label="Primary technical skills"
+                required
+                errors={errors}
+              >
                 <input
                   id="primary_skills"
                   className={field}
@@ -741,7 +757,12 @@ function ApplyPage() {
             <h2 className="font-bold text-primary">Additional details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2">
-                <Field name="resume_name" label="Resume upload (PDF/DOC, max 5 MB)" required errors={errors}>
+                <Field
+                  name="resume_name"
+                  label="Resume upload (PDF/DOC, max 5 MB)"
+                  required
+                  errors={errors}
+                >
                   <label
                     htmlFor="resume"
                     className="mt-2 flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-primary/20 bg-background px-4 py-3 text-sm text-muted-foreground hover:border-accent"
@@ -825,7 +846,11 @@ function ApplyPage() {
                 </select>
               </Field>
               <div className="md:col-span-2">
-                <Field name="cover_letter" label="Cover letter / additional information" errors={errors}>
+                <Field
+                  name="cover_letter"
+                  label="Cover letter / additional information"
+                  errors={errors}
+                >
                   <textarea
                     id="cover_letter"
                     rows={4}

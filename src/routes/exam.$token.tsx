@@ -75,7 +75,6 @@ function ExamPage() {
     );
   }
 
-
   if (!sessionToken) {
     return <LoginCard token={token} title={intro.data.title} onAuthenticated={onAuthenticated} />;
   }
@@ -83,7 +82,11 @@ function ExamPage() {
   return (
     <ProctoredExam>
       {(onSubmitted) => (
-        <ExamRunner sessionToken={sessionToken} onSessionInvalid={signOut} onSubmitted={onSubmitted} />
+        <ExamRunner
+          sessionToken={sessionToken}
+          onSessionInvalid={signOut}
+          onSubmitted={onSubmitted}
+        />
       )}
     </ProctoredExam>
   );
@@ -113,7 +116,6 @@ function LoginCard({
     },
     onError: (mutationError: Error) => setError(mutationError.message),
   });
-
 
   return (
     <Shell>

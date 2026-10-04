@@ -118,7 +118,9 @@ function ExamBuilder() {
     getStoredCandidatePasswords(),
   );
   const [copiedCandidateField, setCopiedCandidateField] = useState<string | null>(null);
-  const [hiddenCandidatePasswords, setHiddenCandidatePasswords] = useState<Record<string, boolean>>({});
+  const [hiddenCandidatePasswords, setHiddenCandidatePasswords] = useState<Record<string, boolean>>(
+    {},
+  );
 
   async function copyCandidateText(text: string, fieldId: string) {
     try {
@@ -181,7 +183,10 @@ function ExamBuilder() {
         marks: draft.marks,
       };
       if (editing) {
-        const { error } = await supabase.from("exam_questions").update(payload).eq("id", editing.id);
+        const { error } = await supabase
+          .from("exam_questions")
+          .update(payload)
+          .eq("id", editing.id);
         if (error) throw new Error(error.message);
       } else {
         const position = await nextPosition(examId);
@@ -237,10 +242,12 @@ function ExamBuilder() {
   });
 
   const questionActionMutation = useMutation({
-    mutationFn: async (action:
-      | { type: "delete"; question: ExamQuestionRow }
-      | { type: "duplicate"; question: ExamQuestionRow }
-      | { type: "move"; question: ExamQuestionRow; direction: -1 | 1 }) => {
+    mutationFn: async (
+      action:
+        | { type: "delete"; question: ExamQuestionRow }
+        | { type: "duplicate"; question: ExamQuestionRow }
+        | { type: "move"; question: ExamQuestionRow; direction: -1 | 1 },
+    ) => {
       if (action.type === "delete") return deleteQuestion(action.question);
       if (action.type === "duplicate") return duplicateQuestion(action.question);
       return reorderQuestion(questions.data ?? [], action.question.id, action.direction);
@@ -250,8 +257,13 @@ function ExamBuilder() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: ({ target, status }: { target: ExamRow; status: "draft" | "published" | "closed" }) =>
-      setExamStatus(target, status),
+    mutationFn: ({
+      target,
+      status,
+    }: {
+      target: ExamRow;
+      status: "draft" | "published" | "closed";
+    }) => setExamStatus(target, status),
     onSuccess: () => {
       toast.success("Exam status updated");
       invalidate();
@@ -373,7 +385,9 @@ function ExamBuilder() {
       <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
         <div className="space-y-6">
           <section className="space-y-5 rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-primary">Exam details</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+              Exam details
+            </h2>
             <div>
               <label className={labelClass} htmlFor="exam-title">
                 Exam name
@@ -474,11 +488,11 @@ function ExamBuilder() {
           </div>
 
           {tab === "questions" ? (
-          <QuestionBankImport
-            existingCount={list.length}
-            pending={bulkImportMutation.isPending}
-            onImport={(items, mode) => bulkImportMutation.mutate({ items, mode })}
-          />
+            <QuestionBankImport
+              existingCount={list.length}
+              pending={bulkImportMutation.isPending}
+              onImport={(items, mode) => bulkImportMutation.mutate({ items, mode })}
+            />
           ) : null}
 
           {tab === "questions" && sectionGroups.length > 0 ? (
@@ -504,193 +518,203 @@ function ExamBuilder() {
           ) : null}
 
           {tab === "questions" ? (
-          <section className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
-                Questions ({list.length})
-              </h2>
-              {!adding && !editing ? (
+            <section className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                  Questions ({list.length})
+                </h2>
+                {!adding && !editing ? (
+                  <button
+                    type="button"
+                    onClick={() => setAdding(true)}
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+                  >
+                    <Plus className="size-4" aria-hidden="true" /> Add Question
+                  </button>
+                ) : null}
+              </div>
+
+              {adding || editing ? (
+                <QuestionEditor
+                  question={editing}
+                  pending={saveQuestionMutation.isPending}
+                  onCancel={() => {
+                    setAdding(false);
+                    setEditing(null);
+                  }}
+                  onSave={(draft) => saveQuestionMutation.mutate(draft)}
+                />
+              ) : null}
+
+              {questions.isLoading ? <LoadingBlock rows={2} /> : null}
+              {list.length === 0 && !adding ? (
+                <EmptyState
+                  title="No questions yet"
+                  hint="Add your first question to build the exam."
+                />
+              ) : null}
+
+              <ol className="space-y-3">
+                {list.map((question, index) => (
+                  <li key={question.id} className="rounded-2xl border border-primary/5 bg-card p-5">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          {index + 1}. {normalizeSection(question.section)} ·{" "}
+                          {questionTypeLabel(question.question_type)} · {Number(question.marks)}{" "}
+                          {Number(question.marks) === 1 ? "mark" : "marks"}
+                        </p>
+                        <p className="mt-1 font-semibold text-primary">{question.prompt}</p>
+                        {Array.isArray(question.options) && question.options.length > 0 ? (
+                          <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                            {(question.options as string[]).map((option, optionIndex) => {
+                              const correct = Array.isArray(question.correct_options)
+                                ? (question.correct_options as number[]).map(Number)
+                                : [];
+                              return (
+                                <li key={optionIndex}>
+                                  {correct.includes(optionIndex) ? "●" : "○"} {option}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        ) : null}
+                        {question.expected_answer ? (
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Expected: {question.expected_answer}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          aria-label="Move up"
+                          onClick={() =>
+                            questionActionMutation.mutate({ type: "move", question, direction: -1 })
+                          }
+                          className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
+                        >
+                          <ArrowUp className="size-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Move down"
+                          onClick={() =>
+                            questionActionMutation.mutate({ type: "move", question, direction: 1 })
+                          }
+                          className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
+                        >
+                          <ArrowDown className="size-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Duplicate question"
+                          onClick={() =>
+                            questionActionMutation.mutate({ type: "duplicate", question })
+                          }
+                          className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
+                        >
+                          <Copy className="size-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAdding(false);
+                            setEditing(question);
+                          }}
+                          className="rounded-lg border border-primary/10 px-3 py-2 text-xs font-bold text-primary hover:border-accent hover:text-accent"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Delete question"
+                          onClick={() => {
+                            if (window.confirm("Delete this question?")) {
+                              questionActionMutation.mutate({ type: "delete", question });
+                            }
+                          }}
+                          className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="size-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : (
+            <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                  Answer key ({list.length})
+                </h2>
                 <button
                   type="button"
-                  onClick={() => setAdding(true)}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      list
+                        .map((question, index) => `${index + 1} - ${answerLetters(question)}`)
+                        .join("\n"),
+                    );
+                    toast.success("Answer key copied");
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-accent hover:text-accent"
                 >
-                  <Plus className="size-4" aria-hidden="true" /> Add Question
+                  <Copy className="size-4" aria-hidden="true" /> Copy answer key
                 </button>
-              ) : null}
-            </div>
-
-            {adding || editing ? (
-              <QuestionEditor
-                question={editing}
-                pending={saveQuestionMutation.isPending}
-                onCancel={() => {
-                  setAdding(false);
-                  setEditing(null);
-                }}
-                onSave={(draft) => saveQuestionMutation.mutate(draft)}
-              />
-            ) : null}
-
-            {questions.isLoading ? <LoadingBlock rows={2} /> : null}
-            {list.length === 0 && !adding ? (
-              <EmptyState title="No questions yet" hint="Add your first question to build the exam." />
-            ) : null}
-
-            <ol className="space-y-3">
-              {list.map((question, index) => (
-                <li key={question.id} className="rounded-2xl border border-primary/5 bg-card p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        {index + 1}. {normalizeSection(question.section)} ·{" "}
-                        {questionTypeLabel(question.question_type)} ·{" "}
-                        {Number(question.marks)} {Number(question.marks) === 1 ? "mark" : "marks"}
-                      </p>
-                      <p className="mt-1 font-semibold text-primary">{question.prompt}</p>
-                      {Array.isArray(question.options) && question.options.length > 0 ? (
-                        <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                          {(question.options as string[]).map((option, optionIndex) => {
-                            const correct = Array.isArray(question.correct_options)
-                              ? (question.correct_options as number[]).map(Number)
-                              : [];
-                            return (
-                              <li key={optionIndex}>
-                                {correct.includes(optionIndex) ? "●" : "○"} {option}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      ) : null}
-                      {question.expected_answer ? (
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          Expected: {question.expected_answer}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        aria-label="Move up"
-                        onClick={() =>
-                          questionActionMutation.mutate({ type: "move", question, direction: -1 })
-                        }
-                        className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
-                      >
-                        <ArrowUp className="size-4" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="Move down"
-                        onClick={() =>
-                          questionActionMutation.mutate({ type: "move", question, direction: 1 })
-                        }
-                        className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
-                      >
-                        <ArrowDown className="size-4" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="Duplicate question"
-                        onClick={() => questionActionMutation.mutate({ type: "duplicate", question })}
-                        className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-accent hover:text-accent"
-                      >
-                        <Copy className="size-4" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAdding(false);
-                          setEditing(question);
-                        }}
-                        className="rounded-lg border border-primary/10 px-3 py-2 text-xs font-bold text-primary hover:border-accent hover:text-accent"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="Delete question"
-                        onClick={() => {
-                          if (window.confirm("Delete this question?")) {
-                            questionActionMutation.mutate({ type: "delete", question });
-                          }
-                        }}
-                        className="rounded-lg border border-primary/10 p-2 text-muted-foreground hover:border-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="size-4" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-          ) : (
-          <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
-                Answer key ({list.length})
-              </h2>
-              <button
-                type="button"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(
-                    list
-                      .map((question, index) => `${index + 1} - ${answerLetters(question)}`)
-                      .join("\n"),
-                  );
-                  toast.success("Answer key copied");
-                }}
-                className="inline-flex items-center gap-2 rounded-full border border-primary/10 px-5 py-2.5 text-sm font-semibold text-primary hover:border-accent hover:text-accent"
-              >
-                <Copy className="size-4" aria-hidden="true" /> Copy answer key
-              </button>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Candidates never see this key — it stays inside the admin portal.
-            </p>
-            {list.length === 0 ? (
-              <EmptyState title="No questions yet" hint="Paste a question bank to generate the key." />
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-primary/10 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      <th className="py-2 pr-4">Question</th>
-                      <th className="py-2 pr-4">Section</th>
-                      <th className="py-2 pr-4">Question text</th>
-                      <th className="py-2 pr-4">Correct answer</th>
-                      <th className="py-2">Marks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {list.map((question, index) => (
-                      <tr key={question.id} className="border-b border-primary/5">
-                        <td className="py-2.5 pr-4 font-bold text-primary">{index + 1}</td>
-                        <td className="py-2.5 pr-4 text-muted-foreground">
-                          {normalizeSection(question.section)}
-                        </td>
-                        <td className="max-w-md truncate py-2.5 pr-4 text-muted-foreground">
-                          {question.prompt}
-                        </td>
-                        <td className="py-2.5 pr-4 font-bold text-accent">
-                          {answerLetters(question)}
-                        </td>
-                        <td className="py-2.5 text-muted-foreground">{Number(question.marks)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
-            )}
-          </section>
+              <p className="text-sm text-muted-foreground">
+                Candidates never see this key — it stays inside the admin portal.
+              </p>
+              {list.length === 0 ? (
+                <EmptyState
+                  title="No questions yet"
+                  hint="Paste a question bank to generate the key."
+                />
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-primary/10 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        <th className="py-2 pr-4">Question</th>
+                        <th className="py-2 pr-4">Section</th>
+                        <th className="py-2 pr-4">Question text</th>
+                        <th className="py-2 pr-4">Correct answer</th>
+                        <th className="py-2">Marks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {list.map((question, index) => (
+                        <tr key={question.id} className="border-b border-primary/5">
+                          <td className="py-2.5 pr-4 font-bold text-primary">{index + 1}</td>
+                          <td className="py-2.5 pr-4 text-muted-foreground">
+                            {normalizeSection(question.section)}
+                          </td>
+                          <td className="max-w-md truncate py-2.5 pr-4 text-muted-foreground">
+                            {question.prompt}
+                          </td>
+                          <td className="py-2.5 pr-4 font-bold text-accent">
+                            {answerLetters(question)}
+                          </td>
+                          <td className="py-2.5 text-muted-foreground">{Number(question.marks)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
           )}
         </div>
 
         <aside className="space-y-6">
           <section className="space-y-4 rounded-2xl border border-primary/5 bg-card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">Publishing</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                Publishing
+              </h2>
               <StatusPill status={exam.data.status} />
             </div>
             <p className="text-sm text-muted-foreground">
@@ -893,9 +917,13 @@ function ExamBuilder() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono font-bold text-primary">{candidate.username}</span>
+                          <span className="font-mono font-bold text-primary">
+                            {candidate.username}
+                          </span>
                           {candidate.full_name ? (
-                            <span className="text-xs text-muted-foreground">({candidate.full_name})</span>
+                            <span className="text-xs text-muted-foreground">
+                              ({candidate.full_name})
+                            </span>
                           ) : null}
                         </div>
 
@@ -903,7 +931,12 @@ function ExamBuilder() {
                         <div className="mt-1.5 flex items-center gap-1.5 flex-wrap text-xs">
                           <span className="text-muted-foreground font-medium">Password:</span>
                           <span className="font-mono font-bold text-foreground bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
-                            {shown ? (isHidden ? "••••••••" : shown) : (shownPasswords[candidate.username.toLowerCase()] ?? "not stored yet")}
+                            {shown
+                              ? isHidden
+                                ? "••••••••"
+                                : shown
+                              : (shownPasswords[candidate.username.toLowerCase()] ??
+                                "not stored yet")}
                           </span>
                           {shown ? (
                             <>
@@ -918,7 +951,11 @@ function ExamBuilder() {
                                 className="p-1 text-muted-foreground hover:text-foreground"
                                 title={isHidden ? "Show password" : "Hide password"}
                               >
-                                {isHidden ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
+                                {isHidden ? (
+                                  <Eye className="size-3.5" />
+                                ) : (
+                                  <EyeOff className="size-3.5" />
+                                )}
                               </button>
                               <button
                                 type="button"
@@ -975,7 +1012,9 @@ function ExamBuilder() {
                     <div className="mt-2.5 pt-2 border-t border-primary/5 flex items-center justify-between">
                       <button
                         type="button"
-                        onClick={() => void copyCandidateText(candidateEmailText, `all-${candidate.id}`)}
+                        onClick={() =>
+                          void copyCandidateText(candidateEmailText, `all-${candidate.id}`)
+                        }
                         className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent px-3 py-1 text-xs font-bold transition-colors"
                         title="Copy all candidate assessment credentials"
                       >
@@ -991,11 +1030,15 @@ function ExamBuilder() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => void copyCandidateText(candidate.username, `user-${candidate.id}`)}
+                        onClick={() =>
+                          void copyCandidateText(candidate.username, `user-${candidate.id}`)
+                        }
                         className="text-xs text-muted-foreground hover:text-foreground"
                         title="Copy username only"
                       >
-                        {copiedCandidateField === `user-${candidate.id}` ? "User copied" : "Copy username"}
+                        {copiedCandidateField === `user-${candidate.id}`
+                          ? "User copied"
+                          : "Copy username"}
                       </button>
                     </div>
                   </li>
@@ -1008,7 +1051,6 @@ function ExamBuilder() {
               password, window and time limit. Candidates can also sign in from the public Exam page
               with just this username and password.
             </p>
-
           </section>
         </aside>
       </div>

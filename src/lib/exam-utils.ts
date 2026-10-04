@@ -1,9 +1,5 @@
 export type QuestionType =
-  | "multiple_choice"
-  | "multiple_select"
-  | "true_false"
-  | "short_answer"
-  | "long_answer";
+  "multiple_choice" | "multiple_select" | "true_false" | "short_answer" | "long_answer";
 
 export const questionTypes: { value: QuestionType; label: string; hint: string }[] = [
   { value: "multiple_choice", label: "Multiple Choice", hint: "One correct option" },
@@ -72,7 +68,9 @@ export function normalizeSection(value?: string | null) {
 export type SectionGroup<T> = { name: string; items: T[]; startIndex: number };
 
 /** Groups questions by section, preserving their saved order. */
-export function groupBySection<T extends { section?: string | null }>(items: T[]): SectionGroup<T>[] {
+export function groupBySection<T extends { section?: string | null }>(
+  items: T[],
+): SectionGroup<T>[] {
   const groups: SectionGroup<T>[] = [];
   items.forEach((item, index) => {
     const name = normalizeSection(item.section);

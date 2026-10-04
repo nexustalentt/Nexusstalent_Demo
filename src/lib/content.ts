@@ -164,49 +164,85 @@ export const digitalServices: DigitalServiceItem[] = [
     id: "business-websites",
     title: "Business Website Development",
     tagline: "High-performance & conversion-focused",
-    description: "Modern, responsive websites designed specifically for small businesses to showcase offerings and attract inbound customers.",
+    description:
+      "Modern, responsive websites designed specifically for small businesses to showcase offerings and attract inbound customers.",
     iconName: "Globe",
-    highlights: ["Custom domain setup", "Ultra-fast load speeds", "Lead capture forms", "Analytics ready"],
+    highlights: [
+      "Custom domain setup",
+      "Ultra-fast load speeds",
+      "Lead capture forms",
+      "Analytics ready",
+    ],
   },
   {
     id: "website-design",
     title: "Website Design",
     tagline: "Clean, brand-centric UI/UX",
-    description: "Clean, professional, and user-friendly designs that represent your brand and establish immediate credibility.",
+    description:
+      "Clean, professional, and user-friendly designs that represent your brand and establish immediate credibility.",
     iconName: "Layout",
-    highlights: ["Modern visual identity", "Intuitive navigation", "Accessible typography", "Engaging hero sections"],
+    highlights: [
+      "Modern visual identity",
+      "Intuitive navigation",
+      "Accessible typography",
+      "Engaging hero sections",
+    ],
   },
   {
     id: "mobile-friendly",
     title: "Mobile-Friendly Websites",
     tagline: "Flawless across all viewports",
-    description: "Websites that work smoothly across phones, tablets, and desktops with zero layout friction.",
+    description:
+      "Websites that work smoothly across phones, tablets, and desktops with zero layout friction.",
     iconName: "Smartphone",
-    highlights: ["Touch-optimized controls", "Adaptive images", "App-like fluid feel", "Cross-browser tested"],
+    highlights: [
+      "Touch-optimized controls",
+      "Adaptive images",
+      "App-like fluid feel",
+      "Cross-browser tested",
+    ],
   },
   {
     id: "seo-visibility",
     title: "SEO & Online Visibility",
     tagline: "Get discovered on search engines",
-    description: "Help your business improve its online presence and get discovered by local and global potential customers.",
+    description:
+      "Help your business improve its online presence and get discovered by local and global potential customers.",
     iconName: "Search",
-    highlights: ["On-page search optimization", "Google Business ready", "Structured schema markup", "Speed optimization"],
+    highlights: [
+      "On-page search optimization",
+      "Google Business ready",
+      "Structured schema markup",
+      "Speed optimization",
+    ],
   },
   {
     id: "growth-solutions",
     title: "Business Growth Solutions",
     tagline: "Drive enquiries and conversions",
-    description: "Digital solutions focused on generating more enquiries, customers, and opportunities through automated funnels.",
+    description:
+      "Digital solutions focused on generating more enquiries, customers, and opportunities through automated funnels.",
     iconName: "TrendingUp",
-    highlights: ["WhatsApp/Click-to-Call", "Lead notifications", "CRM & email integration", "Conversion tracking"],
+    highlights: [
+      "WhatsApp/Click-to-Call",
+      "Lead notifications",
+      "CRM & email integration",
+      "Conversion tracking",
+    ],
   },
   {
     id: "website-maintenance",
     title: "Website Maintenance",
     tagline: "Zero downtime peace of mind",
-    description: "Ongoing updates, security improvements, technical support, and content maintenance after launch.",
+    description:
+      "Ongoing updates, security improvements, technical support, and content maintenance after launch.",
     iconName: "ShieldCheck",
-    highlights: ["Routine backups", "Security patching", "Content updates on demand", "Priority technical help"],
+    highlights: [
+      "Routine backups",
+      "Security patching",
+      "Content updates on demand",
+      "Priority technical help",
+    ],
   },
 ];
 
@@ -225,7 +261,8 @@ export const builtProducts: ProductBuildItem[] = [
     id: "websites",
     title: "Websites",
     subtitle: "High-impact digital front doors",
-    description: "Professional business websites and conversion-focused landing pages engineered for speed, polish, and lead generation.",
+    description:
+      "Professional business websites and conversion-focused landing pages engineered for speed, polish, and lead generation.",
     iconName: "Monitor",
     deliverables: ["Landing Pages", "Corporate Portals", "Product Showcase", "Booking Microsites"],
     badge: "Fast Launch",
@@ -234,27 +271,45 @@ export const builtProducts: ProductBuildItem[] = [
     id: "web-apps",
     title: "Web Applications",
     subtitle: "Interactive cloud software",
-    description: "Custom web applications designed around business requirements, client portals, and administrative workflows.",
+    description:
+      "Custom web applications designed around business requirements, client portals, and administrative workflows.",
     iconName: "Layers",
-    deliverables: ["Customer Dashboards", "Internal Admin Tools", "SaaS MVPs", "Role-based Portals"],
+    deliverables: [
+      "Customer Dashboards",
+      "Internal Admin Tools",
+      "SaaS MVPs",
+      "Role-based Portals",
+    ],
     badge: "Scalable",
   },
   {
     id: "business-products",
     title: "Business Products",
     subtitle: "Turnkey digital utilities",
-    description: "Digital products and tools that solve specific operational friction, automate repetitive tasks, and unlock revenue.",
+    description:
+      "Digital products and tools that solve specific operational friction, automate repetitive tasks, and unlock revenue.",
     iconName: "Sparkles",
-    deliverables: ["Order & Booking Systems", "Inventory Trackers", "Custom Calculators", "Automated Workflows"],
+    deliverables: [
+      "Order & Booking Systems",
+      "Inventory Trackers",
+      "Custom Calculators",
+      "Automated Workflows",
+    ],
     badge: "Automation",
   },
   {
     id: "custom-solutions",
     title: "Custom Solutions",
     subtitle: "Tailored to your exact workflow",
-    description: "Technology solutions built according to your unique workflow, integrating with existing tools and databases.",
+    description:
+      "Technology solutions built according to your unique workflow, integrating with existing tools and databases.",
     iconName: "Cpu",
-    deliverables: ["API Integrations", "Database Architecture", "Legacy Modernization", "Proprietary Systems"],
+    deliverables: [
+      "API Integrations",
+      "Database Architecture",
+      "Legacy Modernization",
+      "Proprietary Systems",
+    ],
     badge: "Bespoke",
   },
 ];
@@ -274,8 +329,14 @@ export const targetAudiences: AudienceItem[] = [
     id: "restaurants-cafes",
     category: "Food & Hospitality",
     title: "Restaurants & Cafés",
-    description: "Menus, location mapping, contact details, table reservations, and an appetizing online presence that attracts diners.",
-    features: ["Interactive digital menus", "Table reservation links", "Direct calling & WhatsApp order links", "Google Maps embed & hours"],
+    description:
+      "Menus, location mapping, contact details, table reservations, and an appetizing online presence that attracts diners.",
+    features: [
+      "Interactive digital menus",
+      "Table reservation links",
+      "Direct calling & WhatsApp order links",
+      "Google Maps embed & hours",
+    ],
     iconName: "Utensils",
     accentColor: "from-amber-500/10 to-orange-500/10",
   },
@@ -283,8 +344,14 @@ export const targetAudiences: AudienceItem[] = [
     id: "local-businesses",
     category: "Services & Trade",
     title: "Local Businesses",
-    description: "Services, transparent pricing, project gallery, contact forms, and local SEO to become the go-to provider in your area.",
-    features: ["Service rate cards & catalogues", "Quote request forms", "Customer review showcases", "Neighborhood search optimization"],
+    description:
+      "Services, transparent pricing, project gallery, contact forms, and local SEO to become the go-to provider in your area.",
+    features: [
+      "Service rate cards & catalogues",
+      "Quote request forms",
+      "Customer review showcases",
+      "Neighborhood search optimization",
+    ],
     iconName: "Store",
     accentColor: "from-blue-500/10 to-cyan-500/10",
   },
@@ -292,8 +359,14 @@ export const targetAudiences: AudienceItem[] = [
     id: "startups",
     category: "New Ventures & Tech",
     title: "Startups & Emerging Brands",
-    description: "Professional landing pages and web apps to introduce breakthrough products, capture waitlists, and pitch to investors.",
-    features: ["High-converting waitlist funnels", "Interactive product demos", "Investor-grade brand design", "Modern responsive architecture"],
+    description:
+      "Professional landing pages and web apps to introduce breakthrough products, capture waitlists, and pitch to investors.",
+    features: [
+      "High-converting waitlist funnels",
+      "Interactive product demos",
+      "Investor-grade brand design",
+      "Modern responsive architecture",
+    ],
     iconName: "Rocket",
     accentColor: "from-emerald-500/10 to-teal-500/10",
   },
@@ -301,8 +374,14 @@ export const targetAudiences: AudienceItem[] = [
     id: "professionals",
     category: "Consultants & Creators",
     title: "Independent Professionals",
-    description: "Portfolio websites, personal branding, case studies, fee structures, and streamlined client enquiry workflows.",
-    features: ["Curated case studies & portfolio", "Direct calendar scheduling integration", "Credential & testimonial grids", "Client inquiry routing"],
+    description:
+      "Portfolio websites, personal branding, case studies, fee structures, and streamlined client enquiry workflows.",
+    features: [
+      "Curated case studies & portfolio",
+      "Direct calendar scheduling integration",
+      "Credential & testimonial grids",
+      "Client inquiry routing",
+    ],
     iconName: "Briefcase",
     accentColor: "from-indigo-500/10 to-violet-500/10",
   },
@@ -313,32 +392,35 @@ export const digitalProcessSteps = [
     step: "01",
     name: "Understand",
     title: "Discovery & Requirements",
-    description: "We dive deep into your business model, customer goals, and specific technical requirements.",
+    description:
+      "We dive deep into your business model, customer goals, and specific technical requirements.",
   },
   {
     step: "02",
     name: "Plan",
     title: "Strategy & Architecture",
-    description: "We map out the user journeys, wireframes, sitemap, tech stack, and deliver a transparent timeline.",
+    description:
+      "We map out the user journeys, wireframes, sitemap, tech stack, and deliver a transparent timeline.",
   },
   {
     step: "03",
     name: "Build",
     title: "Design & Development",
-    description: "Our dedicated developers and designers engineer your solution with clean code and modern aesthetics.",
+    description:
+      "Our dedicated developers and designers engineer your solution with clean code and modern aesthetics.",
   },
   {
     step: "04",
     name: "Launch",
     title: "Deployment & Optimization",
-    description: "We configure custom domains, set up analytics, verify mobile responsiveness, and push live.",
+    description:
+      "We configure custom domains, set up analytics, verify mobile responsiveness, and push live.",
   },
   {
     step: "05",
     name: "Grow",
     title: "Support & Iteration",
-    description: "We provide ongoing support, security updates, and feature upgrades as your business scales.",
+    description:
+      "We provide ongoing support, security updates, and feature upgrades as your business scales.",
   },
 ];
-
-

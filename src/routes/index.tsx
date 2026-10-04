@@ -46,7 +46,10 @@ export const Route = createFileRoute("/")({
         content:
           "Technology consulting, talent solutions, product development and digital experiences — helping businesses turn ideas into real-world solutions.",
       },
-      { property: "og:title", content: "Nexus Talent — We Consult. We Build. We Help Businesses Grow." },
+      {
+        property: "og:title",
+        content: "Nexus Talent — We Consult. We Build. We Help Businesses Grow.",
+      },
       {
         property: "og:description",
         content:
@@ -180,7 +183,9 @@ function HomePage() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-primary">Nexus Digital</div>
-                    <div className="text-[10px] text-muted-foreground">Websites & Digital Growth</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      Websites & Digital Growth
+                    </div>
                   </div>
                 </div>
               </div>
@@ -204,8 +209,9 @@ function HomePage() {
                 companies build great teams and launch modern technology.
               </p>
               <p>
-                Whether you need dedicated IT talent to scale an enterprise roadmap or a rapid digital
-                presence to grow your business, we own the outcome with transparency and care.
+                Whether you need dedicated IT talent to scale an enterprise roadmap or a rapid
+                digital presence to grow your business, we own the outcome with transparency and
+                care.
               </p>
             </div>
             <div className="mt-8 flex flex-wrap gap-4">
@@ -309,9 +315,9 @@ function HomePage() {
                 We Don't Just Consult. We Build.
               </h2>
               <p className="mt-4 text-muted-foreground">
-                We turn ideas into real digital products. From business websites and web applications
-                to custom software solutions, we design, develop and deliver technology that solves
-                real business problems.
+                We turn ideas into real digital products. From business websites and web
+                applications to custom software solutions, we design, develop and deliver technology
+                that solves real business problems.
               </p>
             </div>
             <Link
@@ -385,8 +391,9 @@ function HomePage() {
             </h2>
             <p className="mt-4 text-muted-foreground">
               We help small businesses build a strong online presence with modern, professional, and
-              affordable digital solutions. From designing your website to getting it live, we provide
-              simple technology solutions that help your business reach more customers and grow online.
+              affordable digital solutions. From designing your website to getting it live, we
+              provide simple technology solutions that help your business reach more customers and
+              grow online.
             </p>
           </div>
 
@@ -410,7 +417,10 @@ function HomePage() {
                   <div className="mt-6 border-t border-primary/5 pt-4">
                     <ul className="space-y-2">
                       {service.highlights.map((h) => (
-                        <li key={h} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <li
+                          key={h}
+                          className="flex items-center gap-2 text-xs text-muted-foreground"
+                        >
                           <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
                           <span>{h}</span>
                         </li>
@@ -441,8 +451,9 @@ function HomePage() {
               Built for Small Businesses
             </h2>
             <p className="mt-4 text-muted-foreground">
-              From local businesses and service providers to startups and growing companies, we create
-              affordable digital solutions without the complexity of working with a large agency.
+              From local businesses and service providers to startups and growing companies, we
+              create affordable digital solutions without the complexity of working with a large
+              agency.
             </p>
           </div>
 
@@ -633,7 +644,10 @@ function HomePage() {
                 Current openings across our client engagements. Apply directly — no account needed.
               </p>
             </div>
-            <Link to="/careers" className="text-sm font-bold text-accent underline-offset-8 hover:underline">
+            <Link
+              to="/careers"
+              className="text-sm font-bold text-accent underline-offset-8 hover:underline"
+            >
               View All Jobs
             </Link>
           </div>
@@ -729,8 +743,8 @@ function HomePage() {
                   Meet Zozii — invisible AI meeting assistant
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  A lightweight desktop companion for Nexus Talent workflows. Listen to meetings, ask
-                  questions, and receive instant streaming answers invisible to screen shares.
+                  A lightweight desktop companion for Nexus Talent workflows. Listen to meetings,
+                  ask questions, and receive instant streaming answers invisible to screen shares.
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   Windows installer (.exe){zoziiVersion ? ` · ${zoziiVersion}` : ""}

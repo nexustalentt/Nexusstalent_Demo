@@ -38,14 +38,7 @@ export const qualifications = [
   "Other Masters",
   "PhD",
 ];
-export const noticePeriods = [
-  "Immediate",
-  "15 days",
-  "30 days",
-  "45 days",
-  "60 days",
-  "90 days",
-];
+export const noticePeriods = ["Immediate", "15 days", "30 days", "45 days", "60 days", "90 days"];
 export const heardAboutOptions = [
   "Company website",
   "LinkedIn",

@@ -81,16 +81,14 @@ function FormsAdmin() {
   const label = "text-xs font-bold tracking-widest uppercase text-muted-foreground";
 
   return (
-    <AdminShell
-      title="Application forms"
-      description="Reusable form links that jobs can point to"
-    >
+    <AdminShell title="Application forms" description="Reusable form links that jobs can point to">
       <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
         <section className="rounded-2xl border border-primary/5 bg-card p-6">
           <h2 className="font-bold text-primary">Add a form</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Today these are Google Forms. Because jobs reference a form record rather than a hard-coded
-            link, swapping to an in-house application form later only means changing the URL here.
+            Today these are Google Forms. Because jobs reference a form record rather than a
+            hard-coded link, swapping to an in-house application form later only means changing the
+            URL here.
           </p>
           <div className="mt-5 space-y-4">
             <div>

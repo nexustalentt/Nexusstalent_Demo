@@ -2,11 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Briefcase, CheckCircle2, Clock, Users } from "lucide-react";
 import { AdminShell, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
-import {
-  adminApplicationsQuery,
-  adminJobsQuery,
-  auditLogsQuery,
-} from "@/lib/admin-api";
+import { adminApplicationsQuery, adminJobsQuery, auditLogsQuery } from "@/lib/admin-api";
 import { formatDate, statusLabel } from "@/lib/job-utils";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -29,9 +25,8 @@ function AdminDashboard() {
   const draftJobs = jobs.data?.filter((job) => job.status === "draft").length ?? 0;
   const total = applications.data?.length ?? 0;
   const pending =
-    applications.data?.filter((application) =>
-      ["new", "under_review"].includes(application.status),
-    ).length ?? 0;
+    applications.data?.filter((application) => ["new", "under_review"].includes(application.status))
+      .length ?? 0;
   const selected = applications.data?.filter((a) => a.status === "selected").length ?? 0;
 
   const byStatus = ["new", "under_review", "shortlisted", "interview", "selected", "rejected"].map(
@@ -45,7 +40,12 @@ function AdminDashboard() {
   return (
     <AdminShell title="Dashboard" description="Live overview of hiring activity">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Active Jobs" value={activeJobs} hint={`${draftJobs} drafts`} icon={Briefcase} />
+        <StatCard
+          label="Active Jobs"
+          value={activeJobs}
+          hint={`${draftJobs} drafts`}
+          icon={Briefcase}
+        />
         <StatCard label="Total Applications" value={total} hint="All time" icon={Users} />
         <StatCard label="Pending Review" value={pending} hint="New + under review" icon={Clock} />
         <StatCard label="Selected" value={selected} hint="Offers extended" icon={CheckCircle2} />

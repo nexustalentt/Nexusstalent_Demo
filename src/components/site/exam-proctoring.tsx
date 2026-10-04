@@ -28,11 +28,7 @@ async function requestCamera(): Promise<MediaStream> {
  * The stream is never recorded, uploaded, or sent anywhere — it only feeds
  * the on-screen preview and is stopped when the exam ends.
  */
-export function ProctoredExam({
-  children,
-}: {
-  children: (onSubmitted: () => void) => ReactNode;
-}) {
+export function ProctoredExam({ children }: { children: (onSubmitted: () => void) => ReactNode }) {
   const [status, setStatus] = useState<CameraStatus>("idle");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraLost, setCameraLost] = useState(false);
@@ -106,7 +102,8 @@ export function ProctoredExam({
       <Shell>
         <h1 className="text-xl font-bold text-primary">Camera not available</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          This assessment recommends camera access for proctoring. You can continue to the exam directly.
+          This assessment recommends camera access for proctoring. You can continue to the exam
+          directly.
         </p>
         <button
           type="button"

@@ -6,7 +6,6 @@ import { Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLogo } from "@/components/site/site-header";
 
-
 export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
@@ -40,8 +39,6 @@ function AuthPage() {
       if (data.session) navigate({ to: "/admin", replace: true });
     });
   }, [navigate]);
-
-
 
   async function handleSignIn(event: React.FormEvent) {
     event.preventDefault();
@@ -120,8 +117,6 @@ function AuthPage() {
             noValidate
             className="mt-8 space-y-5"
           >
-
-
             <div>
               <label className={labelClass} htmlFor="email">
                 Email
@@ -170,7 +165,10 @@ function AuthPage() {
             ) : null}
 
             {error ? (
-              <p role="alert" className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <p
+                role="alert"
+                className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive"
+              >
                 {error}
               </p>
             ) : null}
@@ -196,7 +194,6 @@ function AuthPage() {
                 {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
               </button>
             </div>
-
           </form>
         </div>
       </main>

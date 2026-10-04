@@ -97,7 +97,11 @@ function ContactPage() {
 
       <section className="py-20">
         <div className="container-page grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-          <form onSubmit={handleSubmit} noValidate className="rounded-2xl border border-primary/5 bg-card p-8 shadow-card">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="rounded-2xl border border-primary/5 bg-card p-8 shadow-card"
+          >
             <h2 className="text-xl font-bold text-primary">Send an inquiry</h2>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               <div>
@@ -113,7 +117,13 @@ function ContactPage() {
                 <label className={labelClass} htmlFor="email">
                   Email *
                 </label>
-                <input id="email" name="email" type="email" maxLength={255} className={fieldClass} />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  maxLength={255}
+                  className={fieldClass}
+                />
                 {errors["email"] ? (
                   <p className="mt-1 text-xs text-destructive">{errors["email"]}</p>
                 ) : null}

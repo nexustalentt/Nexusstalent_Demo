@@ -94,7 +94,10 @@ function JobsAdmin() {
         {jobs.isPending ? (
           <LoadingBlock rows={6} />
         ) : filtered.length === 0 ? (
-          <EmptyState title="No jobs match your filters" hint="Try clearing the search or status filter." />
+          <EmptyState
+            title="No jobs match your filters"
+            hint="Try clearing the search or status filter."
+          />
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-primary/5 bg-card">
             <table className="w-full min-w-[52rem] text-sm">
@@ -127,7 +130,9 @@ function JobsAdmin() {
                     <td className="px-5 py-4">
                       <StatusPill status={job.status} />
                     </td>
-                    <td className="px-5 py-4 text-muted-foreground">{formatDate(job.updated_at)}</td>
+                    <td className="px-5 py-4 text-muted-foreground">
+                      {formatDate(job.updated_at)}
+                    </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-wrap items-center justify-end gap-2">
                         <select

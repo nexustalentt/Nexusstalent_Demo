@@ -101,7 +101,9 @@ export function DigitalShowcase() {
                   </div>
                   <div>
                     <span className="font-bold text-sm text-primary">Artisan Kitchen & Grill</span>
-                    <span className="block text-[10px] text-muted-foreground">Fine Dining & Local Bistro</span>
+                    <span className="block text-[10px] text-muted-foreground">
+                      Fine Dining & Local Bistro
+                    </span>
                   </div>
                 </div>
                 <div className="hidden gap-4 text-xs font-medium text-muted-foreground md:flex">
@@ -131,7 +133,8 @@ export function DigitalShowcase() {
                     Handcrafted Cuisine. Fresh Local Flavours.
                   </h3>
                   <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                    Book your intimate evening, view our seasonal degustation menu, or order signature dishes directly.
+                    Book your intimate evening, view our seasonal degustation menu, or order
+                    signature dishes directly.
                   </p>
                   <div className="flex flex-wrap gap-2.5 pt-2">
                     <span className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-bold text-accent-foreground">
@@ -194,13 +197,17 @@ export function DigitalShowcase() {
                   <div className="size-6 rounded-md bg-accent flex items-center justify-center text-xs font-black text-white">
                     N
                   </div>
-                  <span className="text-xs font-bold tracking-tight text-primary">Nexus Portal OS</span>
+                  <span className="text-xs font-bold tracking-tight text-primary">
+                    Nexus Portal OS
+                  </span>
                   <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold text-accent">
                     v2.4 Live
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-medium text-muted-foreground">Workspace: Main Branch</span>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Workspace: Main Branch
+                  </span>
                   <span className="size-2 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
                 </div>
               </div>
@@ -249,22 +256,32 @@ export function DigitalShowcase() {
               <div className="rounded-xl border border-primary/10 bg-surface/50 p-4">
                 <div className="mb-3 flex items-center justify-between text-xs">
                   <span className="font-bold text-primary">Recent Automated Pipelines</span>
-                  <span className="text-accent hover:underline cursor-pointer">View audit logs</span>
+                  <span className="text-accent hover:underline cursor-pointer">
+                    View audit logs
+                  </span>
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between rounded-lg bg-card p-2.5 border border-primary/5">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="size-4 text-emerald-500" />
-                      <span className="font-medium text-primary">Client Onboarding Portal — Apex Law</span>
+                      <span className="font-medium text-primary">
+                        Client Onboarding Portal — Apex Law
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-muted-foreground">Deployed 12m ago</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      Deployed 12m ago
+                    </span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-card p-2.5 border border-primary/5">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="size-4 text-accent" />
-                      <span className="font-medium text-primary">Payment & Billing Gateway Synchronization</span>
+                      <span className="font-medium text-primary">
+                        Payment & Billing Gateway Synchronization
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-muted-foreground">Success · 0 errors</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      Success · 0 errors
+                    </span>
                   </div>
                 </div>
               </div>
@@ -292,7 +309,8 @@ export function DigitalShowcase() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Family Health & Preventative Wellness Clinic. Fast bookings with instant confirmation.
+                  Family Health & Preventative Wellness Clinic. Fast bookings with instant
+                  confirmation.
                 </p>
 
                 {/* Mobile Button Actions */}
@@ -329,7 +347,11 @@ export function DigitalShowcase() {
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Sparkles className="size-4 text-accent" />
             <span>
-              Engineered with <strong className="text-primary font-semibold">React, TypeScript & Tailwind CSS</strong> for peak velocity.
+              Engineered with{" "}
+              <strong className="text-primary font-semibold">
+                React, TypeScript & Tailwind CSS
+              </strong>{" "}
+              for peak velocity.
             </span>
           </div>
           <Link

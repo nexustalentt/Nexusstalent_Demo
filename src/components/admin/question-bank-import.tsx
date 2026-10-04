@@ -67,8 +67,9 @@ export function QuestionBankImport({
       </div>
       <p className="text-sm text-muted-foreground">
         Paste the whole paper at once. Options are lettered A, B, C, D and each question ends with{" "}
-        <span className="font-semibold text-primary">Answer: C</span> — or list every answer under an{" "}
-        <span className="font-semibold text-primary">Answers</span> heading at the end (1 - C, 2 - A).
+        <span className="font-semibold text-primary">Answer: C</span> — or list every answer under
+        an <span className="font-semibold text-primary">Answers</span> heading at the end (1 - C, 2
+        - A).
       </p>
 
       <div className="grid gap-4 sm:grid-cols-[1fr_12rem]">
@@ -136,7 +137,9 @@ export function QuestionBankImport({
 
       {result.questions.length > 0 ? (
         <div className="space-y-4 rounded-lg bg-surface p-5">
-          <p className={labelClass}>Generated paper preview ({result.questions.length} questions)</p>
+          <p className={labelClass}>
+            Generated paper preview ({result.questions.length} questions)
+          </p>
           {groups.map((group) => (
             <div key={group.name} className="space-y-3">
               <p className="text-sm font-bold text-primary">

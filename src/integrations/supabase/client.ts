@@ -33,7 +33,9 @@ function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
   // Fall back to process.env for SSR (server-side rendering)
   const SUPABASE_URL =
-    (typeof import.meta !== "undefined" && import.meta.env && import.meta.env["VITE_SUPABASE_URL"]) ||
+    (typeof import.meta !== "undefined" &&
+      import.meta.env &&
+      import.meta.env["VITE_SUPABASE_URL"]) ||
     process.env["VITE_SUPABASE_URL"] ||
     process.env["SUPABASE_URL"];
 

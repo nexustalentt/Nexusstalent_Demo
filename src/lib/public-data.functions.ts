@@ -35,7 +35,6 @@ const LIST_COLUMNS =
 
 const DETAIL_COLUMNS = `${LIST_COLUMNS}, description, responsibilities, requirements, preferred_qualifications, benefits, application_method, google_form_url, updated_at`;
 
-
 export const listActiveJobs = createServerFn({ method: "GET" }).handler(async () => {
   try {
     const { data, error } = await publicClient()

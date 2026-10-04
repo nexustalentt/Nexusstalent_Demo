@@ -6,22 +6,18 @@ const FALLBACK_URL =
 
 /** Resolve a GitHub release *tag* page to the first .exe asset download URL. */
 async function resolveTagUrl(url: string): Promise<string> {
-  const match = url.match(
-    /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/tag\/([^/?#]+)/,
-  );
+  const match = url.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/tag\/([^/?#]+)/);
   if (!match) return url;
   const [, owner, repo, tag] = match;
-  const res = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`,
-    { headers: { Accept: "application/vnd.github+json", "User-Agent": "zozii-site" } },
-  );
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`, {
+    headers: { Accept: "application/vnd.github+json", "User-Agent": "zozii-site" },
+  });
   if (!res.ok) return url;
   const release = (await res.json()) as {
     assets?: Array<{ name: string; browser_download_url: string }>;
   };
   const exe =
-    release.assets?.find((a) => a.name.toLowerCase().endsWith(".exe")) ??
-    release.assets?.[0];
+    release.assets?.find((a) => a.name.toLowerCase().endsWith(".exe")) ?? release.assets?.[0];
   return exe?.browser_download_url ?? url;
 }
 

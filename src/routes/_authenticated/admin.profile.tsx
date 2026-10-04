@@ -37,7 +37,10 @@ function ProfilePage() {
         .select("name")
         .eq("id", user.id)
         .maybeSingle();
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
       return {
         id: user.id,
         email: user.email ?? "",

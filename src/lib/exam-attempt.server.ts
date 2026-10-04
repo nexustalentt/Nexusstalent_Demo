@@ -68,14 +68,11 @@ async function attemptLogin(args: {
   token: string | null;
 }): Promise<LoginResult> {
   try {
-    const raw = await callRpc<any>(
-      "exam_candidate_login",
-      {
-        p_username: args.username.trim(),
-        p_password: args.password,
-        p_token: args.token,
-      },
-    );
+    const raw = await callRpc<any>("exam_candidate_login", {
+      p_username: args.username.trim(),
+      p_password: args.password,
+      p_token: args.token,
+    });
     let result = raw;
     if (typeof result === "string") {
       try {

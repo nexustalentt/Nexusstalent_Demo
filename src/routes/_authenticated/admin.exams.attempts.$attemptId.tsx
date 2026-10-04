@@ -5,7 +5,12 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell, EmptyState, LoadingBlock, StatusPill } from "@/components/admin/admin-shell";
 import { attemptStatusLabels, questionTypeLabel } from "@/lib/exam-utils";
-import { examAttemptQuery, saveEvaluation, type ExamAnswerRow, type ExamQuestionRow } from "@/lib/exams-api";
+import {
+  examAttemptQuery,
+  saveEvaluation,
+  type ExamAnswerRow,
+  type ExamQuestionRow,
+} from "@/lib/exams-api";
 import { formatDate } from "@/lib/job-utils";
 
 export const Route = createFileRoute("/_authenticated/admin/exams/attempts/$attemptId")({
@@ -92,7 +97,9 @@ function AttemptDetail() {
       <div className="space-y-6">
         <section className="grid gap-4 rounded-2xl border border-primary/5 bg-card p-6 sm:grid-cols-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Score</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Score
+            </p>
             <p className="mt-1 text-lg font-bold text-primary">
               {Number(attempt.total_score)} / {Number(attempt.total_marks)}
             </p>
@@ -106,15 +113,15 @@ function AttemptDetail() {
             </p>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Status
+            </p>
             <p className="mt-1">
               <StatusPill status={attempt.status} />
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {attemptStatusLabels[attempt.status]}
-              {attempt.status === "evaluated"
-                ? ` · ${attempt.passed ? "Passed" : "Failed"}`
-                : ""}
+              {attempt.status === "evaluated" ? ` · ${attempt.passed ? "Passed" : "Failed"}` : ""}
             </p>
           </div>
           <div>
@@ -132,16 +139,20 @@ function AttemptDetail() {
             const answer = answerByQuestion.get(question.id);
             const manual = question.question_type === "long_answer";
             const draft = drafts[question.id] ?? {
-              marks: answer?.awarded_marks === null || answer?.awarded_marks === undefined
-                ? ""
-                : String(Number(answer.awarded_marks)),
+              marks:
+                answer?.awarded_marks === null || answer?.awarded_marks === undefined
+                  ? ""
+                  : String(Number(answer.awarded_marks)),
               feedback: answer?.feedback ?? "",
             };
             return (
-              <li key={question.id} className="space-y-3 rounded-2xl border border-primary/5 bg-card p-6">
+              <li
+                key={question.id}
+                className="space-y-3 rounded-2xl border border-primary/5 bg-card p-6"
+              >
                 <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  {index + 1}. {questionTypeLabel(question.question_type)} · {Number(question.marks)}{" "}
-                  {Number(question.marks) === 1 ? "mark" : "marks"}
+                  {index + 1}. {questionTypeLabel(question.question_type)} ·{" "}
+                  {Number(question.marks)} {Number(question.marks) === 1 ? "mark" : "marks"}
                 </p>
                 <p className="font-semibold text-primary">{question.prompt}</p>
                 <div className="grid gap-3 sm:grid-cols-2">

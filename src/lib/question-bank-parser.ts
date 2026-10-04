@@ -26,7 +26,12 @@ const sectionHeader = /^(?:section|part)\s*\d*\s*[:\-–.)]?\s*(.*)$/i;
 /** Recognises "Section: English", "Part 2 - Logical Reasoning" or a bare known section name. */
 function detectSection(line: string): string | null {
   const known = examSections.find(
-    (section) => section.toLowerCase() === line.toLowerCase().replace(/[:\-–.]+$/, "").trim(),
+    (section) =>
+      section.toLowerCase() ===
+      line
+        .toLowerCase()
+        .replace(/[:\-–.]+$/, "")
+        .trim(),
   );
   if (known) return known;
   const match = line.match(sectionHeader);
@@ -142,7 +147,10 @@ export function parseQuestionBank(
     const number = raw.number ?? position + 1;
     const label = raw.number ?? position + 1;
     if (raw.number === null) {
-      errors.push({ number: null, message: `A block near question ${label} has no question number.` });
+      errors.push({
+        number: null,
+        message: `A block near question ${label} has no question number.`,
+      });
     }
     const seenKey = `${raw.section}|${number}`;
     if (seen.has(seenKey)) {
@@ -224,8 +232,7 @@ export function parseQuestionBank(
     if (!order.has(question.section)) order.set(question.section, order.size);
   });
   questions.sort(
-    (a, b) =>
-      (order.get(a.section) ?? 0) - (order.get(b.section) ?? 0) || a.number - b.number,
+    (a, b) => (order.get(a.section) ?? 0) - (order.get(b.section) ?? 0) || a.number - b.number,
   );
   return { questions, errors };
 }

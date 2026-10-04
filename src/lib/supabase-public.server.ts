@@ -5,10 +5,7 @@ import type { Database } from "@/integrations/supabase/types";
 // repo .env at runtime, so fall back to the build-time inlined VITE_ values.
 // Both values are publishable and safe to expose.
 function resolveConfig() {
-  const url =
-    process.env["SUPABASE_URL"] ||
-    import.meta.env["VITE_SUPABASE_URL"] ||
-    "";
+  const url = process.env["SUPABASE_URL"] || import.meta.env["VITE_SUPABASE_URL"] || "";
   const key =
     process.env["SUPABASE_PUBLISHABLE_KEY"] ||
     import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||

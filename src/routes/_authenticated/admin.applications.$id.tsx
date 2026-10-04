@@ -11,7 +11,12 @@ import {
   recordAudit,
 } from "@/lib/admin-api";
 import { supabase } from "@/integrations/supabase/client";
-import { applicationStatuses, formatDate, statusLabel, type ApplicationStatus } from "@/lib/job-utils";
+import {
+  applicationStatuses,
+  formatDate,
+  statusLabel,
+  type ApplicationStatus,
+} from "@/lib/job-utils";
 
 export const Route = createFileRoute("/_authenticated/admin/applications/$id")({
   head: () => ({
@@ -137,7 +142,8 @@ function ApplicationDetail() {
               </a>
             </div>
             <p className="mt-5 text-xs text-muted-foreground">
-              Received {formatDate(candidate.submitted_at)} via {candidate.source.replace(/_/g, " ")}
+              Received {formatDate(candidate.submitted_at)} via{" "}
+              {candidate.source.replace(/_/g, " ")}
             </p>
           </section>
 
@@ -212,15 +218,7 @@ function ApplicationDetail() {
   );
 }
 
-function Detail({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Mail;
-  label: string;
-  value: string;
-}) {
+function Detail({ icon: Icon, label, value }: { icon: typeof Mail; label: string; value: string }) {
   return (
     <div>
       <dt className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-muted-foreground">

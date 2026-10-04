@@ -44,7 +44,11 @@ const toggles: { key: keyof SettingsRow; label: string; hint: string }[] = [
     label: "New application received",
     hint: "Email the recruitment inbox as soon as an application arrives.",
   },
-  { key: "notify_on_shortlist", label: "Candidate shortlisted", hint: "Notify on shortlist moves." },
+  {
+    key: "notify_on_shortlist",
+    label: "Candidate shortlisted",
+    hint: "Notify on shortlist moves.",
+  },
   { key: "notify_on_interview", label: "Interview scheduled", hint: "Notify on interview stage." },
   { key: "notify_on_selected", label: "Candidate selected", hint: "Notify when an offer is made." },
 ];

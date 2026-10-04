@@ -91,7 +91,10 @@ export const submitExamAttempt = createServerFn({ method: "POST" })
 export const createCandidateAccess = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => {
     const parsed = candidateAccessSchema.parse((data as { credentials: unknown }).credentials);
-    return { examId: String((data as { examId: string }).examId).slice(0, 60), credentials: parsed };
+    return {
+      examId: String((data as { examId: string }).examId).slice(0, 60),
+      credentials: parsed,
+    };
   })
   .handler(async ({ data }) => {
     const { supabase } = await import("@/integrations/supabase/client");

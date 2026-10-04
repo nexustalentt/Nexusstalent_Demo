@@ -17,7 +17,11 @@ function indices(value: unknown): number[] {
 }
 
 function normalize(text: string) {
-  return text.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:]+$/g, "");
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[.,!?;:]+$/g, "");
 }
 
 export function gradeAnswer(question: QuestionRow, answer: StoredAnswer): number | null {

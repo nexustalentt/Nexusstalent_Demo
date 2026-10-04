@@ -32,8 +32,7 @@ function NewJobPage() {
         created_by: userData.user?.id ?? null,
         updated_by: userData.user?.id ?? null,
         published_at:
-          values.published_at ??
-          (values.status === "active" ? new Date().toISOString() : null),
+          values.published_at ?? (values.status === "active" ? new Date().toISOString() : null),
       };
       const data = await createAdminJob({ data: payload });
       try {

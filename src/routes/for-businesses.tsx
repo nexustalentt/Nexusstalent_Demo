@@ -24,7 +24,12 @@ import {
 } from "lucide-react";
 import { PublicShell } from "@/components/site/public-shell";
 import { DigitalShowcase } from "@/components/site/digital-showcase";
-import { digitalServices, builtProducts, targetAudiences, digitalProcessSteps } from "@/lib/content";
+import {
+  digitalServices,
+  builtProducts,
+  targetAudiences,
+  digitalProcessSteps,
+} from "@/lib/content";
 import { submitInquiry } from "@/lib/inquiries.functions";
 
 export const Route = createFileRoute("/for-businesses")({
@@ -71,7 +76,11 @@ const projectSchema = z.object({
   company: z.string().trim().max(120).optional().or(z.literal("")),
   projectType: z.string().min(1, "Select a project category"),
   timeline: z.string().optional().or(z.literal("")),
-  message: z.string().trim().min(10, "Please describe your project or business requirements (10+ characters)").max(2000),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Please describe your project or business requirements (10+ characters)")
+    .max(2000),
 });
 
 function ForBusinessesPage() {
@@ -203,8 +212,8 @@ function ForBusinessesPage() {
                   Consulting · Staffing · Enterprise Recruitment
                 </p>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  High-level workforce planning, senior recruitment, IT advisory, and augmentation for
-                  enterprises and expanding organisations.
+                  High-level workforce planning, senior recruitment, IT advisory, and augmentation
+                  for enterprises and expanding organisations.
                 </p>
               </div>
 
@@ -220,8 +229,8 @@ function ForBusinessesPage() {
                   Websites · Products · Digital Solutions · Growth
                 </p>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Purpose-built for small businesses, startups, and founders who need high-performance
-                  websites and digital products without large-agency complexity.
+                  Purpose-built for small businesses, startups, and founders who need
+                  high-performance websites and digital products without large-agency complexity.
                 </p>
               </div>
             </div>
@@ -336,7 +345,10 @@ function ForBusinessesPage() {
                   <div className="mt-5 border-t border-primary/5 pt-4">
                     <ul className="space-y-1.5">
                       {service.highlights.map((h) => (
-                        <li key={h} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <li
+                          key={h}
+                          className="flex items-center gap-2 text-xs text-muted-foreground"
+                        >
                           <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
                           <span>{h}</span>
                         </li>
@@ -576,7 +588,9 @@ function ForBusinessesPage() {
                       Expected Timeline
                     </label>
                     <select id="timeline" name="timeline" className={fieldClass}>
-                      <option value="Ready to start immediately">Ready to start immediately (1–2 weeks)</option>
+                      <option value="Ready to start immediately">
+                        Ready to start immediately (1–2 weeks)
+                      </option>
                       <option value="Within 1 month">Within this month (2–4 weeks)</option>
                       <option value="Within 2-3 months">In next 2–3 months</option>
                       <option value="Exploring & Planning">Just exploring ideas & estimates</option>

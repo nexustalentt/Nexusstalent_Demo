@@ -19,15 +19,74 @@ export type ExtractedJobData = {
 };
 
 const COMMON_SKILLS = [
-  "JavaScript", "TypeScript", "React", "React Native", "Next.js", "Vue.js", "Angular",
-  "Node.js", "Express", "Python", "Django", "FastAPI", "Java", "Spring Boot", "Kotlin",
-  "C++", "C#", ".NET", "Golang", "Rust", "PHP", "Laravel", "Ruby", "Rails",
-  "SQL", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Elasticsearch", "GraphQL", "REST API",
-  "AWS", "Azure", "GCP", "Docker", "Kubernetes", "CI/CD", "Git", "GitHub", "Terraform",
-  "Linux", "Tailwind CSS", "HTML5", "CSS3", "Redux", "Jest", "Cypress", "Selenium",
-  "Playwright", "Manual Testing", "Automation Testing", "Agile", "Scrum", "Jira",
-  "Machine Learning", "Deep Learning", "NLP", "Pandas", "NumPy", "TensorFlow", "PyTorch",
-  "Figma", "UI/UX", "System Design", "Microservices", "Data Structures", "Algorithms"
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "React Native",
+  "Next.js",
+  "Vue.js",
+  "Angular",
+  "Node.js",
+  "Express",
+  "Python",
+  "Django",
+  "FastAPI",
+  "Java",
+  "Spring Boot",
+  "Kotlin",
+  "C++",
+  "C#",
+  ".NET",
+  "Golang",
+  "Rust",
+  "PHP",
+  "Laravel",
+  "Ruby",
+  "Rails",
+  "SQL",
+  "PostgreSQL",
+  "MySQL",
+  "MongoDB",
+  "Redis",
+  "Elasticsearch",
+  "GraphQL",
+  "REST API",
+  "AWS",
+  "Azure",
+  "GCP",
+  "Docker",
+  "Kubernetes",
+  "CI/CD",
+  "Git",
+  "GitHub",
+  "Terraform",
+  "Linux",
+  "Tailwind CSS",
+  "HTML5",
+  "CSS3",
+  "Redux",
+  "Jest",
+  "Cypress",
+  "Selenium",
+  "Playwright",
+  "Manual Testing",
+  "Automation Testing",
+  "Agile",
+  "Scrum",
+  "Jira",
+  "Machine Learning",
+  "Deep Learning",
+  "NLP",
+  "Pandas",
+  "NumPy",
+  "TensorFlow",
+  "PyTorch",
+  "Figma",
+  "UI/UX",
+  "System Design",
+  "Microservices",
+  "Data Structures",
+  "Algorithms",
 ];
 
 function decodeHtmlEntities(str: string): string {
@@ -105,7 +164,8 @@ function normalizeWorkMode(raw?: string, telecommute?: boolean): string {
   if (telecommute) return "Remote";
   if (!raw) return "On-site";
   const s = raw.toLowerCase();
-  if (s.includes("remote") || s.includes("telecommute") || s.includes("work from home")) return "Remote";
+  if (s.includes("remote") || s.includes("telecommute") || s.includes("work from home"))
+    return "Remote";
   if (s.includes("hybrid") || s.includes("flexible")) return "Hybrid";
   return "On-site";
 }
@@ -122,7 +182,9 @@ function extractExperience(text: string): { min: number | null; max: number | nu
   }
 
   // e.g. "5+ years", "minimum 3 years", "at least 2 years"
-  const singleMatch = text.match(/(?:minimum|at least|min\.?)?\s*(\d{1,2})\s*\+?\s*(?:years?|yrs?)/i);
+  const singleMatch = text.match(
+    /(?:minimum|at least|min\.?)?\s*(\d{1,2})\s*\+?\s*(?:years?|yrs?)/i,
+  );
   if (singleMatch && singleMatch[1]) {
     const min = parseInt(singleMatch[1], 10);
     if (!isNaN(min) && min >= 0 && min <= 40) {
@@ -166,7 +228,10 @@ function extractSectionContent(text: string, sectionKeywords: string[]): string 
 
     if (capturing) {
       // Check if another major heading starts
-      const isOtherHeading = /^(?:#+\s*)?(?:requirements?|responsibilities|qualifications|benefits|what we offer|about us|who you are|skills|perks)\b/i.test(line);
+      const isOtherHeading =
+        /^(?:#+\s*)?(?:requirements?|responsibilities|qualifications|benefits|what we offer|about us|who you are|skills|perks)\b/i.test(
+          line,
+        );
       if (isOtherHeading && extracted.length > 0) {
         break;
       }
@@ -200,7 +265,8 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
   const html = await response.text();
 
   let jsonLdJob: any = null;
-  const jsonLdRegex = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const jsonLdRegex =
+    /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let match;
   while ((match = jsonLdRegex.exec(html)) !== null) {
     try {
@@ -217,13 +283,17 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
 
   // Meta tags fallback
   const getMeta = (name: string): string => {
-    const reg = new RegExp(`<meta\\s+[^>]*(?:name|property)=["']${name}["'][^>]*content=["']([^"']*)["']`, "i");
+    const reg = new RegExp(
+      `<meta\\s+[^>]*(?:name|property)=["']${name}["'][^>]*content=["']([^"']*)["']`,
+      "i",
+    );
     const m = html.match(reg);
     return m && m[1] ? decodeHtmlEntities(m[1].trim()) : "";
   };
 
   const titleMeta = getMeta("og:title") || getMeta("twitter:title");
-  const descMeta = getMeta("og:description") || getMeta("description") || getMeta("twitter:description");
+  const descMeta =
+    getMeta("og:description") || getMeta("description") || getMeta("twitter:description");
 
   // Title extraction
   let title = jsonLdJob?.title || titleMeta;
@@ -237,20 +307,13 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
   }
 
   // Company Name
-  const company =
-    jsonLdJob?.hiringOrganization?.name ||
-    getMeta("og:site_name") ||
-    "";
+  const company = jsonLdJob?.hiringOrganization?.name || getMeta("og:site_name") || "";
 
   // Location
   let location = "";
   if (jsonLdJob?.jobLocation?.address) {
     const addr = jsonLdJob.jobLocation.address;
-    const parts = [
-      addr.addressLocality,
-      addr.addressRegion,
-      addr.addressCountry,
-    ].filter(Boolean);
+    const parts = [addr.addressLocality, addr.addressRegion, addr.addressCountry].filter(Boolean);
     location = parts.join(", ");
   }
   if (!location) {
@@ -298,14 +361,19 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
     }
   }
   if (!salary) {
-    const salMatch = cleanBodyText.match(/(?:salary|ctc|compensation|pay|rate)[:\s]*([$₹€£][\d,kK\.\s\-–toLPA]+(?:\s*\/\s*(?:year|yr|month|hr|annum))?)/i);
+    const salMatch = cleanBodyText.match(
+      /(?:salary|ctc|compensation|pay|rate)[:\s]*([$₹€£][\d,kK\.\s\-–toLPA]+(?:\s*\/\s*(?:year|yr|month|hr|annum))?)/i,
+    );
     if (salMatch && salMatch[1]) {
       salary = salMatch[1].trim();
     }
   }
 
   // Experience
-  const expSource = (jsonLdJob?.experienceRequirements ? String(jsonLdJob.experienceRequirements) : "") + " " + fullDescription;
+  const expSource =
+    (jsonLdJob?.experienceRequirements ? String(jsonLdJob.experienceRequirements) : "") +
+    " " +
+    fullDescription;
   const { min: experience_min, max: experience_max } = extractExperience(expSource);
 
   // Skills
@@ -320,11 +388,24 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
   // Sections
   const responsibilities =
     (jsonLdJob?.responsibilities ? htmlToCleanText(String(jsonLdJob.responsibilities)) : "") ||
-    extractSectionContent(fullDescription, ["responsibilities", "what you'll do", "key responsibilities", "role & responsibilities", "duties"]);
+    extractSectionContent(fullDescription, [
+      "responsibilities",
+      "what you'll do",
+      "key responsibilities",
+      "role & responsibilities",
+      "duties",
+    ]);
 
   const requirements =
     (jsonLdJob?.qualifications ? htmlToCleanText(String(jsonLdJob.qualifications)) : "") ||
-    extractSectionContent(fullDescription, ["requirements", "what we're looking for", "qualifications", "required skills", "must have", "basic qualifications"]);
+    extractSectionContent(fullDescription, [
+      "requirements",
+      "what we're looking for",
+      "qualifications",
+      "required skills",
+      "must have",
+      "basic qualifications",
+    ]);
 
   const preferred_qualifications = extractSectionContent(fullDescription, [
     "preferred qualifications",
@@ -359,7 +440,9 @@ export async function extractJobDetails(url: string): Promise<ExtractedJobData> 
     description: fullDescription.slice(0, 6000) || undefined,
     responsibilities: responsibilities ? responsibilities.slice(0, 4000) : undefined,
     requirements: requirements ? requirements.slice(0, 4000) : undefined,
-    preferred_qualifications: preferred_qualifications ? preferred_qualifications.slice(0, 4000) : undefined,
+    preferred_qualifications: preferred_qualifications
+      ? preferred_qualifications.slice(0, 4000)
+      : undefined,
     benefits: benefits ? benefits.slice(0, 4000) : undefined,
     google_form_url: url,
   };

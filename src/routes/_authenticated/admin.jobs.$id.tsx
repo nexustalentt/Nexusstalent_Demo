@@ -33,8 +33,7 @@ function EditJobPage() {
         ...values,
         updated_by: userData.user?.id ?? null,
         published_at:
-          values.published_at ??
-          (values.status === "active" ? new Date().toISOString() : null),
+          values.published_at ?? (values.status === "active" ? new Date().toISOString() : null),
       };
       await updateAdminJob({ data: { id, values: payload } });
       try {

@@ -19,8 +19,7 @@ import {
 } from "lucide-react";
 import { PublicShell } from "@/components/site/public-shell";
 
-const DOWNLOAD_URL =
-  "/api/public/zozii-download";
+const DOWNLOAD_URL = "/api/public/zozii-download";
 
 export const Route = createFileRoute("/zozii")({
   head: () => ({
@@ -76,7 +75,8 @@ const modalities = [
   {
     icon: Mic,
     title: "Voice Prompts",
-    description: "Press Ctrl+Z and speak out loud into your microphone. Zozii transcribes and answers live.",
+    description:
+      "Press Ctrl+Z and speak out loud into your microphone. Zozii transcribes and answers live.",
   },
   {
     icon: Radio,
@@ -99,12 +99,36 @@ const modalities = [
 ];
 
 const architectureItems = [
-  { label: "RUNTIME", title: "Electron 32 & TypeScript", note: "Hardened desktop environment with secure context isolation and fast IPC." },
-  { label: "DWM WIN32", title: "Direct3D Screen Guard", note: "Native exclusion flags omit the window buffer from any capture pipe." },
-  { label: "AUDIO PIPELINE", title: "WASAPI Audio Session", note: "Direct digital loopback from your default playback device." },
-  { label: "LLM ENGINE", title: "Groq & Gemini Dual Backend", note: "Switch dynamically between Groq LPU inference and Google Gemini." },
-  { label: "INFRASTRUCTURE", title: "Supabase Auth & Storage", note: "Encrypted accounts, verified sessions, and fast installer distribution." },
-  { label: "PRIVACY", title: "Local-First Zero Retention", note: "No meeting audio, transcripts, or personal logs are persisted remotely." },
+  {
+    label: "RUNTIME",
+    title: "Electron 32 & TypeScript",
+    note: "Hardened desktop environment with secure context isolation and fast IPC.",
+  },
+  {
+    label: "DWM WIN32",
+    title: "Direct3D Screen Guard",
+    note: "Native exclusion flags omit the window buffer from any capture pipe.",
+  },
+  {
+    label: "AUDIO PIPELINE",
+    title: "WASAPI Audio Session",
+    note: "Direct digital loopback from your default playback device.",
+  },
+  {
+    label: "LLM ENGINE",
+    title: "Groq & Gemini Dual Backend",
+    note: "Switch dynamically between Groq LPU inference and Google Gemini.",
+  },
+  {
+    label: "INFRASTRUCTURE",
+    title: "Supabase Auth & Storage",
+    note: "Encrypted accounts, verified sessions, and fast installer distribution.",
+  },
+  {
+    label: "PRIVACY",
+    title: "Local-First Zero Retention",
+    note: "No meeting audio, transcripts, or personal logs are persisted remotely.",
+  },
 ];
 
 const quickstartSteps = [
@@ -154,7 +178,13 @@ function DownloadButton({
       ? "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-105 shadow-accent"
       : "inline-flex items-center justify-center gap-2 rounded-full border border-primary/10 px-8 py-4 text-sm font-bold text-primary transition-colors hover:bg-surface";
   return (
-    <a href={DOWNLOAD_URL} download target="_blank" rel="noopener noreferrer" className={`${base} ${className}`}>
+    <a
+      href={DOWNLOAD_URL}
+      download
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${base} ${className}`}
+    >
       <Download className="size-4" aria-hidden="true" />
       {children}
     </a>
@@ -174,8 +204,9 @@ function ZoziiPage() {
                 Meet Zozii — <span className="text-accent">invisible</span> AI meeting assistant
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-                Listen to meetings, speak or type questions, and receive instant streaming answers — rendered
-                directly on your display, completely invisible to screen shares and meeting participants.
+                Listen to meetings, speak or type questions, and receive instant streaming answers —
+                rendered directly on your display, completely invisible to screen shares and meeting
+                participants.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <DownloadButton>Download for Windows (.exe)</DownloadButton>
@@ -213,7 +244,8 @@ function ZoziiPage() {
                 <br />
                 &nbsp;&nbsp;stealth: <span className="text-success">"WDA_EXCLUDEFROMCAPTURE"</span>,
                 <br />
-                &nbsp;&nbsp;audioTap: <span className="text-success">"WASAPI_LOOPBACK_ACTIVE"</span>,
+                &nbsp;&nbsp;audioTap: <span className="text-success">"WASAPI_LOOPBACK_ACTIVE"</span>
+                ,
                 <br />
                 &nbsp;&nbsp;models: [<span className="text-success">"Groq/LLaMA-3.3"</span>,{" "}
                 <span className="text-success">"Gemini 1.5 Pro"</span>],
@@ -232,13 +264,13 @@ function ZoziiPage() {
                 </p>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                   <p>
-                    <span className="text-primary">&gt; Meeting:</span> “How do you manage zero downtime database
-                    migrations?”
+                    <span className="text-primary">&gt; Meeting:</span> “How do you manage zero
+                    downtime database migrations?”
                   </p>
                   <p>
-                    <span className="text-accent">&gt; Zozii:</span> “Expand-contract pattern: add nullable column
-                    first, backfill asynchronously in batches, switch dual writes, then migrate read queries before
-                    pruning.”
+                    <span className="text-accent">&gt; Zozii:</span> “Expand-contract pattern: add
+                    nullable column first, backfill asynchronously in batches, switch dual writes,
+                    then migrate read queries before pruning.”
                   </p>
                 </div>
               </div>
@@ -256,7 +288,8 @@ function ZoziiPage() {
               Engineered for absolute discretion
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Hardware and OS-level innovations that keep your AI assistant private, ultra-low latency, and reliable.
+              Hardware and OS-level innovations that keep your AI assistant private, ultra-low
+              latency, and reliable.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -269,7 +302,9 @@ function ZoziiPage() {
                   <feature.icon className="size-5" aria-hidden="true" />
                 </div>
                 <h3 className="text-xl font-bold text-primary">{feature.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {feature.description}
+                </p>
               </article>
             ))}
           </div>
@@ -281,9 +316,12 @@ function ZoziiPage() {
         <div className="container-page">
           <div className="mb-14 max-w-2xl">
             <div className="eyebrow mb-6">Interaction Modalities</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">Four ways to interact with Zozii</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+              Four ways to interact with Zozii
+            </h2>
             <p className="mt-4 text-muted-foreground">
-              Flexible multi-modal input designed for seamless, discreet workflow integration during critical meetings.
+              Flexible multi-modal input designed for seamless, discreet workflow integration during
+              critical meetings.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -294,12 +332,15 @@ function ZoziiPage() {
               >
                 <modality.icon className="size-6 text-accent" aria-hidden="true" />
                 <h3 className="mt-5 text-base font-bold text-primary">{modality.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{modality.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {modality.description}
+                </p>
               </div>
             ))}
           </div>
           <p className="mt-8 text-xs text-muted-foreground">
-            <span className="font-semibold">[i]</span> Prompts and meeting transcription currently supported in English.
+            <span className="font-semibold">[i]</span> Prompts and meeting transcription currently
+            supported in English.
           </p>
         </div>
       </section>
@@ -309,7 +350,9 @@ function ZoziiPage() {
         <div className="container-page">
           <div className="mb-14 max-w-2xl">
             <div className="eyebrow mb-6">Architecture</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">Under the hood</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+              Under the hood
+            </h2>
             <p className="mt-4 text-muted-foreground">
               A breakdown of the native system stack powering Zozii&apos;s desktop runtime.
             </p>
@@ -320,7 +363,9 @@ function ZoziiPage() {
                 key={item.label}
                 className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card transition-all hover:shadow-elegant"
               >
-                <span className="text-[10px] font-bold tracking-widest uppercase text-accent">{item.label}</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase text-accent">
+                  {item.label}
+                </span>
                 <h3 className="mt-2 text-base font-bold text-primary">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.note}</p>
               </div>
@@ -334,9 +379,12 @@ function ZoziiPage() {
         <div className="container-page">
           <div className="mb-14 max-w-2xl">
             <div className="eyebrow mb-6">Quickstart</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">Get started in 3 minutes</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+              Get started in 3 minutes
+            </h2>
             <p className="mt-4 text-muted-foreground">
-              Simple steps from downloading the installer to receiving your first live streaming answer.
+              Simple steps from downloading the installer to receiving your first live streaming
+              answer.
             </p>
           </div>
           <ol className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -357,14 +405,19 @@ function ZoziiPage() {
         <div className="container-page">
           <div className="mb-14 max-w-2xl">
             <div className="eyebrow mb-6">FAQ</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">Frequently asked questions</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+              Frequently asked questions
+            </h2>
             <p className="mt-4 text-muted-foreground">
               Clear answers regarding privacy, screen protection, audio capture, and account quotas.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {faqItems.map((item, index) => (
-              <div key={item.q} className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card">
+              <div
+                key={item.q}
+                className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card"
+              >
                 <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
                   // {String(index + 1).padStart(2, "0")} · FAQ
                 </span>
@@ -382,10 +435,12 @@ function ZoziiPage() {
           <div className="rounded-3xl bg-primary p-10 text-primary-foreground md:p-16">
             <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold md:text-4xl">Ready to experience invisible AI co-piloting?</h2>
+                <h2 className="text-3xl font-bold md:text-4xl">
+                  Ready to experience invisible AI co-piloting?
+                </h2>
                 <p className="mt-4 text-primary-foreground/70">
-                  Download the desktop application, register in seconds, and start getting instant answers in your
-                  meetings.
+                  Download the desktop application, register in seconds, and start getting instant
+                  answers in your meetings.
                 </p>
               </div>
               <a

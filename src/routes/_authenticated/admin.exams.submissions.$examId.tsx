@@ -93,7 +93,6 @@ function ExamSubmissions() {
         />
       ) : null}
 
-
       {rows.length > 0 ? (
         <div className="overflow-x-auto rounded-2xl border border-primary/5 bg-card">
           <table className="w-full min-w-[44rem] text-sm">
@@ -167,7 +166,6 @@ function ExamSubmissions() {
                       </button>
                     </div>
                   </td>
-
                 </tr>
               ))}
             </tbody>

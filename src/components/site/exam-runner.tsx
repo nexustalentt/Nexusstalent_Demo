@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode, RefObject } from "react";
-import { formatDuration, groupBySection, normalizeSection, questionTypeLabel } from "@/lib/exam-utils";
+import {
+  formatDuration,
+  groupBySection,
+  normalizeSection,
+  questionTypeLabel,
+} from "@/lib/exam-utils";
 import { letterLabel } from "@/lib/question-bank-parser";
 import { ShieldAlert, X } from "lucide-react";
 import {
@@ -19,7 +24,9 @@ export const fieldClass =
 export function Shell({ children }: { children: ReactNode }) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface p-6">
-      <div className="w-full max-w-xl rounded-2xl border border-primary/5 bg-card p-8">{children}</div>
+      <div className="w-full max-w-xl rounded-2xl border border-primary/5 bg-card p-8">
+        {children}
+      </div>
     </main>
   );
 }
@@ -213,11 +220,11 @@ function CameraMonitorReminder({ active }: { active: boolean }) {
                 <span className="size-1.5 rounded-full bg-amber-600 animate-pulse" />
                 Proctoring Notice
               </span>
-              <span className="text-[11px] font-semibold text-muted-foreground">Live Monitoring</span>
+              <span className="text-[11px] font-semibold text-muted-foreground">
+                Live Monitoring
+              </span>
             </div>
-            <p className="mt-1.5 text-sm font-semibold text-foreground leading-snug">
-              {message}
-            </p>
+            <p className="mt-1.5 text-sm font-semibold text-foreground leading-snug">{message}</p>
           </div>
 
           <button
@@ -279,20 +286,15 @@ export function ExamRunner({
   useEffect(() => {
     if (state.data && !hydrated.current) {
       setAnswers(state.data.answers);
-      setReview(
-        Object.fromEntries((state.data.reviewFlags ?? []).map((id: string) => [id, true])),
-      );
+      setReview(Object.fromEntries((state.data.reviewFlags ?? []).map((id: string) => [id, true])));
       setSeconds(state.data.secondsRemaining);
       hydrated.current = true;
     }
   }, [state.data]);
 
   const saveMutation = useMutation({
-    mutationFn: (input: {
-      questionId: string;
-      answer?: StoredAnswer;
-      markedForReview?: boolean;
-    }) => saveExamAnswer({ data: { sessionToken, ...input } }),
+    mutationFn: (input: { questionId: string; answer?: StoredAnswer; markedForReview?: boolean }) =>
+      saveExamAnswer({ data: { sessionToken, ...input } }),
   });
 
   const submitMutation = useMutation({
@@ -505,7 +507,10 @@ export function ExamRunner({
         <ul className="mt-2.5 space-y-1.5 text-sm">
           {legend.map((item) => (
             <li key={item.status} className="flex items-center gap-2">
-              <span className={`size-4 shrink-0 rounded ${statusClass[item.status]}`} aria-hidden="true" />
+              <span
+                className={`size-4 shrink-0 rounded ${statusClass[item.status]}`}
+                aria-hidden="true"
+              />
               <span className="text-muted-foreground">{item.label}</span>
             </li>
           ))}
@@ -601,7 +606,9 @@ export function ExamRunner({
       <main className="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-8">
         {state.data.exam.instructions ? (
           <details className="rounded-2xl border border-primary/10 bg-card p-5">
-            <summary className="cursor-pointer text-sm font-bold text-primary">Instructions</summary>
+            <summary className="cursor-pointer text-sm font-bold text-primary">
+              Instructions
+            </summary>
             <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
               {state.data.exam.instructions}
             </p>
@@ -760,7 +767,10 @@ export function ExamRunner({
                     >
                       Next
                     </button>
-                    <span className="mx-1 hidden h-6 w-px bg-primary/10 sm:block" aria-hidden="true" />
+                    <span
+                      className="mx-1 hidden h-6 w-px bg-primary/10 sm:block"
+                      aria-hidden="true"
+                    />
                     <button
                       type="button"
                       onClick={() => toggleReview(question.id)}
@@ -790,7 +800,9 @@ export function ExamRunner({
             <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-[var(--shadow-card)]">
               {confirming ? (
                 <div className="space-y-3">
-                  <p className="font-semibold text-primary">Are you sure you want to submit the exam?</p>
+                  <p className="font-semibold text-primary">
+                    Are you sure you want to submit the exam?
+                  </p>
                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>Answered: {answeredCount}</li>
                     <li>Not answered: {notAnswered}</li>
@@ -856,7 +868,12 @@ function InstructionsGate({
   error,
   onStart,
 }: {
-  exam: { title: string; description: string | null; instructions: string | null; duration_minutes: number };
+  exam: {
+    title: string;
+    description: string | null;
+    instructions: string | null;
+    duration_minutes: number;
+  };
   candidateName: string | null;
   candidateUsername: string | null;
   questionCount: number;
@@ -874,7 +891,9 @@ function InstructionsGate({
         aria-labelledby="exam-instructions-title"
         className="w-full max-w-2xl rounded-2xl border border-primary/5 bg-card p-6 shadow-xl sm:p-8"
       >
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Exam instructions</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+          Exam instructions
+        </p>
         <h1 id="exam-instructions-title" className="mt-2 text-2xl font-bold text-primary">
           {exam.title}
         </h1>

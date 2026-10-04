@@ -1,12 +1,7 @@
 export type JobStatus = "draft" | "active" | "closed" | "archived";
 
 export type ApplicationStatus =
-  | "new"
-  | "under_review"
-  | "shortlisted"
-  | "interview"
-  | "selected"
-  | "rejected";
+  "new" | "under_review" | "shortlisted" | "interview" | "selected" | "rejected";
 
 export const applicationStatuses: { value: ApplicationStatus; label: string }[] = [
   { value: "new", label: "New" },

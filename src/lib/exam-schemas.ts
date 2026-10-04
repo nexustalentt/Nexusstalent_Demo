@@ -60,9 +60,7 @@ export const candidateAccessSchema = z.object({
   email: z.string().trim().email("Enter a valid email").max(200).optional().or(z.literal("")),
   access_start_at: z.string().trim().max(40).optional().or(z.literal("")),
   access_end_at: z.string().trim().max(40).optional().or(z.literal("")),
-  duration_minutes: z
-    .union([z.coerce.number().int().min(1).max(600), z.literal("")])
-    .optional(),
+  duration_minutes: z.union([z.coerce.number().int().min(1).max(600), z.literal("")]).optional(),
 });
 
 export const candidateLoginSchema = z.object({

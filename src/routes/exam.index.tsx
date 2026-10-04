@@ -84,7 +84,6 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
     onError: (mutationError: Error) => setError(mutationError.message),
   });
 
-
   return (
     <Shell>
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Nexus Talent</p>

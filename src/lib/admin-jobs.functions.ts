@@ -96,4 +96,3 @@ export const extractJobFromUrl = createServerFn({ method: "POST" })
       throw new Error(err?.message || "Failed to extract job details from the provided URL.");
     }
   });
-

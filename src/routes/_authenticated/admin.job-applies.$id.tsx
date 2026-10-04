@@ -56,9 +56,7 @@ function generateCandidateCredentials(candidate: {
   phone?: string | null;
   pan_number?: string | null;
 }) {
-  const cleanFirst = (candidate.first_name || "candidate")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
+  const cleanFirst = (candidate.first_name || "candidate").toLowerCase().replace(/[^a-z0-9]/g, "");
   const suffix = (candidate.pan_number || candidate.phone || "2026")
     .replace(/[^a-zA-Z0-9]/g, "")
     .slice(-4)
@@ -171,9 +169,8 @@ function JobApplyDetail() {
         .from("exam_candidates")
         .select("*, exams(id, title, duration_minutes, public_token, status)");
 
-      const { data: rows, error } = filters.length > 0
-        ? await query.or(filters.join(","))
-        : await query.limit(0);
+      const { data: rows, error } =
+        filters.length > 0 ? await query.or(filters.join(",")) : await query.limit(0);
 
       if (error) {
         console.warn("Could not query candidate exams:", error.message);
@@ -191,9 +188,7 @@ function JobApplyDetail() {
     setCandPassword(creds.password);
     // Allow immediate access by setting start window slightly before now
     setCandAccessStart(isoToIstLocal(new Date(Date.now() - 10 * 60 * 1000).toISOString()));
-    setCandAccessEnd(
-      isoToIstLocal(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()),
-    );
+    setCandAccessEnd(isoToIstLocal(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()));
     setAssignError(null);
     setCreatedCredentials(null);
 
@@ -449,19 +444,21 @@ function JobApplyDetail() {
 
               <div className="mt-4 divide-y divide-primary/5">
                 {candidateExamsQuery.data.map((item) => (
-                  <div key={item.id} className="py-3 flex flex-wrap items-center justify-between gap-4">
+                  <div
+                    key={item.id}
+                    className="py-3 flex flex-wrap items-center justify-between gap-4"
+                  >
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="font-semibold text-sm text-primary">
                           {item.exams?.title || "Assessment"}
                         </p>
-                        {item.exams?.status ? (
-                          <StatusPill status={item.exams.status} />
-                        ) : null}
+                        {item.exams?.status ? <StatusPill status={item.exams.status} /> : null}
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                         <span>
-                          Username: <strong className="font-mono text-foreground">{item.username}</strong>
+                          Username:{" "}
+                          <strong className="font-mono text-foreground">{item.username}</strong>
                         </span>
                         {(() => {
                           const isSha256 =
@@ -495,7 +492,8 @@ function JobApplyDetail() {
                         })()}
                         {item.access_start_at || item.access_end_at ? (
                           <span>
-                            Window: {formatIst(item.access_start_at) || "Anytime"} → {formatIst(item.access_end_at) || "No end"}
+                            Window: {formatIst(item.access_start_at) || "Anytime"} →{" "}
+                            {formatIst(item.access_end_at) || "No end"}
                           </span>
                         ) : null}
                       </div>
@@ -615,7 +613,9 @@ function JobApplyDetail() {
             <Row label="Portfolio" value={data.portfolio_url} />
             <Row
               label="Willing to relocate"
-              value={data.willing_to_relocate == null ? "—" : data.willing_to_relocate ? "Yes" : "No"}
+              value={
+                data.willing_to_relocate == null ? "—" : data.willing_to_relocate ? "Yes" : "No"
+              }
             />
             <Row label="Availability to join" value={data.availability_to_join} />
             <Row label="Heard about us" value={data.heard_about_us} />
@@ -675,23 +675,34 @@ function JobApplyDetail() {
                       Candidate access created successfully!
                     </div>
                     <p className="mt-1 text-xs">
-                      The candidate can now sign in and take the assessment with the credentials below.
+                      The candidate can now sign in and take the assessment with the credentials
+                      below.
                     </p>
                   </div>
 
                   <div className="space-y-3 rounded-xl border border-primary/10 bg-surface p-4 text-sm">
                     <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Exam</span>
-                      <span className="font-semibold text-primary">{createdCredentials.examTitle}</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Exam
+                      </span>
+                      <span className="font-semibold text-primary">
+                        {createdCredentials.examTitle}
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Candidate</span>
-                      <span className="font-semibold text-primary">{createdCredentials.fullName}</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Candidate
+                      </span>
+                      <span className="font-semibold text-primary">
+                        {createdCredentials.fullName}
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Exam Link</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Exam Link
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className="max-w-[200px] truncate text-xs font-mono text-accent">
                           {typeof window !== "undefined"
@@ -718,7 +729,9 @@ function JobApplyDetail() {
                     </div>
 
                     <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Username</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Username
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold text-foreground">
                           {createdCredentials.username}
@@ -738,7 +751,9 @@ function JobApplyDetail() {
                     </div>
 
                     <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Password</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Password
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold text-foreground">
                           {showCandPassword ? createdCredentials.password : "••••••••••••"}
@@ -749,7 +764,11 @@ function JobApplyDetail() {
                           className="rounded p-1 text-muted-foreground hover:text-foreground"
                           title={showCandPassword ? "Hide password" : "Show password"}
                         >
-                          {showCandPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+                          {showCandPassword ? (
+                            <EyeOff className="size-3.5" />
+                          ) : (
+                            <Eye className="size-3.5" />
+                          )}
                         </button>
                         <button
                           type="button"
@@ -767,17 +786,28 @@ function JobApplyDetail() {
 
                     {createdCredentials.accessStart || createdCredentials.accessEnd ? (
                       <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Window (IST)</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          Window (IST)
+                        </span>
                         <span className="text-xs text-muted-foreground">
-                          {createdCredentials.accessStart ? formatIst(createdCredentials.accessStart) : "Anytime"} →{" "}
-                          {createdCredentials.accessEnd ? formatIst(createdCredentials.accessEnd) : "No end"}
+                          {createdCredentials.accessStart
+                            ? formatIst(createdCredentials.accessStart)
+                            : "Anytime"}{" "}
+                          →{" "}
+                          {createdCredentials.accessEnd
+                            ? formatIst(createdCredentials.accessEnd)
+                            : "No end"}
                         </span>
                       </div>
                     ) : null}
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Duration</span>
-                      <span className="text-xs font-semibold text-foreground">{createdCredentials.duration} mins</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Duration
+                      </span>
+                      <span className="text-xs font-semibold text-foreground">
+                        {createdCredentials.duration} mins
+                      </span>
                     </div>
                   </div>
 
@@ -842,7 +872,8 @@ function JobApplyDetail() {
                         </option>
                         {exams.data.map((item) => (
                           <option key={item.id} value={item.id}>
-                            {item.title} ({item.duration_minutes} mins · {item.question_count ?? 0} questions · {item.status})
+                            {item.title} ({item.duration_minutes} mins · {item.question_count ?? 0}{" "}
+                            questions · {item.status})
                           </option>
                         ))}
                       </select>
@@ -880,7 +911,8 @@ function JobApplyDetail() {
                       className="w-full rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-sm font-mono outline-none focus:border-accent"
                     />
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Auto-generated from candidate&apos;s name and PAN / phone. Letters, numbers, dot, dash, underscore.
+                      Auto-generated from candidate&apos;s name and PAN / phone. Letters, numbers,
+                      dot, dash, underscore.
                     </p>
                   </div>
 
@@ -915,7 +947,11 @@ function JobApplyDetail() {
                         className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                         title={showCandPassword ? "Hide password" : "Show password"}
                       >
-                        {showCandPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                        {showCandPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
                       </button>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -982,7 +1018,12 @@ function JobApplyDetail() {
                     <button
                       type="button"
                       onClick={() => assignMutation.mutate()}
-                      disabled={assignMutation.isPending || !selectedExamId || !candUsername || !candPassword}
+                      disabled={
+                        assignMutation.isPending ||
+                        !selectedExamId ||
+                        !candUsername ||
+                        !candPassword
+                      }
                       className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-60 shadow-sm"
                     >
                       <GraduationCap className="size-4" />

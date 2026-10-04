@@ -37,7 +37,6 @@ export const examsQuery = queryOptions({
         completed_count: examAttempts.filter((row) => row.status === "evaluated").length,
       };
     });
-
   },
 });
 
@@ -85,7 +84,11 @@ export const examAttemptsQuery = (examId: string) =>
           .eq("exam_id", examId)
           .order("created_at", { ascending: false }),
       ) as (ExamAttemptRow & {
-        exam_candidates: { username: string; full_name: string | null; email: string | null } | null;
+        exam_candidates: {
+          username: string;
+          full_name: string | null;
+          email: string | null;
+        } | null;
       })[],
   });
 
@@ -96,12 +99,18 @@ export const examAttemptQuery = (attemptId: string) =>
       const attempt = unwrap(
         await supabase
           .from("exam_attempts")
-          .select("*, exam_candidates(username, full_name, email), exams(title, passing_percentage)")
+          .select(
+            "*, exam_candidates(username, full_name, email), exams(title, passing_percentage)",
+          )
           .eq("id", attemptId)
           .maybeSingle(),
       ) as
         | (ExamAttemptRow & {
-            exam_candidates: { username: string; full_name: string | null; email: string | null } | null;
+            exam_candidates: {
+              username: string;
+              full_name: string | null;
+              email: string | null;
+            } | null;
             exams: { title: string; passing_percentage: number } | null;
           })
         | null;
@@ -176,7 +185,10 @@ export async function setExamStatus(exam: ExamRow, status: "draft" | "published"
     .from("exams")
     .update({
       status,
-      published_at: status === "published" ? (exam.published_at ?? new Date().toISOString()) : exam.published_at,
+      published_at:
+        status === "published"
+          ? (exam.published_at ?? new Date().toISOString())
+          : exam.published_at,
     })
     .eq("id", exam.id);
   if (error) throw new Error(error.message);
@@ -211,7 +223,6 @@ export async function deleteAllExamAttempts(examId: string) {
   return attempts.length;
 }
 
-
 /** Recomputes attempt totals after manual grading. */
 export async function recalculateAttempt(attemptId: string) {
   const attempt = unwrap(
@@ -224,9 +235,17 @@ export async function recalculateAttempt(attemptId: string) {
 
   const [questions, answers] = await Promise.all([
     unwrap(
-      await supabase.from("exam_questions").select("id, question_type, marks").eq("exam_id", attempt.exam_id),
+      await supabase
+        .from("exam_questions")
+        .select("id, question_type, marks")
+        .eq("exam_id", attempt.exam_id),
     ),
-    unwrap(await supabase.from("exam_answers").select("question_id, awarded_marks").eq("attempt_id", attemptId)),
+    unwrap(
+      await supabase
+        .from("exam_answers")
+        .select("question_id, awarded_marks")
+        .eq("attempt_id", attemptId),
+    ),
   ]);
 
   const awarded = new Map(answers.map((row) => [row.question_id, row.awarded_marks]));
