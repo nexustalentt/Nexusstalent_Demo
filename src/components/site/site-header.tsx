@@ -6,10 +6,11 @@ import { NexusLogo } from "@/components/brand/nexus-logo";
 
 const navItems = [
   { label: "Home", to: "/" },
-  { label: "About Us", to: "/about" },
+  { label: "For Businesses", to: "/for-businesses" },
   { label: "Services", to: "/services" },
   { label: "Industries", to: "/industries" },
   { label: "Careers", to: "/careers" },
+  { label: "About Us", to: "/about" },
   { label: "Zozii", to: "/zozii" },
 ] as const;
 
