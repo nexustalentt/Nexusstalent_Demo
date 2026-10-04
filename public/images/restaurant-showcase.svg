@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <linearGradient id="rest-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="96" fill="url(#rest-bg)" />
+  
+  <!-- Cloche / Plate -->
+  <path d="M 50 140 L 150 140" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+  <path d="M 60 135 C 60 90, 140 90, 140 135 Z" fill="#ffffff" opacity="0.95" />
+  <circle cx="100" cy="85" r="8" fill="#ffffff" />
+  
+  <!-- Steam Curves -->
+  <path d="M 90 70 C 85 60, 95 50, 90 40" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  <path d="M 110 70 C 105 60, 115 50, 110 40" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  
+  <!-- Cutlery accents -->
+  <path d="M 35 90 L 35 150 M 30 90 L 40 90 M 30 105 L 40 105" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+  <path d="M 165 90 L 165 150 M 160 90 C 170 90, 170 115, 160 115" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <rect width="120" height="120" rx="24" fill="#e0f2fe" />
+  <!-- Storefront / Local Business Vector -->
+  <path d="M 30 50 L 90 50 L 85 90 L 35 90 Z" fill="#38bdf8" opacity="0.3" stroke="#0284c7" stroke-width="3" stroke-linejoin="round" />
+  <path d="M 25 40 L 95 40 L 90 52 L 80 52 L 75 40 L 65 40 L 60 52 L 50 52 L 45 40 L 35 40 L 30 52 L 25 40 Z" fill="#0284c7" />
+  <rect x="50" y="65" width="20" height="25" rx="3" fill="#0284c7" />
+  <circle cx="55" cy="78" r="2" fill="#ffffff" />
+</svg>

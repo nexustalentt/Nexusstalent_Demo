@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <rect width="120" height="120" rx="24" fill="#d1fae5" />
+  <!-- Rocket / Startup Vector -->
+  <path d="M 60 25 C 60 25, 78 45, 78 70 L 42 70 C 42 45, 60 25, 60 25 Z" fill="#10b981" />
+  <circle cx="60" cy="50" r="7" fill="#ffffff" />
+  <path d="M 42 60 L 30 75 L 42 72 Z" fill="#059669" />
+  <path d="M 78 60 L 90 75 L 78 72 Z" fill="#059669" />
+  <!-- Flame -->
+  <path d="M 52 70 C 52 85, 60 95, 60 95 C 60 95, 68 85, 68 70 Z" fill="#f59e0b" />
+</svg>

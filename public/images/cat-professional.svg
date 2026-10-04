@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <rect width="120" height="120" rx="24" fill="#ede9fe" />
+  <!-- Briefcase / Portfolio Vector -->
+  <rect x="30" y="45" width="60" height="45" rx="6" fill="#8b5cf6" />
+  <path d="M 48 45 L 48 36 C 48 33, 51 30, 54 30 L 66 30 C 69 30, 72 33, 72 36 L 72 45" stroke="#7c3aed" stroke-width="4" fill="none" />
+  <path d="M 30 62 L 120 62" stroke="#ffffff" stroke-width="2.5" opacity="0.4" />
+  <rect x="54" y="58" width="12" height="9" rx="2" fill="#f59e0b" />
+</svg>

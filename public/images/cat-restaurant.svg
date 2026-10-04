@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <rect width="120" height="120" rx="24" fill="#fef3c7" />
+  <!-- Cafe / Restaurant Vector -->
+  <path d="M 35 85 L 85 85" stroke="#d97706" stroke-width="4" stroke-linecap="round" />
+  <path d="M 42 80 C 42 55, 78 55, 78 80 Z" fill="#f59e0b" />
+  <circle cx="60" cy="52" r="5" fill="#d97706" />
+  <path d="M 55 42 C 52 35, 58 30, 55 24" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M 65 42 C 62 35, 68 30, 65 24" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" />
+</svg>

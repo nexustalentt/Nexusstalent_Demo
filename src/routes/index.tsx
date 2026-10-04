@@ -91,6 +91,22 @@ const serviceIcons: Record<string, React.ElementType> = {
   Briefcase,
 };
 
+const audienceImages: Record<string, string> = {
+  "restaurants-cafes": "/images/cat-restaurant.svg",
+  "local-businesses": "/images/cat-local.svg",
+  startups: "/images/cat-startup.svg",
+  professionals: "/images/cat-professional.svg",
+};
+
+const clientLogoFallbacks: Record<string, string> = {
+  SAP: "/logos/sap.svg",
+  LTIMindtree: "/logos/ltimindtree.svg",
+  Wipro: "/logos/wipro.svg",
+  Accenture: "/logos/accenture.svg",
+  Capgemini: "/logos/capgemini.svg",
+  "Mercedes-Benz": "/logos/mercedes-benz.svg",
+};
+
 function HomePage() {
   const { data: jobs } = useSuspenseQuery(activeJobsQuery);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
@@ -156,7 +172,10 @@ function HomePage() {
 
             <div className="relative">
               <img
-                src={heroImage}
+                src={heroImage || "/images/hero-office.jpg"}
+                onError={(e) => {
+                  e.currentTarget.src = "/images/hero-office.jpg";
+                }}
                 alt="Nexus Talent consultants and engineers collaborating in a modern office"
                 width={1200}
                 height={800}
@@ -470,9 +489,13 @@ function HomePage() {
                   className="rounded-2xl border border-primary/10 bg-card p-6 shadow-card transition-all hover:border-accent/40 hover:shadow-elegant"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                      <Icon className="size-5" />
-                    </div>
+                    <img
+                      src={audienceImages[audience.id] || "/images/cat-local.svg"}
+                      alt={audience.title}
+                      width={48}
+                      height={48}
+                      className="size-12 rounded-xl object-contain shadow-xs border border-primary/5"
+                    />
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                       {audience.category}
                     </span>
@@ -715,6 +738,11 @@ function HomePage() {
                   {client.logo ? (
                     <img
                       src={client.logo}
+                      onError={(e) => {
+                        if (clientLogoFallbacks[client.name]) {
+                          e.currentTarget.src = clientLogoFallbacks[client.name];
+                        }
+                      }}
                       alt={`${client.name} logo`}
                       loading="lazy"
                       className="max-h-6 w-full object-contain"

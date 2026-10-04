@@ -143,9 +143,13 @@ export function DigitalShowcase() {
                 {/* Doctor Bio & Credentials */}
                 <div className="space-y-4 md:col-span-7">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground font-bold text-xl shadow-md">
-                      SA
-                    </div>
+                    <img
+                      src="/images/doctor-profile.svg"
+                      alt="Dr. Sarah Adams, MD"
+                      width={56}
+                      height={56}
+                      className="size-14 shrink-0 rounded-2xl object-cover shadow-md border border-accent/20"
+                    />
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="font-bold text-base sm:text-lg text-primary">
@@ -288,9 +292,13 @@ export function DigitalShowcase() {
             <div className="animate-fade-up w-full space-y-4 sm:space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary/10 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-accent-foreground font-bold text-sm">
-                    A
-                  </div>
+                  <img
+                    src="/images/restaurant-showcase.svg"
+                    alt="Artisan Kitchen & Grill"
+                    width={40}
+                    height={40}
+                    className="size-10 shrink-0 rounded-xl object-cover shadow-sm border border-amber-500/20"
+                  />
                   <div>
                     <span className="font-bold text-sm sm:text-base text-primary">
                       Artisan Kitchen & Grill
@@ -360,10 +368,14 @@ export function DigitalShowcase() {
           {activeTab === "software" && (
             <div className="animate-fade-up w-full space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between border-b border-primary/10 pb-4">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="size-7 rounded-md bg-accent flex items-center justify-center text-xs font-black text-white shrink-0">
-                    N
-                  </div>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img
+                    src="/images/software-dashboard.svg"
+                    alt="Nexus Portal OS"
+                    width={36}
+                    height={36}
+                    className="size-9 shrink-0 rounded-lg object-cover shadow-sm border border-accent/20"
+                  />
                   <span className="text-xs sm:text-sm font-bold tracking-tight text-primary truncate">
                     Nexus Portal OS
                   </span>

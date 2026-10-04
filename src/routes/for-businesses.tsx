@@ -69,6 +69,13 @@ const serviceIcons: Record<string, React.ElementType> = {
   Briefcase,
 };
 
+const audienceImages: Record<string, string> = {
+  "restaurants-cafes": "/images/cat-restaurant.svg",
+  "local-businesses": "/images/cat-local.svg",
+  startups: "/images/cat-startup.svg",
+  professionals: "/images/cat-professional.svg",
+};
+
 const projectSchema = z.object({
   name: z.string().trim().min(2, "Please enter your full name").max(100),
   email: z.string().trim().email("Please enter a valid email address").max(255),
@@ -386,9 +393,13 @@ function ForBusinessesPage() {
                   className="rounded-2xl border border-primary/10 bg-card p-6 shadow-card"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                      <Icon className="size-5" />
-                    </div>
+                    <img
+                      src={audienceImages[audience.id] || "/images/cat-local.svg"}
+                      alt={audience.title}
+                      width={44}
+                      height={44}
+                      className="size-11 rounded-xl object-contain shadow-xs border border-primary/5"
+                    />
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                       {audience.category}
                     </span>
