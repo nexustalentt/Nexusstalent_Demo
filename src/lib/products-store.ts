@@ -141,8 +141,21 @@ export function normalizeProduct(product: ProductItem): ProductItem {
   };
 }
 
+const DELETED_KEY = "nexus_talent_products_deleted_v1";
+
+export function getDeletedProductIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(DELETED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Returns all products, merging seed products with any added/updated products in local storage.
+ * Products explicitly deleted by the user will NEVER be re-added or resurrected.
  */
 export function getLocalProducts(): ProductItem[] {
   if (typeof window === "undefined") {
@@ -150,28 +163,30 @@ export function getLocalProducts(): ProductItem[] {
   }
 
   try {
+    const deletedIds = getDeletedProductIds();
+    const defaults = getDefaultProducts().filter((d) => !deletedIds.includes(d.id));
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    const defaults = getDefaultProducts();
+
     if (!raw) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
       return defaults;
     }
+
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      const normalized = (parsed as ProductItem[]).map(normalizeProduct);
-      // Ensure any newly added default products (like Screenshot Saver) are merged in
-      for (const d of defaults) {
-        if (!normalized.some((p) => p.id === d.id || p.name.toLowerCase() === d.name.toLowerCase())) {
-          normalized.push(d);
-        }
-      }
+    if (Array.isArray(parsed)) {
+      // Exclude any deleted IDs
+      const remaining = (parsed as ProductItem[]).filter(
+        (p) => !deletedIds.includes(p.id)
+      );
+      const normalized = remaining.map(normalizeProduct);
       return normalized;
     }
   } catch (error) {
     console.warn("[products-store] Failed to load from localStorage:", error);
   }
 
-  return getDefaultProducts();
+  const deletedIds = getDeletedProductIds();
+  return getDefaultProducts().filter((d) => !deletedIds.includes(d.id));
 }
 
 /**
@@ -184,6 +199,14 @@ export function saveLocalProduct(product: Partial<ProductItem> & { name: string 
   let targetId = product.id;
   if (!targetId) {
     targetId = `prod-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  }
+
+  // If this targetId was previously marked as deleted, unmark it
+  if (typeof window !== "undefined" && targetId) {
+    try {
+      const deletedIds = getDeletedProductIds().filter((id) => id !== targetId);
+      window.localStorage.setItem(DELETED_KEY, JSON.stringify(deletedIds));
+    } catch {}
   }
 
   const existingIndex = existing.findIndex((p) => p.id === targetId);
@@ -240,35 +263,48 @@ export function saveLocalProduct(product: Partial<ProductItem> & { name: string 
     }
   }
 
-  return fullProduct;
+  return normalizedProduct;
 }
 
 /**
- * Removes a product by ID from storage.
+ * Removes a product by ID from storage permanently.
  */
 export function deleteLocalProduct(productId: string): boolean {
-  const existing = getLocalProducts();
-  const updated = existing.filter((p) => p.id !== productId);
+  if (typeof window === "undefined" || !productId) return true;
 
-  if (typeof window !== "undefined") {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      window.dispatchEvent(new CustomEvent("nexus-products-updated", { detail: updated }));
-    } catch (e) {
-      console.warn("[products-store] Failed to update localStorage on delete:", e);
+  try {
+    // 1. Permanently record ID in deleted list so it's NEVER resurrected by default seed
+    const deletedIds = getDeletedProductIds();
+    if (!deletedIds.includes(productId)) {
+      deletedIds.push(productId);
+      window.localStorage.setItem(DELETED_KEY, JSON.stringify(deletedIds));
     }
-  }
 
-  return true;
+    // 2. Load stored products directly
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const currentList: ProductItem[] = raw ? JSON.parse(raw) : getDefaultProducts();
+
+    // 3. Remove by ID
+    const updated = currentList.filter((p) => p.id !== productId && !deletedIds.includes(p.id));
+
+    // 4. Save and broadcast
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent("nexus-products-updated", { detail: updated }));
+    return true;
+  } catch (e) {
+    console.warn("[products-store] Failed to update localStorage on delete:", e);
+    return false;
+  }
 }
 
 /**
- * Resets products to default seed items.
+ * Resets products to default seed items and clears deleted IDs list.
  */
 export function resetLocalProducts(): ProductItem[] {
   const defaults = getDefaultProducts();
   if (typeof window !== "undefined") {
     try {
+      window.localStorage.removeItem(DELETED_KEY);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
       window.dispatchEvent(new CustomEvent("nexus-products-updated", { detail: defaults }));
     } catch (e) {

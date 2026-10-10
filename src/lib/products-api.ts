@@ -44,7 +44,7 @@ export function useProducts() {
   const [items, setItems] = useState<ProductItem[]>(() => getLocalProducts());
 
   useEffect(() => {
-    if (query.data && query.data.length > 0) {
+    if (query.data) {
       setItems(query.data);
     }
   }, [query.data]);
@@ -66,7 +66,7 @@ export function useProducts() {
 
   return {
     ...query,
-    data: items,
+    data: query.data ?? items,
   };
 }
 
@@ -144,10 +144,10 @@ export function useDeleteProduct() {
       return id;
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.setQueryData<ProductItem[]>(["products", "list"], (prev) =>
         prev ? prev.filter((p) => p.id !== id) : [],
       );
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 }

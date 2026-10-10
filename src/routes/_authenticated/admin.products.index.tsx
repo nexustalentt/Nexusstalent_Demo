@@ -203,13 +203,25 @@ function ProductsAdminPage() {
   }
 
   function handleDelete(product: ProductItem) {
-    if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
-      deleteMutation.mutate(product.id, {
-        onSuccess: () => {
-          toast.success("Product deleted");
-        },
-      });
+    if (!product?.id) {
+      toast.error("Unable to identify product ID.");
+      return;
     }
+
+    const confirmed =
+      typeof window === "undefined" ||
+      window.confirm(`Are you sure you want to delete "${product.name}"?`);
+
+    if (!confirmed) return;
+
+    deleteMutation.mutate(product.id, {
+      onSuccess: () => {
+        toast.success(`"${product.name}" deleted successfully`);
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || "Failed to delete product");
+      },
+    });
   }
 
   // Statistics
@@ -400,11 +412,12 @@ function ProductsAdminPage() {
                       <button
                         type="button"
                         onClick={() => handleDelete(item)}
-                        className="inline-flex items-center gap-1.5 border border-[#e0e0e0] bg-white px-3 py-2 text-xs font-semibold text-[#da1e28] hover:bg-[#fff1f1] transition-colors"
+                        disabled={deleteMutation.isPending && deleteMutation.variables === item.id}
+                        className="inline-flex items-center gap-1.5 border border-[#e0e0e0] bg-white px-3 py-2 text-xs font-semibold text-[#da1e28] hover:bg-[#fff1f1] transition-colors disabled:opacity-50"
                         title="Delete product"
                       >
                         <Trash2 className="size-3.5" />
-                        <span>Delete</span>
+                        <span>{deleteMutation.isPending && deleteMutation.variables === item.id ? "Deleting…" : "Delete"}</span>
                       </button>
                     </div>
                   </div>
