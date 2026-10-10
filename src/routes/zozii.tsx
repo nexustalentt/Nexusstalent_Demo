@@ -175,8 +175,8 @@ function DownloadButton({
 }) {
   const base =
     variant === "primary"
-      ? "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-105 shadow-accent"
-      : "inline-flex items-center justify-center gap-2 rounded-full border border-primary/10 px-8 py-4 text-sm font-bold text-primary transition-colors hover:bg-surface";
+      ? "inline-flex items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9]"
+      : "inline-flex items-center justify-center gap-2 rounded-none border border-[#161616] px-6 py-3.5 text-sm font-semibold text-[#161616] transition-colors hover:bg-[#161616] hover:text-white";
   return (
     <a
       href={DOWNLOAD_URL}
@@ -195,28 +195,31 @@ function ZoziiPage() {
   return (
     <PublicShell>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-primary/5 bg-surface pt-16 pb-20 md:pt-24 md:pb-28">
+      <section className="relative overflow-hidden border-b border-[#e0e0e0] bg-white pt-16 pb-20 md:pt-24 md:pb-28">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <div className="eyebrow mb-6">Product</div>
-              <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-primary sm:text-5xl lg:text-6xl">
-                Meet Zozii — <span className="text-accent">invisible</span> AI meeting assistant
+              <div className="mb-4 inline-flex items-center gap-2 border border-[#e0e0e0] bg-[#f4f4f4] px-2.5 py-1 text-xs font-semibold text-[#525252]">
+                <span className="size-1.5 bg-[#0f62fe]" />
+                PRODUCT SPECIFICATION · DESKTOP RUNTIME
+              </div>
+              <h1 className="text-4xl font-light tracking-tight text-[#161616] sm:text-5xl lg:text-6xl">
+                Meet Zozii — <span className="font-normal text-[#0f62fe]">invisible</span> AI meeting assistant
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-[#525252]">
                 Listen to meetings, speak or type questions, and receive instant streaming answers —
                 rendered directly on your display, completely invisible to screen shares and meeting
                 participants.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <DownloadButton>Download for Windows (.exe)</DownloadButton>
-                <span className="text-sm font-semibold text-muted-foreground">v1.09.01</span>
+                <span className="font-mono text-xs font-medium text-[#525252]">v1.09.01 · Win32/x64</span>
               </div>
               <div className="mt-8 flex flex-wrap gap-2">
                 {capabilityPills.map((pill) => (
                   <span
                     key={pill}
-                    className="rounded-full border border-primary/10 bg-background px-3 py-1.5 text-xs font-semibold text-primary"
+                    className="border border-[#e0e0e0] bg-[#f4f4f4] px-2.5 py-1 font-mono text-xs text-[#161616]"
                   >
                     {pill}
                   </span>
@@ -224,53 +227,49 @@ function ZoziiPage() {
               </div>
             </div>
 
-            {/* Live runtime card */}
-            <div className="rounded-3xl border border-primary/5 bg-card p-6 shadow-elegant md:p-8">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="size-2 animate-pulse rounded-full bg-success" />
-                  <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
-                    zozii-engine.ts · LIVE RUNTIME
-                  </span>
+            {/* Live runtime card - Carbon code terminal */}
+            <div className="border border-[#e0e0e0] bg-[#f4f4f4] p-6 md:p-8">
+              <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-3">
+                <div className="flex items-center gap-2 font-mono text-xs text-[#525252]">
+                  <span className="size-2 bg-[#24a148]" />
+                  <span>zozii-engine.ts</span>
                 </div>
-                <span className="text-[10px] font-bold text-success">SYSTEM ONLINE</span>
+                <span className="border border-[#24a148] bg-[#defbe6] px-2 py-0.5 font-mono text-[11px] font-semibold text-[#0e6027]">
+                  SYSTEM ONLINE
+                </span>
               </div>
-              <div className="mt-6 overflow-hidden rounded-2xl bg-primary p-5 font-mono text-xs leading-relaxed text-primary-foreground md:text-sm">
-                <span className="text-accent">// initializing invisible meeting assistant</span>
+              <div className="mt-4 border border-[#393939] bg-[#161616] p-5 font-mono text-xs leading-relaxed text-[#f4f4f4] md:text-sm">
+                <span className="text-[#8d8d8d]">// initializing invisible meeting assistant</span>
                 <br />
-                <span className="text-muted-foreground">const</span> assistant = {"{"}
+                <span className="text-[#78a9ff]">const</span> assistant = {"{"}
                 <br />
-                &nbsp;&nbsp;role: <span className="text-success">"Invisible AI Co-Pilot"</span>,
+                &nbsp;&nbsp;role: <span className="text-[#42be65]">"Invisible AI Co-Pilot"</span>,
                 <br />
-                &nbsp;&nbsp;stealth: <span className="text-success">"WDA_EXCLUDEFROMCAPTURE"</span>,
+                &nbsp;&nbsp;stealth: <span className="text-[#42be65]">"WDA_EXCLUDEFROMCAPTURE"</span>,
                 <br />
-                &nbsp;&nbsp;audioTap: <span className="text-success">"WASAPI_LOOPBACK_ACTIVE"</span>
-                ,
+                &nbsp;&nbsp;audioTap: <span className="text-[#42be65]">"WASAPI_LOOPBACK_ACTIVE"</span>,
                 <br />
-                &nbsp;&nbsp;models: [<span className="text-success">"Groq/LLaMA-3.3"</span>,{" "}
-                <span className="text-success">"Gemini 1.5 Pro"</span>],
+                &nbsp;&nbsp;models: [<span className="text-[#42be65]">"Groq/LLaMA-3.3"</span>,{" "}
+                <span className="text-[#42be65]">"Gemini 1.5 Pro"</span>],
                 <br />
-                &nbsp;&nbsp;latency: <span className="text-success">"&lt; 320ms"</span>,
+                &nbsp;&nbsp;latency: <span className="text-[#42be65]">"&lt; 320ms"</span>,
                 <br />
-                &nbsp;&nbsp;screenShareSafe: <span className="text-accent">true</span>,
+                &nbsp;&nbsp;screenShareSafe: <span className="text-[#78a9ff]">true</span>,
                 <br />
-                &nbsp;&nbsp;active: <span className="text-accent">true</span>
+                &nbsp;&nbsp;active: <span className="text-[#78a9ff]">true</span>
                 <br />
                 {"}"};
               </div>
-              <div className="mt-6 rounded-2xl border border-primary/5 bg-surface p-5">
-                <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+              <div className="mt-4 border border-[#e0e0e0] bg-white p-4">
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#525252]">
                   Live Stream Simulation
                 </p>
-                <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+                <div className="mt-3 space-y-2 text-sm text-[#161616]">
                   <p>
-                    <span className="text-primary">&gt; Meeting:</span> “How do you manage zero
-                    downtime database migrations?”
+                    <span className="font-semibold text-[#525252]">&gt; Meeting:</span> “How do you manage zero downtime database migrations?”
                   </p>
-                  <p>
-                    <span className="text-accent">&gt; Zozii:</span> “Expand-contract pattern: add
-                    nullable column first, backfill asynchronously in batches, switch dual writes,
-                    then migrate read queries before pruning.”
+                  <p className="border-l-2 border-[#0f62fe] pl-3 text-[#161616]">
+                    <span className="font-semibold text-[#0f62fe]">&gt; Zozii:</span> “Expand-contract pattern: add nullable column first, backfill asynchronously in batches, switch dual writes, then migrate read queries before pruning.”
                   </p>
                 </div>
               </div>
@@ -280,14 +279,14 @@ function ZoziiPage() {
       </section>
 
       {/* CORE ENGINEERING */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="container-page">
-          <div className="mb-14 max-w-2xl">
-            <div className="eyebrow mb-6">Core Engineering</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Core Engineering</p>
+            <h2 className="mt-2 text-3xl font-light tracking-tight text-[#161616] md:text-4xl">
               Engineered for absolute discretion
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-3 text-base text-[#525252]">
               Hardware and OS-level innovations that keep your AI assistant private, ultra-low
               latency, and reliable.
             </p>
@@ -296,13 +295,13 @@ function ZoziiPage() {
             {engineeringFeatures.map((feature) => (
               <article
                 key={feature.title}
-                className="rounded-2xl border border-primary/5 bg-card p-8 transition-all hover:border-accent/40 hover:shadow-elegant"
+                className="group border border-[#e0e0e0] bg-white p-8 transition-colors hover:border-[#0f62fe]"
               >
-                <div className="mb-6 flex size-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <div className="mb-6 flex size-10 items-center justify-center bg-[#edf5ff] text-[#0f62fe]">
                   <feature.icon className="size-5" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-bold text-primary">{feature.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <h3 className="text-lg font-semibold text-[#161616]">{feature.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#525252]">
                   {feature.description}
                 </p>
               </article>
@@ -312,14 +311,14 @@ function ZoziiPage() {
       </section>
 
       {/* INTERACTION MODALITIES */}
-      <section className="border-y border-primary/5 bg-surface py-24">
+      <section className="border-y border-[#e0e0e0] bg-[#f4f4f4] py-20">
         <div className="container-page">
-          <div className="mb-14 max-w-2xl">
-            <div className="eyebrow mb-6">Interaction Modalities</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Interaction Modalities</p>
+            <h2 className="mt-2 text-3xl font-light tracking-tight text-[#161616] md:text-4xl">
               Four ways to interact with Zozii
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-3 text-base text-[#525252]">
               Flexible multi-modal input designed for seamless, discreet workflow integration during
               critical meetings.
             </p>
@@ -328,32 +327,32 @@ function ZoziiPage() {
             {modalities.map((modality) => (
               <div
                 key={modality.title}
-                className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card transition-all hover:shadow-elegant"
+                className="border border-[#e0e0e0] bg-white p-6 transition-colors hover:border-[#0f62fe]"
               >
-                <modality.icon className="size-6 text-accent" aria-hidden="true" />
-                <h3 className="mt-5 text-base font-bold text-primary">{modality.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <modality.icon className="size-6 text-[#0f62fe]" aria-hidden="true" />
+                <h3 className="mt-5 text-base font-semibold text-[#161616]">{modality.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#525252]">
                   {modality.description}
                 </p>
               </div>
             ))}
           </div>
-          <p className="mt-8 text-xs text-muted-foreground">
-            <span className="font-semibold">[i]</span> Prompts and meeting transcription currently
+          <p className="mt-6 text-xs text-[#525252]">
+            <span className="font-semibold text-[#161616]">[i]</span> Prompts and meeting transcription currently
             supported in English.
           </p>
         </div>
       </section>
 
       {/* ARCHITECTURE */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="container-page">
-          <div className="mb-14 max-w-2xl">
-            <div className="eyebrow mb-6">Architecture</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Architecture</p>
+            <h2 className="mt-2 text-3xl font-light tracking-tight text-[#161616] md:text-4xl">
               Under the hood
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-3 text-base text-[#525252]">
               A breakdown of the native system stack powering Zozii&apos;s desktop runtime.
             </p>
           </div>
@@ -361,13 +360,13 @@ function ZoziiPage() {
             {architectureItems.map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card transition-all hover:shadow-elegant"
+                className="border border-[#e0e0e0] bg-white p-6 transition-colors hover:border-[#0f62fe]"
               >
-                <span className="text-[10px] font-bold tracking-widest uppercase text-accent">
+                <span className="font-mono text-[11px] font-semibold tracking-wider uppercase text-[#0f62fe]">
                   {item.label}
                 </span>
-                <h3 className="mt-2 text-base font-bold text-primary">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.note}</p>
+                <h3 className="mt-2 text-base font-semibold text-[#161616]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#525252]">{item.note}</p>
               </div>
             ))}
           </div>
@@ -375,25 +374,25 @@ function ZoziiPage() {
       </section>
 
       {/* QUICKSTART */}
-      <section className="border-y border-primary/5 bg-surface py-24">
+      <section className="border-y border-[#e0e0e0] bg-[#f4f4f4] py-20">
         <div className="container-page">
-          <div className="mb-14 max-w-2xl">
-            <div className="eyebrow mb-6">Quickstart</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Quickstart</p>
+            <h2 className="mt-2 text-3xl font-light tracking-tight text-[#161616] md:text-4xl">
               Get started in 3 minutes
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-3 text-base text-[#525252]">
               Simple steps from downloading the installer to receiving your first live streaming
               answer.
             </p>
           </div>
           <ol className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {quickstartSteps.map((step, index) => (
-              <li key={step} className="flex gap-4 rounded-2xl border border-primary/5 bg-card p-6">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-xs font-bold text-accent">
+              <li key={step} className="flex gap-4 border border-[#e0e0e0] bg-white p-6">
+                <div className="flex size-7 shrink-0 items-center justify-center bg-[#0f62fe] font-mono text-xs font-bold text-white">
                   {index + 1}
                 </div>
-                <p className="text-sm leading-relaxed text-muted-foreground">{step}</p>
+                <p className="text-sm leading-relaxed text-[#525252]">{step}</p>
               </li>
             ))}
           </ol>
@@ -401,14 +400,14 @@ function ZoziiPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="container-page">
-          <div className="mb-14 max-w-2xl">
-            <div className="eyebrow mb-6">FAQ</div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">FAQ</p>
+            <h2 className="mt-2 text-3xl font-light tracking-tight text-[#161616] md:text-4xl">
               Frequently asked questions
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-3 text-base text-[#525252]">
               Clear answers regarding privacy, screen protection, audio capture, and account quotas.
             </p>
           </div>
@@ -416,29 +415,32 @@ function ZoziiPage() {
             {faqItems.map((item, index) => (
               <div
                 key={item.q}
-                className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card"
+                className="border border-[#e0e0e0] bg-white p-6"
               >
-                <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+                <span className="font-mono text-xs font-semibold tracking-wider uppercase text-[#8d8d8d]">
                   // {String(index + 1).padStart(2, "0")} · FAQ
                 </span>
-                <h3 className="mt-3 text-base font-bold text-primary">{item.q}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+                <h3 className="mt-3 text-base font-semibold text-[#161616]">{item.q}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#525252]">{item.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="pb-24">
+      {/* FINAL CTA - Carbon charcoal banner */}
+      <section className="pb-20">
         <div className="container-page">
-          <div className="rounded-3xl bg-primary p-10 text-primary-foreground md:p-16">
+          <div className="border border-[#393939] bg-[#161616] p-10 text-white md:p-14">
             <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold md:text-4xl">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#78a9ff]">
+                  Deployment Ready
+                </p>
+                <h2 className="mt-2 text-3xl font-light text-white md:text-4xl">
                   Ready to experience invisible AI co-piloting?
                 </h2>
-                <p className="mt-4 text-primary-foreground/70">
+                <p className="mt-3 text-sm text-[#c6c6c6]">
                   Download the desktop application, register in seconds, and start getting instant
                   answers in your meetings.
                 </p>
@@ -448,7 +450,7 @@ function ZoziiPage() {
                 download
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-105"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9]"
               >
                 <Download className="size-4" aria-hidden="true" />
                 Download for Windows (.exe)
@@ -459,9 +461,9 @@ function ZoziiPage() {
       </section>
 
       {/* Footer note */}
-      <section className="border-t border-primary/5 py-8">
+      <section className="border-t border-[#e0e0e0] py-6">
         <div className="container-page text-center">
-          <p className="text-xs text-muted-foreground">
+          <p className="font-mono text-xs text-[#525252]">
             Zozii by Nexus Talent · a Nexus Talent product · File: DTDC.Service.Setup.exe · ~91 MB
           </p>
         </div>

@@ -5,20 +5,28 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system — "Executive slate minimalist"
- * Slate primary (#0f172a), electric blue accent (#2563eb), cool surface (#f8fafc).
- * All colors are semantic tokens. Never hardcode colors in components.
+ * Carbon Design System — IBM Enterprise Architecture
+ * Pure white canvas, charcoal ink (#161616), IBM Blue (#0f62fe) accent.
+ * 0px flat geometry, 1px hairlines, light-weight display type (weight 300),
+ * letter-spacing 0.16px on body.
  */
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+  --radius-full: 0px;
+  --radius: 0px;
+
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -58,87 +66,107 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --shadow-elegant: 0 20px 45px -25px color-mix(in oklab, var(--primary) 35%, transparent);
-  --shadow-accent: 0 18px 40px -18px color-mix(in oklab, var(--accent) 45%, transparent);
-  --shadow-card: 0 1px 2px color-mix(in oklab, var(--primary) 6%, transparent);
+
+  /* Specific IBM Carbon tokens */
+  --color-ibm-blue: #0f62fe;
+  --color-ibm-blue-hover: #0050e6;
+  --color-ibm-blue-80: #002d9c;
+  --color-ibm-blue-60: #0043ce;
+  --color-ibm-ink: #161616;
+  --color-ibm-ink-muted: #525252;
+  --color-ibm-ink-subtle: #8c8c8c;
+  --color-ibm-canvas: #ffffff;
+  --color-ibm-surface-1: #f4f4f4;
+  --color-ibm-surface-2: #e0e0e0;
+  --color-ibm-inverse-canvas: #161616;
+  --color-ibm-inverse-surface: #262626;
+  --color-ibm-hairline: #e0e0e0;
+  --color-ibm-hairline-strong: #161616;
+
+  /* Carbon avoids drop shadows on marketing surfaces */
+  --shadow-none: 0 0 #0000;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-elegant: none;
+  --shadow-accent: none;
+  --shadow-card: none;
 }
 
 :root {
-  --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.216 0.033 264.3);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.216 0.033 264.3);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.216 0.033 264.3);
-  --primary: oklch(0.216 0.033 264.3);
-  --primary-foreground: oklch(0.985 0.002 247.8);
-  --secondary: oklch(0.968 0.007 247.9);
-  --secondary-foreground: oklch(0.216 0.033 264.3);
-  --muted: oklch(0.968 0.007 247.9);
-  --muted-foreground: oklch(0.53 0.035 257.4);
-  --accent: oklch(0.546 0.215 262.9);
-  --accent-foreground: oklch(0.99 0.002 247.8);
-  --destructive: oklch(0.577 0.245 27.3);
-  --destructive-foreground: oklch(0.985 0.002 247.8);
-  --success: oklch(0.596 0.132 163.2);
-  --success-foreground: oklch(0.99 0.002 247.8);
-  --warning: oklch(0.75 0.15 75);
-  --warning-foreground: oklch(0.216 0.033 264.3);
-  --surface: oklch(0.984 0.004 247.9);
-  --surface-foreground: oklch(0.216 0.033 264.3);
-  --border: oklch(0.929 0.013 255.5);
-  --input: oklch(0.929 0.013 255.5);
-  --ring: oklch(0.546 0.215 262.9);
-  --chart-1: oklch(0.546 0.215 262.9);
-  --chart-2: oklch(0.596 0.132 163.2);
-  --chart-3: oklch(0.75 0.15 75);
-  --chart-4: oklch(0.216 0.033 264.3);
-  --chart-5: oklch(0.53 0.035 257.4);
-  --sidebar: oklch(0.216 0.033 264.3);
-  --sidebar-foreground: oklch(0.93 0.01 255.5);
-  --sidebar-primary: oklch(0.546 0.215 262.9);
-  --sidebar-primary-foreground: oklch(0.99 0.002 247.8);
-  --sidebar-accent: oklch(0.28 0.035 264.3);
-  --sidebar-accent-foreground: oklch(0.985 0.002 247.8);
-  --sidebar-border: oklch(0.32 0.03 264.3);
-  --sidebar-ring: oklch(0.546 0.215 262.9);
+  --radius: 0px;
+  --background: #ffffff;
+  --foreground: #161616;
+  --card: #ffffff;
+  --card-foreground: #161616;
+  --popover: #ffffff;
+  --popover-foreground: #161616;
+  --primary: #0f62fe;
+  --primary-foreground: #ffffff;
+  --secondary: #161616;
+  --secondary-foreground: #ffffff;
+  --muted: #f4f4f4;
+  --muted-foreground: #525252;
+  --accent: #0f62fe;
+  --accent-foreground: #ffffff;
+  --destructive: #da1e28;
+  --destructive-foreground: #ffffff;
+  --success: #24a148;
+  --success-foreground: #ffffff;
+  --warning: #f1c21b;
+  --warning-foreground: #161616;
+  --surface: #f4f4f4;
+  --surface-foreground: #161616;
+  --border: #e0e0e0;
+  --input: #e0e0e0;
+  --ring: #0f62fe;
+  --chart-1: #0f62fe;
+  --chart-2: #24a148;
+  --chart-3: #f1c21b;
+  --chart-4: #161616;
+  --chart-5: #525252;
+  --sidebar: #161616;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0f62fe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #262626;
+  --sidebar-ring: #0f62fe;
 }
 
 .dark {
-  --background: oklch(0.17 0.03 264.3);
-  --foreground: oklch(0.985 0.002 247.8);
-  --card: oklch(0.216 0.033 264.3);
-  --card-foreground: oklch(0.985 0.002 247.8);
-  --popover: oklch(0.216 0.033 264.3);
-  --popover-foreground: oklch(0.985 0.002 247.8);
-  --primary: oklch(0.985 0.002 247.8);
-  --primary-foreground: oklch(0.216 0.033 264.3);
-  --secondary: oklch(0.279 0.041 260);
-  --secondary-foreground: oklch(0.985 0.002 247.8);
-  --muted: oklch(0.279 0.041 260);
-  --muted-foreground: oklch(0.72 0.03 256.8);
-  --accent: oklch(0.6 0.2 262.9);
-  --accent-foreground: oklch(0.99 0.002 247.8);
-  --destructive: oklch(0.704 0.191 22.2);
-  --destructive-foreground: oklch(0.985 0.002 247.8);
-  --success: oklch(0.68 0.13 163.2);
-  --success-foreground: oklch(0.17 0.03 264.3);
-  --warning: oklch(0.8 0.14 75);
-  --warning-foreground: oklch(0.17 0.03 264.3);
-  --surface: oklch(0.216 0.033 264.3);
-  --surface-foreground: oklch(0.985 0.002 247.8);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.2 262.9);
-  --sidebar: oklch(0.17 0.03 264.3);
-  --sidebar-foreground: oklch(0.93 0.01 255.5);
-  --sidebar-primary: oklch(0.6 0.2 262.9);
-  --sidebar-primary-foreground: oklch(0.99 0.002 247.8);
-  --sidebar-accent: oklch(0.25 0.035 264.3);
-  --sidebar-accent-foreground: oklch(0.985 0.002 247.8);
-  --sidebar-border: oklch(0.3 0.03 264.3);
-  --sidebar-ring: oklch(0.6 0.2 262.9);
+  --background: #161616;
+  --foreground: #ffffff;
+  --card: #262626;
+  --card-foreground: #ffffff;
+  --popover: #262626;
+  --popover-foreground: #ffffff;
+  --primary: #0f62fe;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f4;
+  --secondary-foreground: #161616;
+  --muted: #262626;
+  --muted-foreground: #c6c6c6;
+  --accent: #0f62fe;
+  --accent-foreground: #ffffff;
+  --destructive: #da1e28;
+  --destructive-foreground: #ffffff;
+  --success: #24a148;
+  --success-foreground: #ffffff;
+  --warning: #f1c21b;
+  --warning-foreground: #161616;
+  --surface: #262626;
+  --surface-foreground: #ffffff;
+  --border: #393939;
+  --input: #393939;
+  --ring: #0f62fe;
+  --sidebar: #161616;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0f62fe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #393939;
+  --sidebar-ring: #0f62fe;
 }
 
 @layer base {
@@ -146,45 +174,52 @@
     border-color: var(--color-border);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
     font-family: var(--font-sans);
+    letter-spacing: 0.16px;
+    line-height: 1.5;
   }
 
+  /* Carbon signature: Display headings run at light weight (300) */
   h1,
   h2,
   h3,
   h4 {
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
 }
 
 @utility container-page {
   margin-inline: auto;
-  max-width: 80rem;
+  max-width: 1584px;
   padding-inline: 1.5rem;
 }
 
 @utility eyebrow {
   display: inline-flex;
   align-items: center;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in oklab, var(--primary) 10%, transparent);
-  background-color: var(--surface);
+  border-radius: 0px;
+  border: 1px solid #e0e0e0;
+  background-color: #f4f4f4;
   padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  text-transform: none;
+  color: #161616;
 }
 
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -193,5 +228,5 @@
 }
 
 @utility animate-fade-up {
-  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

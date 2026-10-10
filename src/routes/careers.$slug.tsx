@@ -39,8 +39,8 @@ export const Route = createFileRoute("/careers/$slug")({
   errorComponent: () => (
     <PublicShell>
       <div className="container-page py-24 text-center">
-        <h1 className="text-2xl font-bold text-primary">Something went wrong</h1>
-        <p className="mt-2 text-muted-foreground">Please try again in a moment.</p>
+        <h1 className="text-2xl font-light text-[#161616]">Something went wrong</h1>
+        <p className="mt-2 text-[#525252]">Please try again in a moment.</p>
       </div>
     </PublicShell>
   ),
@@ -51,13 +51,13 @@ function JobNotFound() {
   return (
     <PublicShell>
       <div className="container-page py-28 text-center">
-        <h1 className="text-3xl font-bold text-primary">Position not found</h1>
-        <p className="mt-3 text-muted-foreground">
+        <h1 className="text-3xl font-light text-[#161616]">Position not found</h1>
+        <p className="mt-3 text-[#525252]">
           This opening may have been closed or moved. Browse our current openings instead.
         </p>
         <Link
           to="/careers"
-          className="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-accent"
+          className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white hover:bg-[#0050e6]"
         >
           View all jobs
         </Link>
@@ -71,14 +71,14 @@ function Section({ title, body }: { title: string; body?: string | null }) {
   if (!lines.length) return null;
   return (
     <section>
-      <h2 className="text-lg font-bold text-primary">{title}</h2>
+      <h2 className="text-lg font-normal text-[#161616] border-b border-[#e0e0e0] pb-2">{title}</h2>
       {lines.length === 1 ? (
-        <p className="mt-3 leading-relaxed text-muted-foreground">{lines[0]}</p>
+        <p className="mt-3 leading-relaxed text-[#525252] text-sm tracking-[0.16px]">{lines[0]}</p>
       ) : (
         <ul className="mt-3 space-y-2">
           {lines.map((line) => (
-            <li key={line} className="flex gap-3 leading-relaxed text-muted-foreground">
-              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+            <li key={line} className="flex gap-3 leading-relaxed text-[#525252] text-sm tracking-[0.16px]">
+              <span className="mt-2 size-1 shrink-0 bg-[#0f62fe]" aria-hidden="true" />
               {line}
             </li>
           ))}
@@ -113,18 +113,18 @@ function JobDetailPage() {
   ].filter((fact) => Boolean(fact.value));
 
   const applyPanel = (
-    <div className="rounded-2xl border border-primary/5 bg-card p-6 shadow-card">
-      <h2 className="text-base font-bold text-primary">Apply for this role</h2>
+    <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6">
+      <h2 className="text-base font-normal text-[#161616]">Apply for this role</h2>
       {canApply ? (
         <>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Applications take a few minutes. No account or password required.
+          <p className="mt-2 text-xs text-[#525252] leading-relaxed">
+            Applications take a few minutes. No account or registration required.
           </p>
           {internalApply ? (
             <Link
               to="/apply/$slug"
               params={{ slug }}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.02]"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
             >
               Apply Now
             </Link>
@@ -133,7 +133,7 @@ function JobDetailPage() {
               href={job.google_form_url!}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.02]"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
             >
               Apply Now <ExternalLink className="size-4" aria-hidden="true" />
             </a>
@@ -141,26 +141,26 @@ function JobDetailPage() {
           <button
             type="button"
             onClick={() => setReferralOpen(true)}
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-primary/20 bg-background px-6 py-3.5 text-sm font-bold text-primary transition-all hover:border-accent hover:text-accent hover:bg-accent/5 hover:scale-[1.01] cursor-pointer"
+            className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none border border-[#161616] bg-transparent px-6 text-sm font-normal text-[#161616] transition-colors hover:bg-[#f4f4f4] cursor-pointer"
           >
             <UserPlus className="size-4" aria-hidden="true" />
             Refer Someone
           </button>
         </>
       ) : (
-        <div className="mt-3 rounded-xl border border-dashed border-primary/15 bg-surface p-4">
-          <p className="text-sm font-semibold text-primary">
+        <div className="mt-3 rounded-none border border-dashed border-[#e0e0e0] bg-[#f4f4f4] p-4">
+          <p className="text-sm font-normal text-[#161616]">
             Applications are currently unavailable for this position.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Write to our recruitment team and we will let you know as soon as it reopens.
+          <p className="mt-2 text-xs text-[#525252]">
+            Write to our recruitment team and we will notify you when it reopens.
           </p>
-          <Link to="/contact" className="mt-4 inline-flex text-sm font-bold text-accent">
-            Contact our team
+          <Link to="/contact" className="mt-4 inline-flex text-xs text-[#0f62fe] hover:underline">
+            Contact our team →
           </Link>
         </div>
       )}
-      <p className="mt-5 text-xs text-muted-foreground">
+      <p className="mt-5 text-xs text-[#8c8c8c]">
         Last updated {formatDate(job.updated_at)}
       </p>
     </div>
@@ -168,26 +168,28 @@ function JobDetailPage() {
 
   return (
     <PublicShell>
-      <section className="border-b border-primary/5 bg-surface py-14">
+      <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-14">
         <div className="container-page">
           <Link
             to="/careers"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
+            className="inline-flex items-center gap-2 text-xs text-[#525252] transition-colors hover:text-[#0f62fe]"
           >
-            <ArrowLeft className="size-4" aria-hidden="true" /> All openings
+            <ArrowLeft className="size-3.5" aria-hidden="true" /> All Openings
           </Link>
-          <h1 className="mt-6 max-w-3xl text-3xl font-bold leading-tight tracking-tight text-primary md:text-5xl">
+          <h1 className="mt-4 max-w-3xl text-3xl font-light leading-tight text-[#161616] md:text-5xl">
             {job.title}
           </h1>
           {job.short_description ? (
-            <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{job.short_description}</p>
+            <p className="mt-3 max-w-2xl text-base text-[#525252] tracking-[0.16px]">
+              {job.short_description}
+            </p>
           ) : null}
           {job.skills.length ? (
             <div className="mt-6 flex flex-wrap gap-2">
               {job.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="rounded-full border border-primary/10 bg-card px-3 py-1 text-xs font-semibold text-primary"
+                  className="rounded-none border border-[#e0e0e0] bg-[#ffffff] px-2.5 py-1 text-xs text-[#525252]"
                 >
                   {skill}
                 </span>
@@ -197,16 +199,16 @@ function JobDetailPage() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-16 bg-[#ffffff]">
         <div className="container-page grid gap-12 lg:grid-cols-[1fr_20rem]">
           <div className="space-y-10">
-            <dl className="grid grid-cols-2 gap-6 rounded-2xl border border-primary/5 bg-surface p-6 sm:grid-cols-3">
+            <dl className="grid grid-cols-2 gap-4 rounded-none border border-[#e0e0e0] bg-[#f4f4f4] p-6 sm:grid-cols-3">
               {facts.map((fact) => (
-                <div key={fact.label}>
-                  <dt className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">
+                <div key={fact.label} className="border-b border-[#e0e0e0] pb-2 last:border-b-0 sm:border-b-0">
+                  <dt className="text-[11px] uppercase tracking-[0.16px] text-[#8c8c8c]">
                     {fact.label}
                   </dt>
-                  <dd className="mt-1 text-sm font-semibold text-primary">{fact.value}</dd>
+                  <dd className="mt-1 text-sm font-medium text-[#161616]">{fact.value}</dd>
                 </div>
               ))}
             </dl>

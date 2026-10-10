@@ -28,8 +28,8 @@ export const Route = createFileRoute("/careers/")({
   errorComponent: () => (
     <PublicShell>
       <div className="container-page py-24 text-center">
-        <h1 className="text-2xl font-bold text-primary">Something went wrong</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="text-2xl font-light text-[#161616]">Something went wrong</h1>
+        <p className="mt-2 text-[#525252]">
           We couldn't load the job list. Please try again.
         </p>
       </div>
@@ -97,22 +97,22 @@ function CareersPage() {
   }
 
   const selectClass =
-    "w-full rounded-lg border border-primary/10 bg-background px-3 py-2.5 text-sm font-medium text-primary outline-none focus:border-accent";
+    "w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-3 py-2.5 text-xs text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
 
   return (
     <PublicShell>
       <PageHero
         eyebrow="Careers"
         title="Find Your Next Opportunity"
-        subtitle="Explore current opportunities and take the next step in your career."
+        subtitle="Explore current opportunities across our enterprise client engagements."
       />
 
-      <section className="bg-surface py-16">
+      <section className="bg-[#ffffff] py-16">
         <div className="container-page">
-          <div className="mb-10 rounded-2xl bg-card p-5 shadow-card">
+          <div className="mb-10 rounded-none border border-[#e0e0e0] bg-[#ffffff] p-5">
             <div className="grid gap-4 lg:grid-cols-3">
-              <label className="flex items-center gap-3 rounded-lg border border-primary/10 px-4 lg:col-span-3">
-                <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <label className="flex items-center gap-3 rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 lg:col-span-3">
+                <Search className="size-4 shrink-0 text-[#8c8c8c]" aria-hidden="true" />
                 <span className="sr-only">Search jobs</span>
                 <input
                   type="search"
@@ -120,7 +120,7 @@ function CareersPage() {
                   maxLength={100}
                   onChange={(event) => setTerm(event.target.value)}
                   placeholder="Search job title, skills or keywords"
-                  className="w-full bg-transparent py-3 text-sm text-primary outline-none placeholder:text-muted-foreground"
+                  className="w-full bg-transparent py-3 text-sm text-[#161616] outline-none placeholder:text-[#8c8c8c]"
                 />
               </label>
 
@@ -197,14 +197,14 @@ function CareersPage() {
           </div>
 
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm font-semibold text-primary">
+            <p className="text-sm font-normal text-[#161616] tracking-[0.16px]">
               {filtered.length} {filtered.length === 1 ? "opportunity" : "opportunities"} available
             </p>
             {hasFilters ? (
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-sm font-bold text-accent underline underline-offset-8"
+                className="text-sm text-[#0f62fe] hover:underline cursor-pointer"
               >
                 Clear Filters
               </button>
@@ -212,19 +212,19 @@ function CareersPage() {
           </div>
 
           {filtered.length ? (
-            <div className="grid gap-6">
+            <div className="grid gap-4">
               {filtered.map((job) => (
                 <JobCard key={job.id} job={job} />
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-primary/15 bg-card p-14 text-center">
-              <p className="font-semibold text-primary">
+            <div className="rounded-none border border-dashed border-[#e0e0e0] bg-[#f4f4f4] p-14 text-center">
+              <p className="font-normal text-[#161616]">
                 {jobs.length
                   ? "No opportunities match your search criteria."
                   : "No active jobs available right now."}
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-[#525252]">
                 Try broadening your filters or check back soon.
               </p>
             </div>

@@ -17,6 +17,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ForBusinessesRouteImport } from './routes/for-businesses'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -42,6 +43,7 @@ import { Route as AuthenticatedAdminJobAppliesIdRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminJobsIndexRouteImport } from './routes/_authenticated/admin.jobs.index'
 import { Route as AuthenticatedAdminJobsIdRouteImport } from './routes/_authenticated/admin.jobs.$id'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
+import { Route as AuthenticatedAdminProductsIndexRouteImport } from './routes/_authenticated/admin.products.index'
 import { Route as AuthenticatedAdminReferralsIndexRouteImport } from './routes/_authenticated/admin.referrals.index'
 import { Route as ApiPublicApplicationsIntakeRouteImport } from './routes/api/public/applications/intake'
 import { Route as AuthenticatedAdminExamsAttemptsAttemptIdRouteImport } from './routes/_authenticated/admin.exams.attempts.$attemptId'
@@ -84,6 +86,11 @@ const IndustriesRoute = IndustriesRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -223,6 +230,12 @@ const AuthenticatedAdminJobsNewRoute =
     path: '/admin/jobs/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProductsIndexRoute =
+  AuthenticatedAdminProductsIndexRouteImport.update({
+    id: '/admin/products/',
+    path: '/admin/products/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReferralsIndexRoute =
   AuthenticatedAdminReferralsIndexRouteImport.update({
     id: '/admin/referrals/',
@@ -256,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/for-businesses': typeof ForBusinessesRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -282,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
   '/admin/job-applies/': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
+  '/admin/products/': typeof AuthenticatedAdminProductsIndexRoute
   '/admin/referrals/': typeof AuthenticatedAdminReferralsIndexRoute
   '/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
@@ -294,6 +309,7 @@ export interface FileRoutesByTo {
   '/for-businesses': typeof ForBusinessesRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -320,6 +336,7 @@ export interface FileRoutesByTo {
   '/admin/exams': typeof AuthenticatedAdminExamsIndexRoute
   '/admin/job-applies': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsIndexRoute
+  '/admin/products': typeof AuthenticatedAdminProductsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsIndexRoute
   '/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
@@ -334,6 +351,7 @@ export interface FileRoutesById {
   '/for-businesses': typeof ForBusinessesRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -360,6 +378,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
   '/_authenticated/admin/job-applies/': typeof AuthenticatedAdminJobAppliesIndexRoute
   '/_authenticated/admin/jobs/': typeof AuthenticatedAdminJobsIndexRoute
+  '/_authenticated/admin/products/': typeof AuthenticatedAdminProductsIndexRoute
   '/_authenticated/admin/referrals/': typeof AuthenticatedAdminReferralsIndexRoute
   '/_authenticated/admin/exams/attempts/$attemptId': typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   '/_authenticated/admin/exams/submissions/$examId': typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
@@ -374,6 +393,7 @@ export interface FileRouteTypes {
     | '/for-businesses'
     | '/industries'
     | '/privacy'
+    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
@@ -400,6 +420,7 @@ export interface FileRouteTypes {
     | '/admin/exams/'
     | '/admin/job-applies/'
     | '/admin/jobs/'
+    | '/admin/products/'
     | '/admin/referrals/'
     | '/admin/exams/attempts/$attemptId'
     | '/admin/exams/submissions/$examId'
@@ -412,6 +433,7 @@ export interface FileRouteTypes {
     | '/for-businesses'
     | '/industries'
     | '/privacy'
+    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
@@ -438,6 +460,7 @@ export interface FileRouteTypes {
     | '/admin/exams'
     | '/admin/job-applies'
     | '/admin/jobs'
+    | '/admin/products'
     | '/admin/referrals'
     | '/admin/exams/attempts/$attemptId'
     | '/admin/exams/submissions/$examId'
@@ -451,6 +474,7 @@ export interface FileRouteTypes {
     | '/for-businesses'
     | '/industries'
     | '/privacy'
+    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
@@ -477,6 +501,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/exams/'
     | '/_authenticated/admin/job-applies/'
     | '/_authenticated/admin/jobs/'
+    | '/_authenticated/admin/products/'
     | '/_authenticated/admin/referrals/'
     | '/_authenticated/admin/exams/attempts/$attemptId'
     | '/_authenticated/admin/exams/submissions/$examId'
@@ -491,6 +516,7 @@ export interface RootRouteChildren {
   ForBusinessesRoute: typeof ForBusinessesRoute
   IndustriesRoute: typeof IndustriesRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProductsRoute: typeof ProductsRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -561,6 +587,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -738,6 +771,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/products/': {
+      id: '/_authenticated/admin/products/'
+      path: '/admin/products'
+      fullPath: '/admin/products/'
+      preLoaderRoute: typeof AuthenticatedAdminProductsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/referrals/': {
       id: '/_authenticated/admin/referrals/'
       path: '/admin/referrals'
@@ -784,6 +824,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminExamsIndexRoute: typeof AuthenticatedAdminExamsIndexRoute
   AuthenticatedAdminJobAppliesIndexRoute: typeof AuthenticatedAdminJobAppliesIndexRoute
   AuthenticatedAdminJobsIndexRoute: typeof AuthenticatedAdminJobsIndexRoute
+  AuthenticatedAdminProductsIndexRoute: typeof AuthenticatedAdminProductsIndexRoute
   AuthenticatedAdminReferralsIndexRoute: typeof AuthenticatedAdminReferralsIndexRoute
   AuthenticatedAdminExamsAttemptsAttemptIdRoute: typeof AuthenticatedAdminExamsAttemptsAttemptIdRoute
   AuthenticatedAdminExamsSubmissionsExamIdRoute: typeof AuthenticatedAdminExamsSubmissionsExamIdRoute
@@ -806,6 +847,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminJobAppliesIndexRoute:
     AuthenticatedAdminJobAppliesIndexRoute,
   AuthenticatedAdminJobsIndexRoute: AuthenticatedAdminJobsIndexRoute,
+  AuthenticatedAdminProductsIndexRoute: AuthenticatedAdminProductsIndexRoute,
   AuthenticatedAdminReferralsIndexRoute: AuthenticatedAdminReferralsIndexRoute,
   AuthenticatedAdminExamsAttemptsAttemptIdRoute:
     AuthenticatedAdminExamsAttemptsAttemptIdRoute,
@@ -825,6 +867,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForBusinessesRoute: ForBusinessesRoute,
   IndustriesRoute: IndustriesRoute,
   PrivacyRoute: PrivacyRoute,
+  ProductsRoute: ProductsRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,

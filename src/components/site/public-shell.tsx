@@ -13,11 +13,11 @@ export function PublicShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background relative selection:bg-accent/20">
+    <div className="flex min-h-screen flex-col bg-[#ffffff] text-[#161616] relative selection:bg-[#0f62fe]/15 selection:text-[#161616]">
       <SiteHeader onOpenTalk={() => setTalkOpen(true)} />
       <main className="flex-1">{children}</main>
       <SiteFooter />
-      {/* Floating Talk to Us button & Interactive Agent Popup */}
+      {/* Floating Talk to Us button & Modal */}
       <FloatingTalkButton onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
       <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />
     </div>
@@ -34,14 +34,16 @@ export function PageHero({
   subtitle?: string;
 }) {
   return (
-    <section className="border-b border-primary/5 bg-surface py-16 md:py-20">
+    <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-16 md:py-20">
       <div className="container-page">
         <div className="eyebrow mb-6">{eyebrow}</div>
-        <h1 className="max-w-4xl text-4xl font-bold leading-[1.1] tracking-tight text-primary md:text-5xl">
+        <h1 className="max-w-4xl text-3xl font-light leading-[1.17] text-[#161616] sm:text-4xl md:text-5xl lg:text-6xl">
           {title}
         </h1>
         {subtitle ? (
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{subtitle}</p>
+          <p className="mt-5 max-w-3xl text-base sm:text-lg leading-relaxed text-[#525252]">
+            {subtitle}
+          </p>
         ) : null}
       </div>
     </section>

@@ -63,8 +63,8 @@ export const Route = createFileRoute("/apply/$slug")({
 });
 
 const field =
-  "mt-2 w-full rounded-lg border border-primary/10 bg-background px-4 py-2.5 text-sm text-primary outline-none focus:border-accent";
-const labelClass = "text-xs font-bold tracking-widest uppercase text-muted-foreground";
+  "mt-1.5 w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 py-2.5 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
+const labelClass = "text-xs font-normal uppercase tracking-[0.16px] text-[#525252]";
 
 type FormState = Record<string, string>;
 
@@ -372,16 +372,16 @@ function ApplyPage() {
     return (
       <PublicShell>
         <div className="container-page py-24">
-          <div className="mx-auto max-w-xl rounded-2xl border border-primary/5 bg-card p-10 text-center shadow-card">
-            <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden="true" />
-            <h1 className="mt-5 text-2xl font-bold text-primary">Application already exists</h1>
-            <p className="mt-3 text-muted-foreground">
+          <div className="mx-auto max-w-xl rounded-none border border-[#e0e0e0] bg-[#ffffff] p-10 text-center">
+            <CheckCircle2 className="mx-auto size-12 text-[#0f62fe]" aria-hidden="true" />
+            <h1 className="mt-5 text-2xl font-light text-[#161616]">Application already exists</h1>
+            <p className="mt-3 text-[#525252]">
               Your application has already been received and is currently in our system. Our
               recruitment team will review your profile and contact you if shortlisted.
             </p>
             <Link
               to="/careers"
-              className="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-accent"
+              className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white hover:bg-[#0050e6]"
             >
               Browse more openings
             </Link>
@@ -395,19 +395,19 @@ function ApplyPage() {
     return (
       <PublicShell>
         <div className="container-page py-24">
-          <div className="mx-auto max-w-xl rounded-2xl border border-primary/5 bg-card p-10 text-center shadow-card">
-            <CheckCircle2 className="mx-auto size-12 text-success" aria-hidden="true" />
-            <h1 className="mt-5 text-2xl font-bold text-primary">Application submitted</h1>
+          <div className="mx-auto max-w-xl rounded-none border border-[#e0e0e0] bg-[#ffffff] p-10 text-center">
+            <CheckCircle2 className="mx-auto size-12 text-[#24a148]" aria-hidden="true" />
+            <h1 className="mt-5 text-2xl font-light text-[#161616]">Application submitted</h1>
             <p className="mt-3 text-muted-foreground">
               Your application has been submitted successfully. Our recruitment team will review
               your profile and contact you if shortlisted.
             </p>
-            <p className="mt-4 text-sm font-semibold text-primary">
-              Application ID: <span className="text-accent">{success}</span>
+            <p className="mt-4 text-sm font-medium text-[#161616]">
+              Application ID: <span className="text-[#0f62fe]">{success}</span>
             </p>
             <Link
               to="/careers"
-              className="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-accent"
+              className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white hover:bg-[#0050e6]"
             >
               Browse more openings
             </Link>
@@ -419,28 +419,28 @@ function ApplyPage() {
 
   return (
     <PublicShell>
-      <section className="border-b border-primary/5 bg-surface py-12">
+      <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-12">
         <div className="container-page">
           <Link
             to="/careers/$slug"
             params={{ slug }}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-accent"
+            className="inline-flex items-center gap-2 text-xs text-[#525252] hover:text-[#0f62fe]"
           >
-            <ArrowLeft className="size-4" aria-hidden="true" /> Back to job details
+            <ArrowLeft className="size-3.5" aria-hidden="true" /> Back to job details
           </Link>
-          <h1 className="mt-5 text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          <h1 className="mt-4 text-3xl font-light text-[#161616] md:text-4xl">
             Apply — {job.title}
           </h1>
-          <p className="mt-3 text-muted-foreground">
+          <p className="mt-2 text-sm text-[#525252]">
             {[job.location, job.employment_type, job.work_mode].filter(Boolean).join(" · ")}
           </p>
         </div>
       </section>
 
-      <section className="py-12">
+      <section className="py-12 bg-[#ffffff]">
         <form onSubmit={handleSubmit} noValidate className="container-page max-w-4xl space-y-6">
-          <div className="rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="font-bold text-primary">Personal details</h2>
+          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 sm:p-8">
+            <h2 className="font-normal text-lg text-[#161616] border-b border-[#e0e0e0] pb-3">Personal details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <Field name="first_name" label="First name" required errors={errors}>
                 <input
@@ -535,8 +535,8 @@ function ApplyPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="font-bold text-primary">Education details</h2>
+          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 sm:p-8">
+            <h2 className="font-normal text-lg text-[#161616] border-b border-[#e0e0e0] pb-3">Education details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <Field
                 name="highest_qualification"
@@ -599,8 +599,8 @@ function ApplyPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="font-bold text-primary">Technical details</h2>
+          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 sm:p-8">
+            <h2 className="font-normal text-lg text-[#161616] border-b border-[#e0e0e0] pb-3">Technical details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <Field
                 name="primary_skills"
@@ -658,8 +658,8 @@ function ApplyPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="font-bold text-primary">Experience details</h2>
+          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 sm:p-8">
+            <h2 className="font-normal text-lg text-[#161616] border-b border-[#e0e0e0] pb-3">Experience details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <Field name="experience_type" label="Experience type" required errors={errors}>
                 <select
@@ -753,8 +753,8 @@ function ApplyPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/5 bg-card p-6">
-            <h2 className="font-bold text-primary">Additional details</h2>
+          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 sm:p-8">
+            <h2 className="font-normal text-lg text-[#161616] border-b border-[#e0e0e0] pb-3">Additional details</h2>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2">
                 <Field
@@ -765,9 +765,9 @@ function ApplyPage() {
                 >
                   <label
                     htmlFor="resume"
-                    className="mt-2 flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-primary/20 bg-background px-4 py-3 text-sm text-muted-foreground hover:border-accent"
+                    className="mt-2 flex cursor-pointer items-center gap-3 rounded-none border border-dashed border-[#e0e0e0] bg-[#f4f4f4] px-4 py-3 text-sm text-[#525252] hover:border-[#0f62fe]"
                   >
-                    <Upload className="size-4" aria-hidden="true" />
+                    <Upload className="size-4 text-[#0f62fe]" aria-hidden="true" />
                     {resume ? resume.name : "Choose a file"}
                   </label>
                   <input
@@ -865,7 +865,7 @@ function ApplyPage() {
           </div>
 
           {formError ? (
-            <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm font-semibold text-destructive">
+            <p className="rounded-none border border-[#da1e28]/20 bg-[#da1e28]/10 px-4 py-3 text-sm text-[#da1e28]">
               {formError}
             </p>
           ) : null}
@@ -874,10 +874,10 @@ function ApplyPage() {
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-sm font-bold text-accent-foreground shadow-accent disabled:opacity-60"
+              className="inline-flex h-11 items-center gap-2 rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white hover:bg-[#0050e6] disabled:opacity-60 cursor-pointer"
             >
               {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-              {pending ? "Submitting…" : "Submit application"}
+              {pending ? "Submitting…" : "Submit Application"}
             </button>
           </div>
         </form>

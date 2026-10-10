@@ -84,29 +84,29 @@ function AuthPage() {
   }
 
   const fieldClass =
-    "mt-2 w-full rounded-lg border border-primary/10 bg-background px-4 py-3 text-sm text-primary outline-none focus:border-accent";
-  const labelClass = "text-xs font-semibold tracking-widest uppercase text-muted-foreground";
+    "mt-2 w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 py-3 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
+  const labelClass = "text-xs font-semibold tracking-wider uppercase text-[#525252]";
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface">
-      <header className="border-b border-primary/5 bg-background">
-        <div className="container-page flex h-20 items-center justify-between">
+    <div className="flex min-h-screen flex-col bg-[#f4f4f4]">
+      <header className="border-b border-[#e0e0e0] bg-white">
+        <div className="container-page flex h-16 items-center justify-between">
           <SiteLogo />
-          <Link to="/" className="text-sm font-semibold text-muted-foreground hover:text-accent">
+          <Link to="/" className="text-sm font-semibold text-[#525252] hover:text-[#0f62fe]">
             Back to website
           </Link>
         </div>
       </header>
 
       <main className="flex flex-1 items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md rounded-2xl border border-primary/5 bg-card p-8 shadow-elegant">
-          <div className="mb-6 flex size-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+        <div className="w-full max-w-md rounded-none border border-[#e0e0e0] bg-white p-8 shadow-none md:p-10">
+          <div className="mb-6 flex size-10 items-center justify-center bg-[#edf5ff] text-[#0f62fe]">
             <ShieldCheck className="size-5" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-primary">
+          <h1 className="text-2xl font-light text-[#161616]">
             {mode === "signin" ? "Administrator sign in" : "Reset your password"}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-[#525252]">
             {mode === "signin"
               ? "This portal is for authorised Nexus Talent administrators only."
               : "We'll email you a secure link to set a new password."}
@@ -145,12 +145,12 @@ function AuthPage() {
                     value={password}
                     maxLength={72}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="w-full rounded-lg border border-primary/10 bg-background pl-4 pr-11 py-3 text-sm text-primary outline-none focus:border-accent transition-colors"
+                    className="w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] pl-4 pr-11 py-3 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-accent focus:outline-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#525252] transition-colors hover:text-[#0f62fe] focus:outline-none"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                     title={showPassword ? "Hide password" : "Show password"}
                   >
@@ -167,7 +167,7 @@ function AuthPage() {
             {error ? (
               <p
                 role="alert"
-                className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive"
+                className="border-l-2 border-[#da1e28] bg-[#fff1f1] px-4 py-3 text-sm text-[#da1e28]"
               >
                 {error}
               </p>
@@ -176,20 +176,20 @@ function AuthPage() {
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9] disabled:opacity-50"
             >
               {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
               {mode === "signin" ? "Sign In" : "Send reset link"}
             </button>
 
-            <div className="space-y-2 text-center">
+            <div className="space-y-2 text-center pt-2">
               <button
                 type="button"
                 onClick={() => {
                   setMode(mode === "signin" ? "reset" : "signin");
                   setError(null);
                 }}
-                className="w-full text-sm font-semibold text-accent"
+                className="w-full text-sm font-semibold text-[#0f62fe] hover:underline"
               >
                 {mode === "signin" ? "Forgot Password?" : "Back to sign in"}
               </button>

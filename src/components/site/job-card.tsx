@@ -4,33 +4,33 @@ import { experienceLabel, relativePosted } from "@/lib/job-utils";
 
 export function JobCard({ job }: { job: PublicJob }) {
   return (
-    <article className="group relative flex flex-col items-start justify-between rounded-2xl border border-primary/5 bg-card p-6 transition-all hover:border-accent/50 hover:shadow-elegant md:flex-row md:items-center md:p-8">
-      <div className="flex-1">
+    <article className="group relative flex flex-col items-start justify-between rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 transition-colors hover:border-[#0f62fe] md:flex-row md:items-center md:p-8">
+      <div className="flex-1 min-w-0">
         <div className="mb-3 flex flex-wrap gap-2">
           {job.department ? (
-            <span className="rounded bg-surface px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+            <span className="rounded-none border border-[#e0e0e0] bg-[#f4f4f4] px-2.5 py-1 text-xs text-[#525252]">
               {job.department}
             </span>
           ) : null}
           {job.work_mode ? (
-            <span className="rounded bg-accent/10 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase text-accent">
+            <span className="rounded-none border border-[#0f62fe]/30 bg-[#edf5ff] px-2.5 py-1 text-xs text-[#0f62fe]">
               {job.work_mode}
             </span>
           ) : null}
           {job.employment_type ? (
-            <span className="rounded bg-surface px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+            <span className="rounded-none border border-[#e0e0e0] bg-[#f4f4f4] px-2.5 py-1 text-xs text-[#525252]">
               {job.employment_type}
             </span>
           ) : null}
         </div>
 
-        <h3 className="text-xl font-bold text-primary transition-colors group-hover:text-accent">
+        <h3 className="text-xl font-normal text-[#161616] transition-colors group-hover:text-[#0f62fe]">
           <Link to="/careers/$slug" params={{ slug: job.slug }}>
             {job.title}
           </Link>
         </h3>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted-foreground">
+        <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-[#525252]">
           <span>{job.location ?? "Location flexible"}</span>
           <span>{experienceLabel(job.experience_min, job.experience_max)}</span>
           {job.salary ? <span>{job.salary}</span> : null}
@@ -38,11 +38,11 @@ export function JobCard({ job }: { job: PublicJob }) {
         </div>
 
         {job.skills.length ? (
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {job.skills.slice(0, 6).map((skill) => (
               <span
                 key={skill}
-                className="rounded border border-primary/10 px-2 py-0.5 text-[11px] font-semibold text-muted-foreground"
+                className="rounded-none border border-[#e0e0e0] bg-[#ffffff] px-2 py-0.5 text-xs text-[#525252]"
               >
                 {skill}
               </span>
@@ -51,13 +51,13 @@ export function JobCard({ job }: { job: PublicJob }) {
         ) : null}
       </div>
 
-      <div className="mt-6 flex items-center gap-4 md:mt-0 md:pl-8">
+      <div className="mt-6 flex items-center gap-4 md:mt-0 md:pl-8 shrink-0">
         <Link
           to="/careers/$slug"
           params={{ slug: job.slug }}
-          className="rounded-full border-2 border-primary px-8 py-2.5 text-sm font-bold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
+          className="inline-flex h-11 items-center justify-center rounded-none border border-[#0f62fe] bg-transparent px-6 text-sm font-normal text-[#0f62fe] transition-colors hover:bg-[#0f62fe] hover:text-white"
         >
-          View Job
+          View Position →
         </Link>
       </div>
     </article>
@@ -66,10 +66,10 @@ export function JobCard({ job }: { job: PublicJob }) {
 
 export function JobCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-primary/5 bg-card p-8">
-      <div className="h-3 w-24 animate-pulse rounded bg-surface" />
-      <div className="mt-4 h-6 w-64 animate-pulse rounded bg-surface" />
-      <div className="mt-4 h-3 w-80 animate-pulse rounded bg-surface" />
+    <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-8">
+      <div className="h-4 w-28 animate-pulse bg-[#f4f4f4]" />
+      <div className="mt-4 h-6 w-64 animate-pulse bg-[#f4f4f4]" />
+      <div className="mt-4 h-4 w-80 animate-pulse bg-[#f4f4f4]" />
     </div>
   );
 }

@@ -100,15 +100,15 @@ export function ProctoredExam({ children }: { children: (onSubmitted: () => void
   if (status === "unsupported") {
     return (
       <Shell>
-        <h1 className="text-xl font-bold text-primary">Camera not available</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="text-xl font-light text-[#161616]">Camera not available</h1>
+        <p className="mt-2 text-sm text-[#525252]">
           This assessment recommends camera access for proctoring. You can continue to the exam
           directly.
         </p>
         <button
           type="button"
           onClick={() => setSkipped(true)}
-          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent"
+          className="mt-6 w-full rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9]"
         >
           Continue to exam
         </button>
@@ -119,14 +119,14 @@ export function ProctoredExam({ children }: { children: (onSubmitted: () => void
   if (status !== "granted" || !stream) {
     return (
       <Shell>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Proctoring</p>
-        <h1 className="mt-2 text-2xl font-bold text-primary">Camera access required</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Proctoring</p>
+        <h1 className="mt-2 text-2xl font-light text-[#161616]">Camera access required</h1>
+        <p className="mt-2 text-sm text-[#525252]">
           Camera access is required to take this exam. Please allow camera access to continue. Your
           camera feed stays on your device only — it is not recorded, uploaded, or stored anywhere.
         </p>
         {status === "denied" ? (
-          <p role="alert" className="mt-4 text-sm font-semibold text-destructive">
+          <p role="alert" className="mt-4 text-sm font-semibold text-[#da1e28]">
             Camera permission was denied. Please allow camera in your browser, or continue below.
           </p>
         ) : null}
@@ -134,7 +134,7 @@ export function ProctoredExam({ children }: { children: (onSubmitted: () => void
           type="button"
           onClick={() => void start()}
           disabled={status === "requesting"}
-          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent disabled:opacity-60"
+          className="mt-6 w-full rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9] disabled:opacity-50"
         >
           {status === "requesting"
             ? "Waiting for camera permission…"
@@ -145,7 +145,7 @@ export function ProctoredExam({ children }: { children: (onSubmitted: () => void
         <button
           type="button"
           onClick={() => setSkipped(true)}
-          className="mt-3 w-full rounded-full border border-primary/10 px-6 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/20 transition-colors"
+          className="mt-3 w-full rounded-none border border-[#161616] px-6 py-2.5 text-xs font-semibold text-[#161616] transition-colors hover:bg-[#161616] hover:text-white"
         >
           Continue without camera
         </button>
@@ -158,17 +158,17 @@ export function ProctoredExam({ children }: { children: (onSubmitted: () => void
       {children(handleSubmitted)}
       <CameraOverlay stream={stream} />
       {cameraLost ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/70 p-6">
-          <div className="w-full max-w-md rounded-2xl border border-primary/5 bg-card p-8 text-center">
-            <h2 className="text-xl font-bold text-primary">Camera disconnected</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#161616]/80 p-6">
+          <div className="w-full max-w-md rounded-none border border-[#e0e0e0] bg-white p-8 text-center">
+            <h2 className="text-xl font-light text-[#161616]">Camera disconnected</h2>
+            <p className="mt-2 text-sm text-[#525252]">
               Your camera was turned off or its permission was revoked. Your exam is paused — your
               answers are saved. Reconnect the camera to continue.
             </p>
             <button
               type="button"
               onClick={() => void reconnect()}
-              className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent"
+              className="mt-6 rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9]"
             >
               Reconnect camera
             </button>
@@ -197,7 +197,7 @@ function CameraOverlay({ stream }: { stream: MediaStream }) {
       aria-label="Proctoring camera active"
       className="fixed bottom-4 right-4 z-50 flex flex-col items-center gap-2"
     >
-      <div className="size-24 overflow-hidden rounded-full border-4 border-card shadow-lg ring-2 ring-success sm:size-32">
+      <div className="size-24 overflow-hidden rounded-none border-2 border-[#161616] bg-black shadow-none sm:size-32">
         <video
           ref={videoRef}
           autoPlay
@@ -206,11 +206,8 @@ function CameraOverlay({ stream }: { stream: MediaStream }) {
           className="h-full w-full -scale-x-100 object-cover"
         />
       </div>
-      <p className="flex items-center gap-1.5 rounded-full bg-card/95 px-3 py-1 text-xs font-bold text-primary shadow">
-        <span className="relative flex size-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-destructive" />
-        </span>
+      <p className="flex items-center gap-1.5 rounded-none border border-[#e0e0e0] bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-[#161616]">
+        <span className="size-2 bg-[#24a148]" />
         Camera On
       </p>
     </div>

@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Package,
   Settings,
   UserPlus,
   UserRound,
@@ -22,6 +23,7 @@ import { NexusLogo, NexusLogoNavIcon } from "@/components/brand/nexus-logo";
 
 const navItems = [
   { label: "Dashboard", to: "/admin", icon: LayoutDashboard, exact: true },
+  { label: "Products", to: "/admin/products", icon: Package, exact: false },
   { label: "Jobs", to: "/admin/jobs", icon: Briefcase, exact: false },
   { label: "Job Applies", to: "/admin/job-applies", icon: NexusLogoNavIcon, exact: false },
   { label: "Referrals", to: "/admin/referrals", icon: UserPlus, exact: false },
@@ -64,14 +66,14 @@ export function AdminShell({
   }
 
   const sidebar = (
-    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex h-20 items-center gap-3 px-6">
-        <NexusLogo size={32} className="rounded-xl shadow-md" />
-        <span className="text-lg font-bold tracking-tight text-sidebar-accent-foreground">
-          NEXUS<span className="text-sidebar-primary">TALENT</span>
+    <div className="flex h-full flex-col bg-[#161616] text-[#f4f4f4]">
+      <div className="flex h-16 items-center gap-3 border-b border-[#262626] px-6">
+        <NexusLogo size={28} className="rounded-none" />
+        <span className="font-mono text-sm font-semibold tracking-wider text-white">
+          NEXUS<span className="text-[#0f62fe]">TALENT</span>
         </span>
       </div>
-      <nav className="flex-1 space-y-1 px-3">
+      <nav className="flex-1 space-y-0.5 py-3">
         {navItems.map((item) => {
           if (isExternalNavItem(item)) {
             return (
@@ -81,11 +83,11 @@ export function AdminShell({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                className="flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-[#c6c6c6] transition-colors hover:bg-[#262626] hover:text-white"
               >
-                <item.icon className="size-4" aria-hidden="true" />
+                <item.icon className="size-4 shrink-0 text-[#8d8d8d]" aria-hidden="true" />
                 <span>{item.label}</span>
-                <ExternalLink className="ml-auto size-3.5 opacity-60" aria-hidden="true" />
+                <ExternalLink className="ml-auto size-3 opacity-60" aria-hidden="true" />
               </a>
             );
           }
@@ -96,32 +98,32 @@ export function AdminShell({
               key={item.to}
               to={item.to}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors ${
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  ? "border-l-4 border-[#0f62fe] bg-[#262626] pl-4 text-white font-semibold"
+                  : "border-l-4 border-transparent text-[#c6c6c6] hover:bg-[#262626] hover:text-white"
               }`}
             >
-              <item.icon className="size-4" aria-hidden="true" />
+              <item.icon className={`size-4 shrink-0 ${isActive ? "text-[#0f62fe]" : "text-[#8d8d8d]"}`} aria-hidden="true" />
               {item.label}
             </Link>
           );
         })}
       </nav>
-      <div className="border-t border-sidebar-border p-3">
+      <div className="border-t border-[#262626] p-3">
         <button
           type="button"
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex w-full items-center gap-3 px-5 py-2.5 text-xs font-medium text-[#c6c6c6] transition-colors hover:bg-[#262626] hover:text-white"
         >
-          <LogOut className="size-4" aria-hidden="true" /> Logout
+          <LogOut className="size-4 text-[#8d8d8d]" aria-hidden="true" /> Logout
         </button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-surface lg:grid lg:grid-cols-[16rem_1fr]">
+    <div className="min-h-screen bg-[#f4f4f4] lg:grid lg:grid-cols-[16rem_1fr]">
       <aside className="sticky top-0 hidden h-screen lg:block">{sidebar}</aside>
 
       {open ? (
@@ -130,32 +132,32 @@ export function AdminShell({
           <button
             type="button"
             aria-label="Close menu"
-            className="flex-1 bg-primary/40"
+            className="flex-1 bg-black/60"
             onClick={() => setOpen(false)}
           />
         </div>
       ) : null}
 
       <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-30 border-b border-primary/5 bg-background/90 backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+        <header className="sticky top-0 z-30 border-b border-[#e0e0e0] bg-white">
+          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setOpen(true)}
                 aria-label="Open admin menu"
-                className="rounded-lg border border-primary/10 p-2 lg:hidden"
+                className="rounded-none border border-[#e0e0e0] p-2 hover:bg-[#f4f4f4] lg:hidden"
               >
                 <Menu className="size-4" aria-hidden="true" />
               </button>
               <div className="flex items-center gap-3">
                 {title === "Job Applies" && (
-                  <NexusLogo size={32} showText={false} className="rounded-lg shadow-sm" />
+                  <NexusLogo size={28} showText={false} className="rounded-none" />
                 )}
                 <div>
-                  <h1 className="text-xl font-bold text-primary">{title}</h1>
+                  <h1 className="text-xl font-normal text-[#161616]">{title}</h1>
                   {description ? (
-                    <p className="text-sm text-muted-foreground">{description}</p>
+                    <p className="text-xs text-[#525252]">{description}</p>
                   ) : null}
                 </div>
               </div>
@@ -171,23 +173,23 @@ export function AdminShell({
 
 export function StatusPill({ status }: { status: string }) {
   const tone: Record<string, string> = {
-    active: "bg-success/10 text-success",
-    selected: "bg-success/10 text-success",
-    draft: "bg-warning/15 text-warning-foreground",
-    new: "bg-accent/10 text-accent",
-    under_review: "bg-accent/10 text-accent",
-    shortlisted: "bg-accent/10 text-accent",
-    aptitude_test: "bg-accent/10 text-accent",
-    interview: "bg-warning/15 text-warning-foreground",
-    on_hold: "bg-warning/15 text-warning-foreground",
-    closed: "bg-muted text-muted-foreground",
-    archived: "bg-muted text-muted-foreground",
-    rejected: "bg-destructive/10 text-destructive",
+    active: "bg-[#defbe6] text-[#0e6027] border border-[#24a148]",
+    selected: "bg-[#defbe6] text-[#0e6027] border border-[#24a148]",
+    draft: "bg-[#fef3d6] text-[#8a6100] border border-[#f1c21b]",
+    new: "bg-[#edf5ff] text-[#0043ce] border border-[#0f62fe]",
+    under_review: "bg-[#edf5ff] text-[#0043ce] border border-[#0f62fe]",
+    shortlisted: "bg-[#edf5ff] text-[#0043ce] border border-[#0f62fe]",
+    aptitude_test: "bg-[#edf5ff] text-[#0043ce] border border-[#0f62fe]",
+    interview: "bg-[#fef3d6] text-[#8a6100] border border-[#f1c21b]",
+    on_hold: "bg-[#fef3d6] text-[#8a6100] border border-[#f1c21b]",
+    closed: "bg-[#e0e0e0] text-[#525252] border border-[#8d8d8d]",
+    archived: "bg-[#e0e0e0] text-[#525252] border border-[#8d8d8d]",
+    rejected: "bg-[#fff1f1] text-[#da1e28] border border-[#da1e28]",
   };
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase ${
-        tone[status] ?? "bg-muted text-muted-foreground"
+      className={`inline-flex rounded-none px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase ${
+        tone[status] ?? "bg-[#e0e0e0] text-[#525252] border border-[#8d8d8d]"
       }`}
     >
       {status.replace(/_/g, " ")}
@@ -197,9 +199,9 @@ export function StatusPill({ status }: { status: string }) {
 
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-primary/15 bg-card p-12 text-center">
-      <p className="font-semibold text-primary">{title}</p>
-      {hint ? <p className="mt-2 text-sm text-muted-foreground">{hint}</p> : null}
+    <div className="rounded-none border border-dashed border-[#e0e0e0] bg-white p-12 text-center">
+      <p className="font-semibold text-[#161616]">{title}</p>
+      {hint ? <p className="mt-2 text-sm text-[#525252]">{hint}</p> : null}
     </div>
   );
 }
@@ -208,7 +210,7 @@ export function LoadingBlock({ rows = 4 }: { rows?: number }) {
   return (
     <div className="space-y-3">
       {Array.from({ length: rows }).map((_, index) => (
-        <div key={index} className="h-16 animate-pulse rounded-xl bg-card" />
+        <div key={index} className="h-16 animate-pulse rounded-none bg-[#e0e0e0]" />
       ))}
     </div>
   );

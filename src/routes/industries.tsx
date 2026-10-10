@@ -28,18 +28,18 @@ function IndustriesPage() {
       <PageHero
         eyebrow="Industries"
         title="Sector knowledge that shortens every search"
-        subtitle="Screening is done by consultants who know the domain, the tooling and the regulatory context."
+        subtitle="Screening is executed by consultants who know the domain, the tooling and the regulatory context."
       />
 
-      <section className="py-20">
+      <section className="py-20 bg-[#ffffff]">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map((industry) => (
             <article
               key={industry.name}
-              className="rounded-2xl border border-primary/5 bg-card p-8 transition-all hover:border-accent/40 hover:shadow-elegant"
+              className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-8 transition-colors hover:border-[#0f62fe]"
             >
-              <h2 className="text-lg font-bold text-primary">{industry.name}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{industry.note}</p>
+              <h2 className="text-lg font-normal text-[#161616]">{industry.name}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-[#525252]">{industry.note}</p>
             </article>
           ))}
         </div>
@@ -47,9 +47,9 @@ function IndustriesPage() {
         <div className="container-page mt-16 text-center">
           <Link
             to="/careers"
-            className="inline-flex rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-105"
+            className="inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
           >
-            Explore Opportunities
+            Explore Opportunities →
           </Link>
         </div>
       </section>

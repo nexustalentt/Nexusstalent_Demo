@@ -119,8 +119,9 @@ function LoginCard({
 
   return (
     <Shell>
-      <h1 className="text-2xl font-bold text-primary">{title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Nexus Assessment</p>
+      <h1 className="mt-2 text-2xl font-light text-[#161616]">{title}</h1>
+      <p className="mt-2 text-sm text-[#525252]">
         Enter the username and password provided by the recruitment team.
       </p>
       <form
@@ -137,7 +138,7 @@ function LoginCard({
       >
         <div>
           <label
-            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#525252]"
             htmlFor="exam-username"
           >
             Username
@@ -153,7 +154,7 @@ function LoginCard({
         </div>
         <div>
           <label
-            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#525252]"
             htmlFor="exam-password"
           >
             Password
@@ -168,11 +169,11 @@ function LoginCard({
             className={fieldClass}
           />
         </div>
-        {error ? <p className="text-sm font-semibold text-destructive">{error}</p> : null}
+        {error ? <p className="text-sm font-semibold text-[#da1e28]">{error}</p> : null}
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent disabled:opacity-60"
+          className="w-full rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9] disabled:opacity-50"
         >
           {mutation.isPending ? "Signing in…" : "Login"}
         </button>

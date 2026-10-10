@@ -19,12 +19,12 @@ import {
 export type StoredAnswer = { selected?: number[]; text?: string } | null;
 
 export const fieldClass =
-  "w-full rounded-lg border border-primary/10 bg-card px-4 py-2.5 text-sm outline-none focus:border-accent";
+  "w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 py-2.5 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface p-6">
-      <div className="w-full max-w-xl rounded-2xl border border-primary/5 bg-card p-8">
+    <main className="flex min-h-screen items-center justify-center bg-[#f4f4f4] p-6">
+      <div className="w-full max-w-xl rounded-none border border-[#e0e0e0] bg-white p-8">
         {children}
       </div>
     </main>
@@ -42,11 +42,11 @@ function pad2(value: number) {
 type Status = "answered" | "not_visited" | "not_answered" | "review" | "answered_review";
 
 const statusClass: Record<Status, string> = {
-  answered: "bg-success text-success-foreground border border-success",
-  not_visited: "bg-card text-muted-foreground border border-primary/15",
-  not_answered: "bg-secondary text-primary border border-primary/40",
-  review: "bg-warning text-warning-foreground border border-warning",
-  answered_review: "bg-accent text-accent-foreground border border-accent",
+  answered: "bg-[#24a148] text-white border border-[#24a148]",
+  not_visited: "bg-white text-[#525252] border border-[#e0e0e0]",
+  not_answered: "bg-[#e0e0e0] text-[#161616] border border-[#8d8d8d]",
+  review: "bg-[#f1c21b] text-[#161616] border border-[#f1c21b]",
+  answered_review: "bg-[#0f62fe] text-white border border-[#0f62fe]",
 };
 
 const legend: { status: Status; label: string }[] = [
@@ -355,12 +355,12 @@ export function ExamRunner({
   if (state.isError) {
     return (
       <Shell>
-        <h1 className="text-xl font-bold text-primary">Session expired</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Please sign in again to continue.</p>
+        <h1 className="text-xl font-light text-[#161616]">Session expired</h1>
+        <p className="mt-2 text-sm text-[#525252]">Please sign in again to continue.</p>
         <button
           type="button"
           onClick={onSessionInvalid}
-          className="mt-5 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+          className="mt-5 rounded-none bg-[#0f62fe] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0353e9]"
         >
           Back to login
         </button>
@@ -373,15 +373,15 @@ export function ExamRunner({
   if (submitted) {
     return (
       <Shell>
-        <h1 className="text-2xl font-bold text-primary">Exam submitted successfully</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
+        <h1 className="text-2xl font-light text-[#161616]">Exam submitted successfully</h1>
+        <p className="mt-3 text-sm text-[#525252]">
           Thank you for completing the exam. Your responses have been recorded and the recruitment
           team will be in touch. This exam cannot be taken again with the same credentials.
         </p>
         <button
           type="button"
           onClick={onSessionInvalid}
-          className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+          className="mt-6 rounded-none bg-[#0f62fe] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0353e9]"
         >
           Exit exam
         </button>
@@ -457,24 +457,24 @@ export function ExamRunner({
     <div className="space-y-4 lg:sticky lg:top-24">
       <nav
         aria-label="Question navigation"
-        className="rounded-2xl border border-primary/10 bg-card shadow-[var(--shadow-card)]"
+        className="rounded-none border border-[#e0e0e0] bg-white shadow-none"
       >
-        <div className="border-b border-primary/10 px-5 py-3.5">
-          <p className="text-sm font-bold uppercase tracking-wider text-primary">Question Paper</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+        <div className="border-b border-[#e0e0e0] px-5 py-3.5">
+          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#161616]">Question Paper</p>
+          <p className="mt-0.5 text-xs text-[#525252]">
             {questions.length} questions · {answeredCount} answered
           </p>
         </div>
         <div className="space-y-5 p-5">
           {sections.map((group) => (
             <div key={group.name}>
-              <p className="mb-2.5 flex items-baseline justify-between gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+              <p className="mb-2.5 flex items-baseline justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-[#161616]">
                 <span className="truncate">{group.name}</span>
-                <span className="shrink-0 font-semibold normal-case tracking-normal text-muted-foreground">
+                <span className="shrink-0 font-mono font-normal normal-case tracking-normal text-[#525252]">
                   {pad2(group.startIndex + 1)}–{pad2(group.startIndex + group.items.length)}
                 </span>
               </p>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-5 gap-1.5">
                 {group.items.map((item, offset) => {
                   const index = group.startIndex + offset;
                   const active = index === current;
@@ -488,9 +488,9 @@ export function ExamRunner({
                       }}
                       aria-label={`${group.name} question ${index + 1}`}
                       aria-current={active ? "true" : undefined}
-                      className={`grid h-9 place-items-center rounded-md text-xs font-bold transition-colors ${
+                      className={`grid h-8 place-items-center rounded-none font-mono text-xs font-medium transition-colors ${
                         statusClass[statusOf(item.id)]
-                      } ${active ? "ring-2 ring-accent ring-offset-2 ring-offset-card" : ""}`}
+                      } ${active ? "ring-2 ring-[#0f62fe] ring-offset-1" : ""}`}
                     >
                       {pad2(index + 1)}
                     </button>
@@ -502,35 +502,35 @@ export function ExamRunner({
         </div>
       </nav>
 
-      <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-[var(--shadow-card)]">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</p>
-        <ul className="mt-2.5 space-y-1.5 text-sm">
+      <div className="rounded-none border border-[#e0e0e0] bg-white p-5 shadow-none">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#525252]">Legend</p>
+        <ul className="mt-2.5 space-y-1.5 text-xs">
           {legend.map((item) => (
             <li key={item.status} className="flex items-center gap-2">
               <span
-                className={`size-4 shrink-0 rounded ${statusClass[item.status]}`}
+                className={`size-3.5 shrink-0 rounded-none ${statusClass[item.status]}`}
                 aria-hidden="true"
               />
-              <span className="text-muted-foreground">{item.label}</span>
+              <span className="text-[#525252]">{item.label}</span>
             </li>
           ))}
         </ul>
-        <dl className="mt-4 space-y-1 border-t border-primary/10 pt-3 text-sm">
+        <dl className="mt-4 space-y-1 border-t border-[#e0e0e0] pt-3 text-xs">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Total questions</dt>
-            <dd className="font-bold text-primary">{questions.length}</dd>
+            <dt className="text-[#525252]">Total questions</dt>
+            <dd className="font-mono font-semibold text-[#161616]">{questions.length}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Answered</dt>
-            <dd className="font-bold text-success">{answeredCount}</dd>
+            <dt className="text-[#525252]">Answered</dt>
+            <dd className="font-mono font-semibold text-[#24a148]">{answeredCount}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Not answered</dt>
-            <dd className="font-bold text-primary">{notAnswered}</dd>
+            <dt className="text-[#525252]">Not answered</dt>
+            <dd className="font-mono font-semibold text-[#161616]">{notAnswered}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Marked for review</dt>
-            <dd className="font-bold text-primary">{reviewCount}</dd>
+            <dt className="text-[#525252]">Marked for review</dt>
+            <dd className="font-mono font-semibold text-[#161616]">{reviewCount}</dd>
           </div>
         </dl>
       </div>
@@ -538,25 +538,25 @@ export function ExamRunner({
   );
 
   const optionRowClass = (selected: boolean) =>
-    `flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 text-sm transition-colors ${
+    `flex cursor-pointer items-start gap-3 rounded-none border p-3.5 text-sm transition-colors ${
       selected
-        ? "border-accent bg-accent/8 text-primary"
-        : "border-primary/10 bg-surface hover:border-accent/50"
+        ? "border-[#0f62fe] bg-[#edf5ff] text-[#161616]"
+        : "border-[#e0e0e0] bg-white hover:border-[#0f62fe]"
     }`;
 
   return (
     <div ref={examAreaRef} className="min-h-screen bg-surface">
       <CameraMonitorReminder active={Boolean(started && !submitted)} />
-      <header className="sticky top-0 z-30 border-b border-primary/10 bg-card/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#e0e0e0] bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-8">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
             <div className="min-w-0">
-              <h1 className="truncate text-base font-bold text-primary sm:text-lg">
+              <h1 className="truncate text-base font-semibold text-[#161616] sm:text-lg">
                 {state.data.exam.title}
               </h1>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">
+              <p className="mt-0.5 truncate text-xs text-[#525252] sm:text-sm">
                 {state.data.candidateName ? (
-                  <span className="font-semibold text-accent">
+                  <span className="font-semibold text-[#0f62fe]">
                     {state.data.candidateName}
                     {state.data.candidateUsername &&
                     state.data.candidateUsername !== state.data.candidateName
@@ -564,7 +564,7 @@ export function ExamRunner({
                       : ""}
                   </span>
                 ) : (
-                  <span className="font-semibold text-accent">
+                  <span className="font-semibold text-[#0f62fe]">
                     {state.data.candidateUsername ?? "Candidate"}
                   </span>
                 )}
@@ -574,10 +574,10 @@ export function ExamRunner({
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              <span className="hidden rounded-full border border-success/30 bg-success/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-success sm:inline">
+              <span className="hidden rounded-none border border-[#24a148] bg-[#defbe6] px-2.5 py-0.5 font-mono text-xs font-semibold uppercase tracking-wider text-[#0e6027] sm:inline">
                 In progress
               </span>
-              <div className={`rounded-xl border px-3 py-1.5 text-right ${timeClass}`}>
+              <div className={`rounded-none border px-3 py-1.5 text-right font-mono ${timeClass}`}>
                 <p className="text-[10px] font-bold uppercase tracking-wider opacity-70">
                   Time left
                 </p>
@@ -588,7 +588,7 @@ export function ExamRunner({
             </div>
           </div>
           <div
-            className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-secondary"
+            className="mt-3 h-1 w-full overflow-hidden rounded-none bg-[#e0e0e0]"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -596,7 +596,7 @@ export function ExamRunner({
             aria-label="Answered progress"
           >
             <div
-              className="h-full rounded-full bg-success transition-all"
+              className="h-full rounded-none bg-[#0f62fe] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -605,11 +605,11 @@ export function ExamRunner({
 
       <main className="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-8">
         {state.data.exam.instructions ? (
-          <details className="rounded-2xl border border-primary/10 bg-card p-5">
-            <summary className="cursor-pointer text-sm font-bold text-primary">
+          <details className="rounded-none border border-[#e0e0e0] bg-white p-5">
+            <summary className="cursor-pointer text-sm font-semibold text-[#161616]">
               Instructions
             </summary>
-            <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
+            <p className="mt-3 whitespace-pre-wrap text-sm text-[#525252]">
               {state.data.exam.instructions}
             </p>
           </details>
@@ -618,7 +618,7 @@ export function ExamRunner({
         <button
           type="button"
           onClick={() => setPanelOpen((value) => !value)}
-          className="w-full rounded-full border border-primary/10 bg-card px-5 py-2.5 text-sm font-bold text-primary lg:hidden"
+          className="w-full rounded-none border border-[#e0e0e0] bg-white px-5 py-2.5 text-sm font-semibold text-[#161616] lg:hidden"
         >
           {panelOpen ? "Hide question paper" : "Show question paper"}
         </button>
@@ -628,28 +628,28 @@ export function ExamRunner({
 
           <div className="space-y-5">
             {question ? (
-              <section className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[var(--shadow-card)]">
+              <section className="relative overflow-hidden rounded-none border border-[#e0e0e0] bg-white shadow-none">
                 <Watermark label={watermarkLabel} />
 
-                <div className="relative flex flex-wrap items-center justify-between gap-3 border-b border-primary/10 bg-surface/60 px-6 py-3.5">
-                  <p className="text-sm font-bold uppercase tracking-wider text-primary">
+                <div className="relative flex flex-wrap items-center justify-between gap-3 border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-3.5">
+                  <p className="text-sm font-semibold uppercase tracking-wider text-[#161616]">
                     Question {pad2(current + 1)}
-                    <span className="ml-2 text-xs font-semibold normal-case tracking-normal text-muted-foreground">
+                    <span className="ml-2 font-mono text-xs font-normal normal-case tracking-normal text-[#525252]">
                       of {questions.length}
                       {sectionOfCurrent
                         ? ` · ${currentSection} ${indexInSection}/${sectionOfCurrent.items.length}`
                         : ""}
                     </span>
                   </p>
-                  <p className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
-                    <span className="rounded-full border border-primary/10 bg-card px-2.5 py-1">
+                  <p className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#525252]">
+                    <span className="rounded-none border border-[#e0e0e0] bg-white px-2 py-0.5 font-mono text-xs">
                       {questionTypeLabel(question.question_type)}
                     </span>
-                    <span className="rounded-full border border-primary/10 bg-card px-2.5 py-1">
+                    <span className="rounded-none border border-[#e0e0e0] bg-white px-2 py-0.5 font-mono text-xs">
                       {question.marks} {question.marks === 1 ? "mark" : "marks"}
                     </span>
                     {review[question.id] ? (
-                      <span className="rounded-full bg-warning px-2.5 py-1 text-warning-foreground">
+                      <span className="rounded-none border border-[#f1c21b] bg-[#f1c21b] px-2 py-0.5 font-mono text-xs text-[#161616]">
                         Marked for review
                       </span>
                     ) : null}
@@ -657,12 +657,12 @@ export function ExamRunner({
                 </div>
 
                 <div className="relative space-y-5 px-6 py-6">
-                  <p className="select-none text-lg font-semibold leading-relaxed text-primary sm:text-xl">
+                  <p className="select-none text-lg font-normal leading-relaxed text-[#161616] sm:text-xl">
                     {question.prompt}
                   </p>
 
                   {question.options.length > 0 ? (
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#525252]">
                       Select your answer
                     </p>
                   ) : null}
@@ -679,15 +679,15 @@ export function ExamRunner({
                               checked={checked}
                               onChange={() =>
                                 update(question.id, {
-                                  selected: checked
+                                   selected: checked
                                     ? selected.filter((value) => value !== index)
                                     : [...selected, index].sort((a, b) => a - b),
                                 })
                               }
-                              className="mt-0.5 size-4 shrink-0 accent-accent"
+                              className="mt-0.5 size-4 shrink-0 accent-[#0f62fe]"
                             />
                             <span className="select-none">
-                              <span className="font-bold text-primary">{letterLabel(index)}.</span>{" "}
+                              <span className="font-semibold text-[#161616]">{letterLabel(index)}.</span>{" "}
                               {option}
                             </span>
                           </label>
@@ -708,10 +708,10 @@ export function ExamRunner({
                               name={`question-${question.id}`}
                               checked={checked}
                               onChange={() => update(question.id, { selected: [index] })}
-                              className="mt-0.5 size-4 shrink-0 accent-accent"
+                              className="mt-0.5 size-4 shrink-0 accent-[#0f62fe]"
                             />
                             <span className="select-none">
-                              <span className="font-bold text-primary">{letterLabel(index)}.</span>{" "}
+                              <span className="font-semibold text-[#161616]">{letterLabel(index)}.</span>{" "}
                               {option}
                             </span>
                           </label>
@@ -742,20 +742,20 @@ export function ExamRunner({
                   ) : null}
                 </div>
 
-                <div className="relative border-t border-primary/10 bg-surface/60 px-6 py-4">
+                <div className="relative border-t border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <button
                       type="button"
                       disabled={current === 0}
                       onClick={() => goTo(current - 1)}
-                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
+                      className="rounded-none border border-[#161616] bg-white px-5 py-2.5 text-sm font-semibold text-[#161616] hover:bg-[#161616] hover:text-white disabled:opacity-40"
                     >
                       Previous
                     </button>
                     <button
                       type="button"
                       onClick={saveAndNext}
-                      className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent"
+                      className="rounded-none bg-[#0f62fe] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0353e9]"
                     >
                       Save &amp; Next
                     </button>
@@ -763,21 +763,21 @@ export function ExamRunner({
                       type="button"
                       disabled={current >= questions.length - 1}
                       onClick={() => goTo(current + 1)}
-                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-primary disabled:opacity-40"
+                      className="rounded-none border border-[#161616] bg-white px-5 py-2.5 text-sm font-semibold text-[#161616] hover:bg-[#161616] hover:text-white disabled:opacity-40"
                     >
                       Next
                     </button>
                     <span
-                      className="mx-1 hidden h-6 w-px bg-primary/10 sm:block"
+                      className="mx-1 hidden h-6 w-px bg-[#e0e0e0] sm:block"
                       aria-hidden="true"
                     />
                     <button
                       type="button"
                       onClick={() => toggleReview(question.id)}
-                      className={`rounded-full px-5 py-2.5 text-sm font-bold ${
+                      className={`rounded-none px-5 py-2.5 text-sm font-semibold ${
                         review[question.id]
-                          ? "bg-warning text-warning-foreground"
-                          : "border border-primary/15 bg-card text-primary hover:border-accent hover:text-accent"
+                          ? "bg-[#f1c21b] text-[#161616]"
+                          : "border border-[#e0e0e0] bg-white text-[#161616] hover:border-[#0f62fe] hover:text-[#0f62fe]"
                       }`}
                     >
                       {review[question.id] ? "Unmark review" : "Mark for review"}
@@ -785,11 +785,11 @@ export function ExamRunner({
                     <button
                       type="button"
                       onClick={() => update(question.id, null)}
-                      className="rounded-full border border-primary/15 bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:border-destructive hover:text-destructive"
+                      className="rounded-none border border-[#e0e0e0] bg-white px-5 py-2.5 text-sm font-semibold text-[#525252] hover:border-[#da1e28] hover:text-[#da1e28]"
                     >
                       Clear answer
                     </button>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-[#525252]">
                       {saveMutation.isPending ? "Saving…" : "Answers save automatically"}
                     </span>
                   </div>
@@ -797,25 +797,25 @@ export function ExamRunner({
               </section>
             ) : null}
 
-            <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-[var(--shadow-card)]">
+            <section className="rounded-none border border-[#e0e0e0] bg-white p-6 shadow-none">
               {confirming ? (
                 <div className="space-y-3">
-                  <p className="font-semibold text-primary">
+                  <p className="font-semibold text-[#161616]">
                     Are you sure you want to submit the exam?
                   </p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                  <ul className="space-y-1 text-sm text-[#525252]">
                     <li>Answered: {answeredCount}</li>
                     <li>Not answered: {notAnswered}</li>
                     <li>Marked for review: {reviewCount}</li>
                   </ul>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-[#525252]">
                     You cannot retake this exam with the same credentials.
                   </p>
                   <div className="flex gap-3">
                     <button
                       type="button"
                       onClick={() => setConfirming(false)}
-                      className="rounded-full border border-primary/15 px-5 py-2.5 text-sm font-semibold text-primary"
+                      className="rounded-none border border-[#161616] px-5 py-2.5 text-sm font-semibold text-[#161616] hover:bg-[#161616] hover:text-white"
                     >
                       Cancel
                     </button>
@@ -823,7 +823,7 @@ export function ExamRunner({
                       type="button"
                       disabled={submitMutation.isPending}
                       onClick={submit}
-                      className="rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground hover:bg-accent disabled:opacity-60"
+                      className="rounded-none bg-[#0f62fe] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0353e9] disabled:opacity-60"
                     >
                       {submitMutation.isPending ? "Submitting…" : "Submit Exam"}
                     </button>
@@ -831,15 +831,15 @@ export function ExamRunner({
                 </div>
               ) : (
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                  <p className="text-sm text-muted-foreground">
-                    Answered: <span className="font-bold text-success">{answeredCount}</span> · Not
-                    answered: <span className="font-bold text-primary">{notAnswered}</span> · Marked
-                    for review: <span className="font-bold text-primary">{reviewCount}</span>
+                  <p className="text-sm text-[#525252]">
+                    Answered: <span className="font-mono font-semibold text-[#24a148]">{answeredCount}</span> · Not
+                    answered: <span className="font-mono font-semibold text-[#161616]">{notAnswered}</span> · Marked
+                    for review: <span className="font-mono font-semibold text-[#161616]">{reviewCount}</span>
                   </p>
                   <button
                     type="button"
                     onClick={() => setConfirming(true)}
-                    className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-accent"
+                    className="rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0353e9]"
                   >
                     Submit Exam
                   </button>
@@ -847,7 +847,7 @@ export function ExamRunner({
               )}
             </section>
 
-            <p className="pb-4 text-center text-xs text-muted-foreground">
+            <p className="pb-4 text-center text-xs text-[#525252]">
               Confidential aptitude assessment · Copying or distributing this question paper is
               prohibited.
             </p>
@@ -884,42 +884,42 @@ function InstructionsGate({
   const [acknowledged, setAcknowledged] = useState(false);
 
   return (
-    <main className="flex min-h-screen items-start justify-center bg-surface p-4 sm:items-center sm:p-6">
+    <main className="flex min-h-screen items-start justify-center bg-[#f4f4f4] p-4 sm:items-center sm:p-6">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="exam-instructions-title"
-        className="w-full max-w-2xl rounded-2xl border border-primary/5 bg-card p-6 shadow-xl sm:p-8"
+        className="w-full max-w-2xl rounded-none border border-[#e0e0e0] bg-white p-6 shadow-none sm:p-8"
       >
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">
           Exam instructions
         </p>
-        <h1 id="exam-instructions-title" className="mt-2 text-2xl font-bold text-primary">
+        <h1 id="exam-instructions-title" className="mt-2 text-2xl font-light text-[#161616]">
           {exam.title}
         </h1>
         {candidateName ? (
-          <p className="mt-1 text-sm font-semibold text-muted-foreground">
+          <p className="mt-1 text-sm font-semibold text-[#525252]">
             Candidate: {candidateName}
             {candidateUsername ? ` (${candidateUsername})` : ""}
           </p>
         ) : null}
 
-        <dl className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-primary/5 bg-surface p-4 text-sm">
+        <dl className="mt-5 grid grid-cols-2 gap-3 border border-[#e0e0e0] bg-[#f4f4f4] p-4 text-sm">
           <div>
-            <dt className="text-muted-foreground">Duration</dt>
-            <dd className="font-bold text-primary">{exam.duration_minutes} minutes</dd>
+            <dt className="text-[#525252]">Duration</dt>
+            <dd className="font-mono font-semibold text-[#161616]">{exam.duration_minutes} minutes</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Questions</dt>
-            <dd className="font-bold text-primary">{questionCount}</dd>
+            <dt className="text-[#525252]">Questions</dt>
+            <dd className="font-mono font-semibold text-[#161616]">{questionCount}</dd>
           </div>
         </dl>
 
         {exam.description ? (
-          <p className="mt-5 text-sm text-muted-foreground">{exam.description}</p>
+          <p className="mt-5 text-sm text-[#525252]">{exam.description}</p>
         ) : null}
 
-        <div className="mt-5 max-h-72 overflow-y-auto rounded-xl border border-primary/5 p-4 text-sm leading-relaxed text-muted-foreground">
+        <div className="mt-5 max-h-72 overflow-y-auto border border-[#e0e0e0] bg-white p-4 text-sm leading-relaxed text-[#525252]">
           {exam.instructions ? (
             <div className="whitespace-pre-wrap">{exam.instructions}</div>
           ) : (
@@ -933,18 +933,18 @@ function InstructionsGate({
           )}
         </div>
 
-        <label className="mt-5 flex items-start gap-3 text-sm font-semibold text-primary">
+        <label className="mt-5 flex items-start gap-3 text-sm font-semibold text-[#161616]">
           <input
             type="checkbox"
             checked={acknowledged}
             onChange={(event) => setAcknowledged(event.target.checked)}
-            className="mt-0.5 size-4 rounded border-primary/30"
+            className="mt-0.5 size-4 rounded-none border-[#e0e0e0] accent-[#0f62fe]"
           />
           I have read and understood the instructions above.
         </label>
 
         {error ? (
-          <p role="alert" className="mt-4 text-sm font-semibold text-destructive">
+          <p role="alert" className="mt-4 text-sm font-semibold text-[#da1e28]">
             {error}
           </p>
         ) : null}
@@ -953,11 +953,11 @@ function InstructionsGate({
           type="button"
           onClick={onStart}
           disabled={!acknowledged || pending}
-          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
+          className="mt-6 w-full rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9] disabled:opacity-50"
         >
           {pending ? "Starting exam…" : "Start Exam"}
         </button>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
+        <p className="mt-3 text-center text-xs text-[#525252]">
           Your {exam.duration_minutes}-minute timer begins the moment you click Start Exam.
         </p>
       </div>

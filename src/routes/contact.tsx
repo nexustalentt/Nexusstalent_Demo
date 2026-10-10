@@ -27,8 +27,8 @@ export const Route = createFileRoute("/contact")({
   errorComponent: () => (
     <PublicShell>
       <div className="container-page py-24 text-center">
-        <h1 className="text-2xl font-bold text-primary">Something went wrong</h1>
-        <p className="mt-2 text-muted-foreground">Please try again in a moment.</p>
+        <h1 className="text-2xl font-light text-[#161616]">Something went wrong</h1>
+        <p className="mt-2 text-[#525252]">Please try again in a moment.</p>
       </div>
     </PublicShell>
   ),
@@ -76,8 +76,8 @@ function ContactPage() {
   }
 
   const fieldClass =
-    "mt-2 w-full rounded-lg border border-primary/10 bg-background px-4 py-3 text-sm text-primary outline-none focus:border-accent";
-  const labelClass = "text-xs font-semibold tracking-widest uppercase text-muted-foreground";
+    "mt-1.5 w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 py-2.5 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
+  const labelClass = "text-xs font-normal uppercase tracking-[0.16px] text-[#525252]";
 
   const details = [
     { label: "Email", value: settings?.company_email },
@@ -90,19 +90,19 @@ function ContactPage() {
   return (
     <PublicShell>
       <PageHero
-        eyebrow="Contact Us"
+        eyebrow="Contact us"
         title="Talk to a consultant, not a call centre"
         subtitle="Share your hiring requirement or consulting need and we will respond within one business day."
       />
 
-      <section className="py-20">
+      <section className="py-20 bg-[#ffffff]">
         <div className="container-page grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <form
             onSubmit={handleSubmit}
             noValidate
-            className="rounded-2xl border border-primary/5 bg-card p-8 shadow-card"
+            className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-8 sm:p-10"
           >
-            <h2 className="text-xl font-bold text-primary">Send an inquiry</h2>
+            <h2 className="text-xl font-normal text-[#161616]">Send an inquiry</h2>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               <div>
                 <label className={labelClass} htmlFor="name">
@@ -110,7 +110,7 @@ function ContactPage() {
                 </label>
                 <input id="name" name="name" maxLength={100} className={fieldClass} />
                 {errors["name"] ? (
-                  <p className="mt-1 text-xs text-destructive">{errors["name"]}</p>
+                  <p className="mt-1 text-xs text-[#da1e28]">{errors["name"]}</p>
                 ) : null}
               </div>
               <div>
@@ -125,7 +125,7 @@ function ContactPage() {
                   className={fieldClass}
                 />
                 {errors["email"] ? (
-                  <p className="mt-1 text-xs text-destructive">{errors["email"]}</p>
+                  <p className="mt-1 text-xs text-[#da1e28]">{errors["email"]}</p>
                 ) : null}
               </div>
               <div>
@@ -152,30 +152,30 @@ function ContactPage() {
                   className={fieldClass}
                 />
                 {errors["message"] ? (
-                  <p className="mt-1 text-xs text-destructive">{errors["message"]}</p>
+                  <p className="mt-1 text-xs text-[#da1e28]">{errors["message"]}</p>
                 ) : null}
               </div>
             </div>
             <button
               type="submit"
               disabled={pending}
-              className="mt-8 inline-flex rounded-full bg-accent px-8 py-4 text-sm font-bold text-accent-foreground transition-transform hover:scale-[1.02] disabled:opacity-60"
+              className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white transition-colors hover:bg-[#0050e6] disabled:opacity-60 cursor-pointer"
             >
               {pending ? "Sending…" : "Send Inquiry"}
             </button>
           </form>
 
-          <aside className="h-fit rounded-2xl border border-primary/5 bg-surface p-8">
-            <h2 className="text-sm font-semibold tracking-widest uppercase text-muted-foreground">
+          <aside className="h-fit rounded-none border border-[#e0e0e0] bg-[#f4f4f4] p-8">
+            <h2 className="text-xs uppercase tracking-[0.16px] text-[#525252]">
               Reach us directly
             </h2>
             <dl className="mt-6 space-y-5">
               {details.map((detail) => (
-                <div key={detail.label}>
-                  <dt className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">
+                <div key={detail.label} className="border-b border-[#e0e0e0] pb-4 last:border-b-0">
+                  <dt className="text-[11px] uppercase tracking-[0.16px] text-[#8c8c8c]">
                     {detail.label}
                   </dt>
-                  <dd className="mt-1 text-sm font-semibold text-primary">{detail.value}</dd>
+                  <dd className="mt-1 text-sm font-normal text-[#161616]">{detail.value}</dd>
                 </div>
               ))}
             </dl>

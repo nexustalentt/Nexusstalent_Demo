@@ -86,9 +86,9 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
 
   return (
     <Shell>
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Nexus Talent</p>
-      <h1 className="mt-2 text-2xl font-bold text-primary">Exam Login</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Nexus Talent</p>
+      <h1 className="mt-2 text-2xl font-light text-[#161616]">Exam Login</h1>
+      <p className="mt-2 text-sm text-[#525252]">
         Enter the username and password shared with you by the recruitment team.
       </p>
       <form
@@ -105,7 +105,7 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
       >
         <div>
           <label
-            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#525252]"
             htmlFor="candidate-username"
           >
             Username
@@ -121,7 +121,7 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
         </div>
         <div>
           <label
-            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#525252]"
             htmlFor="candidate-password"
           >
             Password
@@ -137,19 +137,19 @@ function LoginCard({ onAuthenticated }: { onAuthenticated: (sessionToken: string
           />
         </div>
         {error ? (
-          <p role="alert" className="text-sm font-semibold text-destructive">
+          <p role="alert" className="text-sm font-semibold text-[#da1e28]">
             {error}
           </p>
         ) : null}
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-accent disabled:opacity-60"
+          className="w-full rounded-none bg-[#0f62fe] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0353e9] disabled:opacity-50"
         >
           {mutation.isPending ? "Signing in…" : "Start Exam"}
         </button>
       </form>
-      <Link to="/" className="mt-6 inline-block text-sm font-semibold text-accent hover:underline">
+      <Link to="/" className="mt-6 inline-block text-sm font-semibold text-[#0f62fe] hover:underline">
         Back to home
       </Link>
     </Shell>

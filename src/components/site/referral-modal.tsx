@@ -250,7 +250,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                 <button
                   type="button"
                   onClick={() => handleClose(false)}
-                  className="rounded-full bg-accent px-6 py-2.5 text-xs font-bold text-accent-foreground hover:bg-accent/90 shadow-sm transition-colors"
+                  className="rounded-none bg-[#0f62fe] px-6 py-2.5 text-xs font-normal text-white hover:bg-[#0050e6] transition-colors"
                 >
                   Done
                 </button>
@@ -259,7 +259,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
           ) : (
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               {serverError && (
-                <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-xs text-destructive">
+                <div className="rounded-none border border-[#da1e28]/20 bg-[#da1e28]/10 p-3 text-xs text-[#da1e28]">
                   <p className="font-semibold">Unable to submit referral</p>
                   <p className="mt-0.5">{serverError}</p>
                 </div>
@@ -270,9 +270,9 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                 <div>
                   <label
                     htmlFor="referral-first-name"
-                    className="block text-xs font-bold tracking-wider uppercase text-muted-foreground"
+                    className="block text-xs font-normal uppercase tracking-[0.16px] text-[#525252]"
                   >
-                    First Name <span className="text-destructive">*</span>
+                    First Name <span className="text-[#da1e28]">*</span>
                   </label>
                   <input
                     id="referral-first-name"
@@ -282,23 +282,23 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                     onChange={(e) => handleInputChange("first_name", e.target.value)}
                     placeholder="Candidate's first name"
                     disabled={isSubmitting}
-                    className={`mt-1.5 w-full rounded-lg border bg-background px-3.5 py-2 text-sm text-primary outline-none transition-colors ${
+                    className={`mt-1.5 w-full rounded-none border-0 border-b bg-[#f4f4f4] px-3.5 py-2 text-sm text-[#161616] outline-none transition-colors ${
                       errors.first_name
-                        ? "border-destructive focus:border-destructive"
-                        : "border-primary/15 focus:border-accent"
+                        ? "border-b-2 border-[#da1e28]"
+                        : "border-[#e0e0e0] focus:border-b-2 focus:border-[#0f62fe]"
                     }`}
                   />
                   {errors.first_name && (
-                    <p className="mt-1 text-xs text-destructive">{errors.first_name}</p>
+                    <p className="mt-1 text-xs text-[#da1e28]">{errors.first_name}</p>
                   )}
                 </div>
 
                 <div>
                   <label
                     htmlFor="referral-last-name"
-                    className="block text-xs font-bold tracking-wider uppercase text-muted-foreground"
+                    className="block text-xs font-normal uppercase tracking-[0.16px] text-[#525252]"
                   >
-                    Last Name <span className="text-destructive">*</span>
+                    Last Name <span className="text-[#da1e28]">*</span>
                   </label>
                   <input
                     id="referral-last-name"
@@ -308,14 +308,14 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                     onChange={(e) => handleInputChange("last_name", e.target.value)}
                     placeholder="Candidate's last name"
                     disabled={isSubmitting}
-                    className={`mt-1.5 w-full rounded-lg border bg-background px-3.5 py-2 text-sm text-primary outline-none transition-colors ${
+                    className={`mt-1.5 w-full rounded-none border-0 border-b bg-[#f4f4f4] px-3.5 py-2 text-sm text-[#161616] outline-none transition-colors ${
                       errors.last_name
-                        ? "border-destructive focus:border-destructive"
-                        : "border-primary/15 focus:border-accent"
+                        ? "border-b-2 border-[#da1e28]"
+                        : "border-[#e0e0e0] focus:border-b-2 focus:border-[#0f62fe]"
                     }`}
                   />
                   {errors.last_name && (
-                    <p className="mt-1 text-xs text-destructive">{errors.last_name}</p>
+                    <p className="mt-1 text-xs text-[#da1e28]">{errors.last_name}</p>
                   )}
                 </div>
               </div>
@@ -324,9 +324,9 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
               <div>
                 <label
                   htmlFor="referral-phone"
-                  className="block text-xs font-bold tracking-wider uppercase text-muted-foreground"
+                  className="block text-xs font-normal uppercase tracking-[0.16px] text-[#525252]"
                 >
-                  Phone Number <span className="text-destructive">*</span>
+                  Phone Number <span className="text-[#da1e28]">*</span>
                 </label>
                 <input
                   id="referral-phone"
@@ -336,22 +336,22 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                   onChange={(e) => handleInputChange("phone", e.target.value)}
                   placeholder="e.g. +91 98765 43210"
                   disabled={isSubmitting}
-                  className={`mt-1.5 w-full rounded-lg border bg-background px-3.5 py-2 text-sm text-primary outline-none transition-colors ${
+                  className={`mt-1.5 w-full rounded-none border-0 border-b bg-[#f4f4f4] px-3.5 py-2 text-sm text-[#161616] outline-none transition-colors ${
                     errors.phone
-                      ? "border-destructive focus:border-destructive"
-                      : "border-primary/15 focus:border-accent"
+                      ? "border-b-2 border-[#da1e28]"
+                      : "border-[#e0e0e0] focus:border-b-2 focus:border-[#0f62fe]"
                   }`}
                 />
-                {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone}</p>}
+                {errors.phone && <p className="mt-1 text-xs text-[#da1e28]">{errors.phone}</p>}
               </div>
 
               {/* Email Address */}
               <div>
                 <label
                   htmlFor="referral-email"
-                  className="block text-xs font-bold tracking-wider uppercase text-muted-foreground"
+                  className="block text-xs font-normal uppercase tracking-[0.16px] text-[#525252]"
                 >
-                  Email Address <span className="text-destructive">*</span>
+                  Email Address <span className="text-[#da1e28]">*</span>
                 </label>
                 <input
                   id="referral-email"
@@ -361,41 +361,41 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   placeholder="e.g. candidate@example.com"
                   disabled={isSubmitting}
-                  className={`mt-1.5 w-full rounded-lg border bg-background px-3.5 py-2 text-sm text-primary outline-none transition-colors ${
+                  className={`mt-1.5 w-full rounded-none border-0 border-b bg-[#f4f4f4] px-3.5 py-2 text-sm text-[#161616] outline-none transition-colors ${
                     errors.email
-                      ? "border-destructive focus:border-destructive"
-                      : "border-primary/15 focus:border-accent"
+                      ? "border-b-2 border-[#da1e28]"
+                      : "border-[#e0e0e0] focus:border-b-2 focus:border-[#0f62fe]"
                   }`}
                 />
-                {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email}</p>}
+                {errors.email && <p className="mt-1 text-xs text-[#da1e28]">{errors.email}</p>}
               </div>
 
               {/* Upload Resume */}
               <div>
                 <label
                   htmlFor="referral-resume"
-                  className="block text-xs font-bold tracking-wider uppercase text-muted-foreground"
+                  className="block text-xs font-normal uppercase tracking-[0.16px] text-[#525252]"
                 >
-                  Upload Resume <span className="text-destructive">*</span>
+                  Upload Resume <span className="text-[#da1e28]">*</span>
                 </label>
                 <div
-                  className={`mt-1.5 rounded-xl border-2 border-dashed p-4 text-center transition-colors ${
+                  className={`mt-1.5 rounded-none border border-dashed p-4 text-center transition-colors ${
                     errors.resume
-                      ? "border-destructive bg-destructive/5"
+                      ? "border-[#da1e28] bg-[#da1e28]/5"
                       : resume
-                        ? "border-accent/40 bg-accent/5"
-                        : "border-primary/15 hover:border-accent/50 bg-surface/50"
+                        ? "border-[#0f62fe] bg-[#edf5ff]"
+                        : "border-[#e0e0e0] hover:border-[#0f62fe] bg-[#f4f4f4]"
                   }`}
                 >
                   {resume ? (
                     <div className="flex items-center justify-between gap-3 text-left">
                       <div className="flex items-center gap-2.5 overflow-hidden">
-                        <FileText className="size-5 shrink-0 text-accent" />
+                        <FileText className="size-5 shrink-0 text-[#0f62fe]" />
                         <div className="overflow-hidden">
-                          <p className="truncate text-xs font-semibold text-primary">
+                          <p className="truncate text-xs font-medium text-[#161616]">
                             {resume.name}
                           </p>
-                          <p className="text-[11px] text-muted-foreground">
+                          <p className="text-[11px] text-[#525252]">
                             {(resume.file.size / 1024).toFixed(0)} KB
                           </p>
                         </div>
@@ -403,7 +403,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                       <button
                         type="button"
                         onClick={() => setResume(null)}
-                        className="rounded-full p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        className="rounded-none p-1 text-[#525252] hover:bg-[#da1e28]/10 hover:text-[#da1e28] transition-colors"
                         aria-label="Remove file"
                       >
                         <X className="size-4" />
@@ -411,17 +411,17 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                     </div>
                   ) : (
                     <div>
-                      <Upload className="mx-auto size-6 text-muted-foreground/80" />
-                      <p className="mt-1.5 text-xs font-medium text-primary">
+                      <Upload className="mx-auto size-6 text-[#8c8c8c]" />
+                      <p className="mt-1.5 text-xs font-normal text-[#161616]">
                         <label
                           htmlFor="referral-resume"
-                          className="cursor-pointer text-accent hover:underline font-semibold"
+                          className="cursor-pointer text-[#0f62fe] hover:underline"
                         >
                           Click to upload resume
                         </label>{" "}
                         or drag and drop
                       </p>
-                      <p className="mt-0.5 text-[11px] text-muted-foreground">
+                      <p className="mt-0.5 text-[11px] text-[#8c8c8c]">
                         Accepts PDF, DOC, or DOCX (up to 5 MB)
                       </p>
                     </div>
@@ -436,7 +436,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                     className="sr-only"
                   />
                 </div>
-                {errors.resume && <p className="mt-1 text-xs text-destructive">{errors.resume}</p>}
+                {errors.resume && <p className="mt-1 text-xs text-[#da1e28]">{errors.resume}</p>}
               </div>
 
               {/* Submit button */}
@@ -444,14 +444,14 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground shadow-accent transition-transform hover:scale-[1.01] disabled:opacity-60 disabled:hover:scale-100 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 py-3.5 text-sm font-normal text-white transition-colors hover:bg-[#0050e6] disabled:opacity-60 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" /> Referring…
                     </>
                   ) : (
-                    "Refer"
+                    "Submit Candidate Referral"
                   )}
                 </button>
               </div>

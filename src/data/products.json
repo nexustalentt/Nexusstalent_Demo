@@ -1,0 +1,91 @@
+[
+  {
+    "id": "prod-shopping-app-01",
+    "name": "NexusCart E-Commerce Shopping App",
+    "tagline": "Modern high-conversion shopping application with instant catalog search, multi-vendor cart, and 1-click checkout.",
+    "description": "Currently in active engineering. A flagship shopping platform featuring native mobile experience and high-performance Web storefront. Includes instant Algolia-grade catalog indexing, real-time inventory locking, localized payment gateways (Stripe, Apple Pay, Cards), and automated order fulfillment tracking.",
+    "category": "E-Commerce & Retail",
+    "status": "in_development",
+    "status_label": "Currently Working On",
+    "website_url": "https://shop.nexustalent.io",
+    "preview_url": "https://nexuscart-demo.vercel.app",
+    "tags": ["React Native", "Next.js 15", "Stripe Checkout", "Tailwind CSS", "Redis Cache", "Node.js"],
+    "highlights": [
+      "Sub-200ms product catalog search & smart filters",
+      "Real-time stock reservation & shopping cart sync",
+      "Multi-currency localized checkout & shipping calculators",
+      "Omnichannel merchant administration & order dashboard"
+    ],
+    "version": "v0.9-WIP",
+    "featured": true,
+    "sort_order": 1,
+    "created_at": "2026-09-15T10:00:00.000Z",
+    "updated_at": "2026-10-10T12:00:00.000Z"
+  },
+  {
+    "id": "prod-zozii-ai-02",
+    "name": "Zozii Desktop AI Assistant",
+    "tagline": "Windows native AI co-pilot invisible to screen shares and meeting streams.",
+    "description": "Desktop Windows application applying DWM_EXCLUDEFROMCAPTURE protection and local WASAPI loopback audio taps to provide instant <320ms streaming answers in critical meetings.",
+    "category": "Desktop AI & Win32",
+    "status": "live",
+    "status_label": "Live & Production Ready",
+    "website_url": "/zozii",
+    "preview_url": "https://zozii-iota.vercel.app/",
+    "tags": ["Electron 32", "Direct3D Screen Guard", "WASAPI Audio", "Groq LLaMA-3.3", "Gemini 1.5"],
+    "highlights": [
+      "100% invisible to Zoom, Teams & Google Meet screen shares",
+      "Zero remote audio upload or recording (Local-First)",
+      "Sub-second word-by-word token streaming"
+    ],
+    "version": "v1.09.01",
+    "featured": true,
+    "sort_order": 2,
+    "created_at": "2026-08-01T10:00:00.000Z",
+    "updated_at": "2026-10-10T12:00:00.000Z"
+  },
+  {
+    "id": "prod-apex-clinic-03",
+    "name": "Apex Clinical Health Portal",
+    "tagline": "Digital patient booking, doctor scheduling, and HIPAA-compliant telehealth suite.",
+    "description": "Modern healthcare practice portal providing automated patient check-in, real-time calendar slot booking, doctor consultation video feeds, and EHR prescription synchronization.",
+    "category": "Healthcare SaaS",
+    "status": "in_development",
+    "status_label": "Currently Working On",
+    "website_url": "https://apexclinic.health",
+    "preview_url": "https://apexclinic.health/booking",
+    "tags": ["TypeScript", "WebRTC Video", "PostgreSQL", "FHIR Standards", "Tailwind CSS"],
+    "highlights": [
+      "Instant slot booking with doctor availability sync",
+      "Secure encrypted patient telemetry",
+      "Multi-clinic branch administration"
+    ],
+    "version": "v1.2-Beta",
+    "featured": false,
+    "sort_order": 3,
+    "created_at": "2026-08-20T10:00:00.000Z",
+    "updated_at": "2026-10-10T12:00:00.000Z"
+  },
+  {
+    "id": "prod-artisan-reserve-04",
+    "name": "Artisan Reserve Hospitality System",
+    "tagline": "Interactive digital dining table reservation, QR menu, and kitchen display platform.",
+    "description": "Comprehensive hospitality software that replaces legacy paper reservations with an interactive visual table map, SMS table-ready notifications, and real-time kitchen order routing.",
+    "category": "Hospitality & POS",
+    "status": "live",
+    "status_label": "Live in Production",
+    "website_url": "https://artisancafe.com",
+    "preview_url": "https://artisancafe.com/reserve",
+    "tags": ["React", "FastAPI", "WebSockets", "Stripe Terminal", "PostgreSQL"],
+    "highlights": [
+      "Live visual table map with seating timers",
+      "Automated SMS & WhatsApp guest reminders",
+      "Integrated kitchen display sync"
+    ],
+    "version": "v2.4.0",
+    "featured": false,
+    "sort_order": 4,
+    "created_at": "2026-07-10T10:00:00.000Z",
+    "updated_at": "2026-10-10T12:00:00.000Z"
+  }
+]
