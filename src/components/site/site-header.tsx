@@ -11,7 +11,6 @@ const navItems = [
   { label: "Industries", to: "/industries" },
   { label: "Careers", to: "/careers" },
   { label: "About Us", to: "/about" },
-  { label: "Zozii", to: "/zozii" },
 ] as const;
 
 export function SiteLogo({ className = "" }: { className?: string }) {

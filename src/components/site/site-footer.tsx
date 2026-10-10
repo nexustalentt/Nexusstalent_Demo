@@ -89,8 +89,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/zozii" className="transition-colors hover:text-white">
-                  Zozii AI Assistant
+                <Link to="/products" className="transition-colors hover:text-white">
+                  Custom Digital Solutions
                 </Link>
               </li>
               <li>
@@ -141,8 +141,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/zozii" className="transition-colors hover:text-white">
-                  Zozii AI Companion
+                <Link to="/about" className="transition-colors hover:text-white">
+                  About Our Team
                 </Link>
               </li>
               <li>
