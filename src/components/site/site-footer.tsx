@@ -178,7 +178,7 @@ export function SiteFooter() {
 
         {/* Bottom Tier: Legal & Copyright Bar */}
         <div className="flex flex-col items-center justify-between gap-4 pt-8 text-xs text-[#8c8c8c] sm:flex-row">
-          <p>© {new Date().getFullYear()} Nexus Talent Group. Built on Carbon Design System principles.</p>
+          <p>© 2020 Nexus Talent Group</p>
           <div className="flex items-center gap-6">
             <Link to="/privacy" className="hover:text-white transition-colors">
               Privacy
