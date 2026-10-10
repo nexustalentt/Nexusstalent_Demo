@@ -11,6 +11,7 @@ const productInputSchema = z.object({
   category: z.string().trim().max(100).default("Web & Mobile Apps"),
   status: z.enum(["in_development", "live", "beta", "planned"]).default("in_development"),
   status_label: z.string().trim().max(100).optional(),
+  link_type: z.enum(["website", "exe"]).default("website"),
   website_url: z
     .string()
     .trim()

@@ -38,6 +38,7 @@ const productFormSchema = z.object({
   category: z.string().trim().min(2, "Category is required").max(100),
   status: z.enum(["in_development", "live", "beta", "planned"]),
   status_label: z.string().trim().max(100).optional(),
+  link_type: z.enum(["website", "exe"]).default("website"),
   website_url: z
     .string()
     .trim()
@@ -77,6 +78,7 @@ function ProductsAdminPage() {
   const [category, setCategory] = useState("E-Commerce & Retail");
   const [status, setStatus] = useState<ProductStatus>("in_development");
   const [statusLabel, setStatusLabel] = useState("Currently Working On");
+  const [linkType, setLinkType] = useState<"website" | "exe">("website");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [tags, setTags] = useState("");
@@ -92,6 +94,7 @@ function ProductsAdminPage() {
     setCategory("E-Commerce & Retail");
     setStatus("in_development");
     setStatusLabel("Currently Working On");
+    setLinkType("website");
     setWebsiteUrl("");
     setPreviewUrl("");
     setTags("React, Next.js, Stripe, Tailwind CSS");
@@ -115,6 +118,15 @@ function ProductsAdminPage() {
     setCategory(product.category);
     setStatus(product.status);
     setStatusLabel(product.status_label || "");
+    const inferredType =
+      product.link_type ||
+      (product.website_url?.includes("jobconnect-x-e65f4f66") ||
+      product.website_url?.includes("Screenshot.Saver") ||
+      product.website_url?.endsWith(".exe") ||
+      product.id?.includes("screenshot")
+        ? "exe"
+        : "website");
+    setLinkType(inferredType);
     setWebsiteUrl(product.website_url || "");
     setPreviewUrl(product.preview_url || "");
     setTags(product.tags.join(", "));
@@ -136,6 +148,7 @@ function ProductsAdminPage() {
       category,
       status,
       status_label: statusLabel,
+      link_type: linkType,
       website_url: websiteUrl,
       preview_url: previewUrl,
       tags,
@@ -168,6 +181,7 @@ function ProductsAdminPage() {
         category: parsed.data.category,
         status: parsed.data.status,
         status_label: parsed.data.status_label || undefined,
+        link_type: parsed.data.link_type,
         website_url: parsed.data.website_url || undefined,
         preview_url: parsed.data.preview_url || undefined,
         tags: tagList,
@@ -512,18 +526,54 @@ function ProductsAdminPage() {
                 </div>
               </div>
 
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-wider text-[#525252] mb-1.5">
+                  Action Link Option *
+                </label>
+                <div className="flex flex-wrap items-center gap-6 p-3 bg-[#f4f4f4] border border-[#e0e0e0]">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-[#161616]">
+                    <input
+                      type="checkbox"
+                      checked={linkType === "website"}
+                      onChange={() => setLinkType("website")}
+                      className="size-4 text-[#0f62fe] rounded-none focus:ring-[#0f62fe]"
+                    />
+                    <span>Website</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-[#161616]">
+                    <input
+                      type="checkbox"
+                      checked={linkType === "exe"}
+                      onChange={() => setLinkType("exe")}
+                      className="size-4 text-[#0f62fe] rounded-none focus:ring-[#0f62fe]"
+                    />
+                    <span>exe</span>
+                  </label>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block font-mono text-xs uppercase tracking-wider text-[#525252] mb-1">
-                    Website URL / Live App Link
+                    {linkType === "exe" ? "exe URL / GitHub Release URL *" : "Website URL / App Link *"}
                   </label>
                   <input
                     type="text"
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
-                    placeholder="https://my-shopping-app.com"
+                    placeholder={
+                      linkType === "exe"
+                        ? "e.g. https://github.com/nexustalentt/jobconnect-x-e65f4f66/releases/tag/V01_S"
+                        : "e.g. https://shop.nexustalent.io"
+                    }
                     className="w-full border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-3.5 py-2.5 text-sm text-[#161616] outline-none focus:border-b-2 focus:border-b-[#0f62fe]"
                   />
+                  <p className="mt-1 text-xs text-[#525252]">
+                    {linkType === "exe"
+                      ? "Displays a 'Download' button on the main page that downloads the application."
+                      : "Displays an 'Open Website / App' button on the main page."}
+                  </p>
                 </div>
 
                 <div>

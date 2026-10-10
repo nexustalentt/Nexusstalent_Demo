@@ -328,18 +328,6 @@ function ProductsPage() {
                           );
                         })()}
 
-                        {product.preview_url && product.preview_url !== product.website_url && (
-                          <a
-                            href={product.preview_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 rounded-none border border-[#161616] px-4 py-2.5 text-xs font-semibold text-[#161616] transition-colors hover:bg-[#161616] hover:text-white"
-                          >
-                            <span>{product.preview_url.includes("github.com") ? "View Release on GitHub" : "Live Preview"}</span>
-                            <ExternalLink className="size-3.5" />
-                          </a>
-                        )}
-
                         {product.id === "prod-zozii-ai-02" && (
                           <Link
                             to="/zozii"

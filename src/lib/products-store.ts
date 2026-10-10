@@ -2,6 +2,8 @@ import initialProductsData from "@/data/products.json";
 
 export type ProductStatus = "in_development" | "live" | "beta" | "planned";
 
+export type ProductLinkType = "website" | "exe";
+
 export interface ProductItem {
   id: string;
   name: string;
@@ -10,6 +12,7 @@ export interface ProductItem {
   category: string;
   status: ProductStatus;
   status_label?: string;
+  link_type?: ProductLinkType;
   website_url?: string;
   preview_url?: string;
   tags: string[];
@@ -31,6 +34,7 @@ export function getDefaultProducts(): ProductItem[] {
     ...p,
     sort_order: p.sort_order ?? idx + 1,
     status: (p.status as ProductStatus) ?? "in_development",
+    link_type: p.link_type ?? (p.website_url?.includes("download") || p.website_url?.endsWith(".exe") || p.id?.includes("screenshot") ? "exe" : "website"),
   }));
 }
 
@@ -43,9 +47,10 @@ export interface ProductActionInfo {
 
 /**
  * Resolves whether a product action is a direct executable download or an external web link.
- * Special handling for Screenshot Saver converts GitHub release URLs to direct .exe downloads.
+ * When link_type is 'exe' or pointing to an executable/release, button label is 'Download'.
  */
 export function resolveProductAction(product: {
+  link_type?: ProductLinkType;
   website_url?: string;
   name?: string;
   preview_url?: string;
@@ -53,30 +58,43 @@ export function resolveProductAction(product: {
   const rawUrl = product.website_url?.trim() || "";
   if (!rawUrl) return null;
 
-  // Screenshot Saver specific download handling
-  if (
-    rawUrl.includes("jobconnect-x-e65f4f66") ||
-    rawUrl.includes("Screenshot.Saver") ||
-    rawUrl.includes("V01_S") ||
-    rawUrl === "/downloads/Screenshot.Saver.1.exe" ||
-    (product.name && /screenshot.*saver/i.test(product.name) && !rawUrl.startsWith("http://localhost"))
-  ) {
-    return {
-      url: "/downloads/Screenshot.Saver.1.exe",
-      isDownload: true,
-      label: "Download .EXE (Windows)",
-      downloadFilename: "Screenshot.Saver.1.exe",
-    };
-  }
+  const isExplicitExe = product.link_type === "exe";
+  const isExplicitWebsite = product.link_type === "website";
 
-  // General binary/installer file detection (.exe, .msi, .dmg, .zip, etc.)
-  const isBinary = /\.(exe|msi|dmg|pkg|zip|tar\.gz|apk)($|\?)/i.test(rawUrl);
-  if (isBinary) {
-    const filename = decodeURIComponent(rawUrl.split("?")[0]!.split("/").pop() || "download.exe");
+  // Determine if this is an EXE / download
+  const isExe =
+    isExplicitExe ||
+    (!isExplicitWebsite && (
+      rawUrl.includes("jobconnect-x-e65f4f66") ||
+      rawUrl.includes("Screenshot.Saver") ||
+      rawUrl.includes("V01_S") ||
+      rawUrl === "/downloads/Screenshot.Saver.1.exe" ||
+      /\.(exe|msi|dmg|pkg|zip|apk)($|\?)/i.test(rawUrl) ||
+      Boolean(product.name && /screenshot.*saver/i.test(product.name) && !rawUrl.startsWith("http://localhost"))
+    ));
+
+  if (isExe) {
+    // If it's Screenshot Saver or jobconnect repo, route to our local direct download
+    if (
+      rawUrl.includes("jobconnect-x-e65f4f66") ||
+      rawUrl.includes("Screenshot.Saver") ||
+      rawUrl.includes("V01_S") ||
+      rawUrl === "/downloads/Screenshot.Saver.1.exe" ||
+      Boolean(product.name && /screenshot.*saver/i.test(product.name))
+    ) {
+      return {
+        url: "/downloads/Screenshot.Saver.1.exe",
+        isDownload: true,
+        label: "Download",
+        downloadFilename: "Screenshot.Saver.1.exe",
+      };
+    }
+
+    const filename = decodeURIComponent(rawUrl.split("?")[0]!.split("/").pop() || "installer.exe");
     return {
       url: rawUrl,
       isDownload: true,
-      label: "Download .EXE",
+      label: "Download",
       downloadFilename: filename,
     };
   }
@@ -95,21 +113,29 @@ export function resolveProductAction(product: {
 export function normalizeProduct(product: ProductItem): ProductItem {
   let website_url = product.website_url;
   let preview_url = product.preview_url;
+  let link_type = product.link_type;
 
   if (
     website_url &&
     (website_url.includes("jobconnect-x-e65f4f66") ||
       website_url.includes("V01_S") ||
+      website_url === "/downloads/Screenshot.Saver.1.exe" ||
       (product.name.toLowerCase().includes("screenshot") && website_url.includes("github.com")))
   ) {
     if (!preview_url) {
       preview_url = website_url;
     }
     website_url = "/downloads/Screenshot.Saver.1.exe";
+    link_type = "exe";
+  }
+
+  if (!link_type) {
+    link_type = (website_url?.includes("download") || website_url?.endsWith(".exe")) ? "exe" : "website";
   }
 
   return {
     ...product,
+    link_type,
     website_url,
     preview_url,
   };
@@ -178,6 +204,7 @@ export function saveLocalProduct(product: Partial<ProductItem> & { name: string 
           : product.status === "planned"
             ? "Planned Stage"
             : "Currently Working On"),
+    link_type: product.link_type || "website",
     website_url: product.website_url?.trim() || undefined,
     preview_url: product.preview_url?.trim() || undefined,
     tags: Array.isArray(product.tags)
