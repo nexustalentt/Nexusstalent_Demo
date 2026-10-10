@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Download,
   ExternalLink,
@@ -13,12 +13,25 @@ import {
   Clock,
   Globe,
   X,
+  AlertTriangle,
+  RefreshCw,
+  Copy,
+  Check,
+  Cloud,
+  Terminal,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AdminShell, EmptyState, LoadingBlock } from "@/components/admin/admin-shell";
-import { useProducts, useSaveProduct, useDeleteProduct } from "@/lib/products-api";
+import {
+  useProducts,
+  useSaveProduct,
+  useDeleteProduct,
+  checkSupabaseProductsTable,
+  pushLocalProductsToSupabase,
+} from "@/lib/products-api";
 import { type ProductItem, type ProductStatus, resolveProductAction } from "@/lib/products-store";
+import { PRODUCTS_SQL_MIGRATION, SUPABASE_SQL_EDITOR_URL } from "@/lib/products-sql";
 
 export const Route = createFileRoute("/_authenticated/admin/products/")({
   head: () => ({
@@ -67,6 +80,63 @@ function ProductsAdminPage() {
   const { data: products = [], isLoading } = useProducts();
   const saveMutation = useSaveProduct();
   const deleteMutation = useDeleteProduct();
+
+  // Cloud Database Sync Status
+  const [cloudStatus, setCloudStatus] = useState<"checking" | "connected" | "missing_table" | "error">("checking");
+  const [cloudError, setCloudError] = useState<string | null>(null);
+  const [isCheckingCloud, setIsCheckingCloud] = useState(false);
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
+  const [isSyncingToCloud, setIsSyncingToCloud] = useState(false);
+  const [sqlCopied, setSqlCopied] = useState(false);
+
+  async function verifyCloudConnection() {
+    setIsCheckingCloud(true);
+    try {
+      const res = await checkSupabaseProductsTable();
+      if (res.ok) {
+        setCloudStatus("connected");
+        setCloudError(null);
+      } else {
+        setCloudStatus("missing_table");
+        setCloudError(res.error || "The 'products' table was not found in your Supabase project.");
+      }
+    } catch (err: any) {
+      setCloudStatus("error");
+      setCloudError(err?.message || "Failed to query Supabase.");
+    } finally {
+      setIsCheckingCloud(false);
+    }
+  }
+
+  useEffect(() => {
+    verifyCloudConnection();
+  }, []);
+
+  async function handlePushLocalToCloud() {
+    setIsSyncingToCloud(true);
+    try {
+      const res = await pushLocalProductsToSupabase();
+      if (res.error) {
+        toast.error(`Cloud sync failed: ${res.error}`);
+      } else {
+        toast.success(
+          `Successfully pushed ${res.count} product(s) to Supabase cloud! All mobile & desktop devices will now see these.`
+        );
+        verifyCloudConnection();
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to sync to Supabase");
+    } finally {
+      setIsSyncingToCloud(false);
+    }
+  }
+
+  function handleCopySql() {
+    navigator.clipboard.writeText(PRODUCTS_SQL_MIGRATION);
+    setSqlCopied(true);
+    toast.success("SQL setup script copied to clipboard!");
+    setTimeout(() => setSqlCopied(false), 2500);
+  }
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
@@ -234,16 +304,106 @@ function ProductsAdminPage() {
       title="Products & Active Builds"
       description="Manage the live products, shopping applications, and tools we are currently building."
       actions={
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="inline-flex items-center gap-2 rounded-none bg-[#0f62fe] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0353e9]"
-        >
-          <Plus className="size-4" />
-          Add Product
-        </button>
+        <div className="flex items-center gap-2">
+          {cloudStatus === "missing_table" && (
+            <button
+              type="button"
+              onClick={() => setIsSqlModalOpen(true)}
+              className="inline-flex items-center gap-2 bg-[#da1e28] px-3.5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#ba1b23]"
+            >
+              <Terminal className="size-4" />
+              Setup Cloud Sync (SQL)
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="inline-flex items-center gap-2 rounded-none bg-[#0f62fe] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0353e9]"
+          >
+            <Plus className="size-4" />
+            Add Product
+          </button>
+        </div>
       }
     >
+      {/* Supabase Cloud Connection & Sync Status Banner */}
+      {cloudStatus === "missing_table" || cloudStatus === "error" ? (
+        <div className="mb-8 border-l-4 border-l-[#da1e28] border border-[#ff8389] bg-[#fff1f1] p-5 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="space-y-2 max-w-3xl">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="size-5 text-[#da1e28] shrink-0" />
+                <h3 className="font-mono text-xs uppercase tracking-wider font-bold text-[#da1e28]">
+                  Database Setup Required: Products Table Missing in Supabase
+                </h3>
+              </div>
+              <p className="text-sm text-[#161616] leading-relaxed">
+                The <code className="bg-[#ffd7d9] px-1.5 py-0.5 font-mono text-xs font-semibold text-[#da1e28]">public.products</code> table has not been created yet in your Supabase project. Because the table does not exist in the database, any added, updated, or deleted products are <strong>only saved temporarily in this browser</strong> and <strong>will NOT appear on mobile phones, tablets, or other devices</strong>.
+              </p>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="font-mono text-[11px] text-[#525252]">Database status:</span>
+                <span className="font-mono text-[11px] text-[#da1e28] bg-white border border-[#ff8389] px-2 py-0.5">
+                  {cloudError || 'relation "public.products" does not exist'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 md:self-center">
+              <button
+                type="button"
+                onClick={() => setIsSqlModalOpen(true)}
+                className="inline-flex items-center gap-2 bg-[#da1e28] px-4 py-2.5 text-xs font-semibold text-white hover:bg-[#ba1b23] transition-colors shadow-sm"
+              >
+                <Terminal className="size-4" />
+                <span>View & Copy SQL Script</span>
+              </button>
+              <button
+                type="button"
+                onClick={verifyCloudConnection}
+                disabled={isCheckingCloud}
+                className="inline-flex items-center gap-1.5 border border-[#161616] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`size-3.5 ${isCheckingCloud ? "animate-spin" : ""}`} />
+                <span>Re-check</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : cloudStatus === "connected" ? (
+        <div className="mb-8 border-l-4 border-l-[#24a148] border border-[#a7f0ba] bg-[#defbe6] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="size-5 text-[#24a148] shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-[#0e6027]">
+                Supabase Cloud Sync Active — Live Across Mobile & All Devices
+              </p>
+              <p className="text-[11px] text-[#525252] mt-0.5">
+                Every added, updated, and deleted product syncs in real-time to your Supabase PostgreSQL database.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handlePushLocalToCloud}
+              disabled={isSyncingToCloud}
+              className="inline-flex items-center gap-1.5 border border-[#24a148] bg-white px-3 py-1.5 text-xs font-semibold text-[#0e6027] hover:bg-[#24a148] hover:text-white transition-colors disabled:opacity-50"
+              title="Push all local items to Supabase"
+            >
+              <Cloud className="size-3.5" />
+              <span>{isSyncingToCloud ? "Syncing…" : "Push Local Cache to Cloud"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsSqlModalOpen(true)}
+              className="inline-flex items-center gap-1.5 border border-[#e0e0e0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#525252] hover:text-[#161616] transition-colors"
+            >
+              <span>View SQL</span>
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {/* Metric Stat Tiles */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-8">
         <div className="border border-[#e0e0e0] bg-white p-5">
@@ -668,6 +828,108 @@ function ProductsAdminPage() {
           </div>
         </div>
       )}
+
+      {/* SUPABASE SQL SCRIPT MODAL */}
+      {isSqlModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
+          <div className="relative w-full max-w-3xl border border-[#e0e0e0] bg-white p-6 md:p-8 my-8 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-4">
+              <div>
+                <span className="font-mono text-xs uppercase tracking-wider text-[#da1e28] font-semibold">
+                  Database Initialization
+                </span>
+                <h3 className="text-xl font-light text-[#161616] mt-0.5">
+                  Run SQL Script in Supabase to Enable Multi-Device Sync
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSqlModalOpen(false)}
+                className="p-1 text-[#525252] hover:text-[#161616]"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-4 text-sm text-[#161616]">
+              <div className="border border-[#0f62fe]/20 bg-[#edf5ff] p-4">
+                <h4 className="font-semibold text-xs text-[#0043ce] uppercase font-mono tracking-wider mb-2">
+                  Follow these 3 quick steps to enable syncing across mobile & all devices:
+                </h4>
+                <ol className="list-decimal list-inside space-y-2 text-xs text-[#161616] leading-relaxed">
+                  <li>
+                    Click the <strong>Open Supabase SQL Editor</strong> button below (or go to your Supabase project dashboard → SQL Editor).
+                  </li>
+                  <li>
+                    Click <strong>Copy SQL Code</strong> below, paste the entire script into the Supabase SQL Editor, and click the green <strong>Run</strong> button.
+                  </li>
+                  <li>
+                    Once executed in Supabase, return here and click <strong>Verify Database Connection</strong>. Your products will instantly sync across all mobile devices, tablets, and browsers!
+                  </li>
+                </ol>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                <span className="font-mono text-xs text-[#525252] font-semibold">
+                  SQL Migration Script (supabase/migrations/20261010190000_products_table.sql)
+                </span>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={SUPABASE_SQL_EDITOR_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 border border-[#0f62fe] bg-white px-3 py-1.5 text-xs font-semibold text-[#0f62fe] hover:bg-[#0f62fe] hover:text-white transition-colors"
+                  >
+                    <span>Open Supabase SQL Editor</span>
+                    <ExternalLink className="size-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleCopySql}
+                    className="inline-flex items-center gap-1.5 bg-[#161616] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#393939] transition-colors"
+                  >
+                    {sqlCopied ? <Check className="size-3.5 text-[#24a148]" /> : <Copy className="size-3.5" />}
+                    <span>{sqlCopied ? "Copied to Clipboard!" : "Copy SQL Code"}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative max-h-80 overflow-y-auto border border-[#e0e0e0] bg-[#161616] p-4 font-mono text-xs text-[#f4f4f4]">
+                <pre className="whitespace-pre-wrap">{PRODUCTS_SQL_MIGRATION}</pre>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#e0e0e0] pt-4">
+              <span className="text-xs text-[#525252]">
+                RLS is enabled with public read access and full admin capabilities.
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsSqlModalOpen(false)}
+                  className="border border-[#161616] px-4 py-2 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await verifyCloudConnection();
+                    setIsSqlModalOpen(false);
+                    if (cloudStatus === "connected") {
+                      toast.success("Supabase products table confirmed active!");
+                    }
+                  }}
+                  className="bg-[#0f62fe] px-5 py-2 text-xs font-semibold text-white hover:bg-[#0353e9] transition-colors"
+                >
+                  Verify Database Connection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }
+

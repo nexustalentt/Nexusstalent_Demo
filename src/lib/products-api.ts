@@ -4,7 +4,6 @@ import {
   getLocalProducts,
   saveLocalProduct,
   deleteLocalProduct,
-  mergeProducts,
   getDefaultProducts,
   normalizeProduct,
   type ProductItem,
@@ -16,16 +15,73 @@ import {
 } from "./products.functions";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Checks whether the 'products' table is created and accessible in Supabase
+ */
+export async function checkSupabaseProductsTable(): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const { error } = await supabase.from("products" as any).select("id").limit(1);
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+    return { ok: true };
+  } catch (err: any) {
+    return { ok: false, error: err?.message || "Failed to query Supabase" };
+  }
+}
+
+/**
+ * Pushes all current local products to Supabase in one batch.
+ * Useful when the table was just created or when syncing existing locally added products.
+ */
+export async function pushLocalProductsToSupabase(): Promise<{ count: number; error?: string }> {
+  if (typeof window === "undefined") return { count: 0 };
+  try {
+    const local = getLocalProducts();
+    if (local.length === 0) return { count: 0 };
+
+    const records = local.map((saved) => ({
+      id: saved.id,
+      name: saved.name,
+      tagline: saved.tagline,
+      description: saved.description || "",
+      category: saved.category,
+      status: saved.status,
+      status_label: saved.status_label || null,
+      link_type: saved.link_type || "website",
+      website_url: saved.website_url || null,
+      preview_url: saved.preview_url || null,
+      tags: saved.tags,
+      highlights: saved.highlights || [],
+      version: saved.version || "v1.0",
+      featured: saved.featured || false,
+      sort_order: saved.sort_order || 0,
+      created_at: saved.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }));
+
+    const { error } = await supabase.from("products" as any).upsert(records);
+    if (error) {
+      return { count: 0, error: error.message };
+    }
+    return { count: records.length };
+  } catch (err: any) {
+    return { count: 0, error: err?.message || "Failed to push to Supabase" };
+  }
+}
+
 export const productsQuery = queryOptions({
   queryKey: ["products", "list"],
   queryFn: async (): Promise<ProductItem[]> => {
     let serverProducts: ProductItem[] = [];
+    let serverHasSupabase = false;
 
-    // 1. Try server function
+    // 1. Try server function first
     try {
       const res = await getProductsServerFn();
       if (res.ok && Array.isArray(res.products) && res.products.length > 0) {
         serverProducts = res.products;
+        serverHasSupabase = true;
       }
     } catch {
       // Server function error
@@ -33,27 +89,34 @@ export const productsQuery = queryOptions({
 
     // 2. In client environment (mobile browser, desktop, tablet):
     if (typeof window !== "undefined") {
-      // If server didn't provide live data, fetch directly from Supabase via client
+      let liveFromSupabase = false;
+
       try {
         const { data: dbData, error } = await supabase
           .from("products" as any)
           .select("*")
           .order("sort_order", { ascending: true });
 
-        if (!error && Array.isArray(dbData) && dbData.length > 0) {
+        if (!error && Array.isArray(dbData)) {
+          // Table exists and query succeeded in Supabase!
           serverProducts = dbData.map(normalizeProduct);
+          liveFromSupabase = true;
         }
       } catch (e) {
         console.warn("[products-api] Client Supabase query note:", e);
       }
 
+      // If Supabase is live, it is the SINGLE SOURCE OF TRUTH across all devices:
+      if (liveFromSupabase) {
+        try {
+          window.localStorage.setItem("nexus_talent_products_v1", JSON.stringify(serverProducts));
+        } catch {}
+        return serverProducts;
+      }
+
+      // Fallback only when Supabase is offline or the table has not been created yet:
       const local = getLocalProducts();
-      const base = serverProducts.length > 0 ? serverProducts : getDefaultProducts();
-      const merged = mergeProducts(base, local);
-      try {
-        window.localStorage.setItem("nexus_talent_products_v1", JSON.stringify(merged));
-      } catch {}
-      return merged;
+      return local.length > 0 ? local : getDefaultProducts();
     }
 
     return serverProducts.length > 0 ? serverProducts : getDefaultProducts();
@@ -136,7 +199,7 @@ export function useSaveProduct() {
 
   return useMutation({
     mutationFn: async (input: Partial<ProductItem> & { id?: string | undefined; name: string }) => {
-      // 1. Immediately save to local client store (instant UI feedback)
+      // 1. Immediately save to local client store (instant feedback on this device)
       const saved = saveLocalProduct(input);
 
       const dbPayload = {
@@ -158,17 +221,19 @@ export function useSaveProduct() {
         updated_at: new Date().toISOString(),
       };
 
-      // 2. Direct client upsert to Supabase (uses current authenticated staff session!)
+      // 2. Direct client upsert to Supabase
+      let supabaseErrorMsg: string | null = null;
       try {
         const { error: sbError } = await supabase
           .from("products" as any)
           .upsert(dbPayload);
 
         if (sbError) {
-          console.warn("[products-api] Client Supabase upsert note:", sbError.message);
+          supabaseErrorMsg = sbError.message;
+          console.error("[products-api] Supabase upsert error:", sbError);
         }
-      } catch (err) {
-        console.warn("[products-api] Client Supabase upsert error:", err);
+      } catch (err: any) {
+        supabaseErrorMsg = err?.message || "Network error connecting to Supabase";
       }
 
       // 3. Broadcast to server function (persists to server storage, memory, and database)
@@ -193,7 +258,13 @@ export function useSaveProduct() {
           },
         });
       } catch (err) {
-        console.warn("[products-api] Server save warning (local cache kept):", err);
+        console.warn("[products-api] Server save warning:", err);
+      }
+
+      if (supabaseErrorMsg) {
+        throw new Error(
+          `Product saved locally, but failed to sync to Supabase database (${supabaseErrorMsg}). Please ensure the 'products' table exists in Supabase so mobile and other devices can see it.`
+        );
       }
 
       return saved;
@@ -225,7 +296,8 @@ export function useDeleteProduct() {
       // 1. Immediately delete from local client store
       deleteLocalProduct(id);
 
-      // 2. Direct client delete from Supabase (uses current authenticated staff session)
+      // 2. Direct client delete from Supabase
+      let supabaseErrorMsg: string | null = null;
       try {
         const { error: sbError } = await supabase
           .from("products" as any)
@@ -233,10 +305,11 @@ export function useDeleteProduct() {
           .eq("id", id);
 
         if (sbError) {
-          console.warn("[products-api] Client Supabase delete note:", sbError.message);
+          supabaseErrorMsg = sbError.message;
+          console.error("[products-api] Supabase delete error:", sbError);
         }
-      } catch (err) {
-        console.warn("[products-api] Client Supabase delete error:", err);
+      } catch (err: any) {
+        supabaseErrorMsg = err?.message || "Network error connecting to Supabase";
       }
 
       // 3. Broadcast to server to permanently remove
@@ -244,6 +317,12 @@ export function useDeleteProduct() {
         await deleteProductServerFn({ data: { id } });
       } catch (err) {
         console.warn("[products-api] Server delete warning (local cache deleted):", err);
+      }
+
+      if (supabaseErrorMsg) {
+        throw new Error(
+          `Product deleted locally, but failed to delete from Supabase database (${supabaseErrorMsg}). Please ensure the 'products' table exists in Supabase so mobile and other devices reflect the deletion.`
+        );
       }
 
       return id;
