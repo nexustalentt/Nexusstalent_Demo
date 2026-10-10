@@ -123,7 +123,7 @@ function ProductsAdminPage() {
       (product.website_url?.includes("jobconnect-x-e65f4f66") ||
       product.website_url?.includes("Screenshot.Saver") ||
       product.website_url?.endsWith(".exe") ||
-      product.id?.includes("screenshot")
+      product.website_url === "/downloads/Screenshot.Saver.1.exe"
         ? "exe"
         : "website");
     setLinkType(inferredType);
@@ -174,7 +174,7 @@ function ProductsAdminPage() {
 
     saveMutation.mutate(
       {
-        id: editingProduct?.id,
+        ...(editingProduct?.id ? { id: editingProduct.id } : {}),
         name: parsed.data.name,
         tagline: parsed.data.tagline,
         description: parsed.data.description || "",
@@ -546,22 +546,24 @@ function ProductsAdminPage() {
                 <div className="flex flex-wrap items-center gap-6 p-3 bg-[#f4f4f4] border border-[#e0e0e0]">
                   <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-[#161616]">
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="linkTypeOption"
                       checked={linkType === "website"}
                       onChange={() => setLinkType("website")}
-                      className="size-4 text-[#0f62fe] rounded-none focus:ring-[#0f62fe]"
+                      className="size-4 text-[#0f62fe] focus:ring-[#0f62fe]"
                     />
-                    <span>Website</span>
+                    <span>Website Link (Opens External or Internal URL)</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-[#161616]">
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="linkTypeOption"
                       checked={linkType === "exe"}
                       onChange={() => setLinkType("exe")}
-                      className="size-4 text-[#0f62fe] rounded-none focus:ring-[#0f62fe]"
+                      className="size-4 text-[#0f62fe] focus:ring-[#0f62fe]"
                     />
-                    <span>exe</span>
+                    <span>Executable / Download (.exe or release file)</span>
                   </label>
                 </div>
               </div>

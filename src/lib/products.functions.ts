@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getDefaultProducts, type ProductItem } from "./products-store";
-import { supabase } from "@/integrations/supabase/client";
 
 const productInputSchema = z.object({
   id: z.string().optional(),
@@ -40,19 +39,13 @@ const productInputSchema = z.object({
 export const getProductsServerFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ ok: boolean; products: ProductItem[] }> => {
     try {
-      const { data, error } = await supabase
-        .from("products" as any)
-        .select("*")
-        .order("sort_order", { ascending: true });
-
-      if (!error && Array.isArray(data) && data.length > 0) {
-        return { ok: true, products: data as unknown as ProductItem[] };
-      }
-    } catch {
-      // Supabase table may not exist yet; fall back safely
+      const { getProductsServer } = await import("./products.server");
+      const products = await getProductsServer();
+      return { ok: true, products };
+    } catch (e) {
+      console.warn("[products.functions] Server get error, using default products:", e);
+      return { ok: true, products: getDefaultProducts() };
     }
-
-    return { ok: true, products: getDefaultProducts() };
   },
 );
 
@@ -78,6 +71,7 @@ export const saveProductServerFn = createServerFn({ method: "POST" })
             : data.status === "planned"
               ? "Planned Stage"
               : "Currently Working On"),
+      link_type: data.link_type,
       website_url: data.website_url || undefined,
       preview_url: data.preview_url || undefined,
       tags: data.tags,
@@ -90,41 +84,23 @@ export const saveProductServerFn = createServerFn({ method: "POST" })
     };
 
     try {
-      // Attempt to save to Supabase products table if available
-      let supabaseClient = supabase;
-      if (process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_SECRET_KEY"]) {
-        try {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          supabaseClient = supabaseAdmin;
-        } catch {
-          supabaseClient = supabase;
-        }
-      }
-
-      await supabaseClient.from("products" as any).upsert(productRecord);
+      const { saveProductServer } = await import("./products.server");
+      const saved = await saveProductServer(productRecord);
+      return { ok: true, product: saved };
     } catch (e) {
-      console.warn("[products.functions] Supabase upsert note:", e);
+      console.warn("[products.functions] Save server error:", e);
+      return { ok: true, product: productRecord };
     }
-
-    return { ok: true, product: productRecord };
   });
 
 export const deleteProductServerFn = createServerFn({ method: "POST" })
   .validator((data: { id: string }) => ({ id: String(data.id) }))
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
     try {
-      let supabaseClient = supabase;
-      if (process.env["SUPABASE_SERVICE_ROLE_KEY"] || process.env["SUPABASE_SECRET_KEY"]) {
-        try {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          supabaseClient = supabaseAdmin;
-        } catch {
-          supabaseClient = supabase;
-        }
-      }
-      await supabaseClient.from("products" as any).delete().eq("id", data.id);
+      const { deleteProductServer } = await import("./products.server");
+      await deleteProductServer(data.id);
     } catch (e) {
-      console.warn("[products.functions] Supabase delete note:", e);
+      console.warn("[products.functions] Server delete error:", e);
     }
 
     return { ok: true };

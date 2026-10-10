@@ -1,9 +1,11 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   getLocalProducts,
   saveLocalProduct,
   deleteLocalProduct,
+  mergeProducts,
+  getDefaultProducts,
   type ProductItem,
 } from "./products-store";
 import {
@@ -15,24 +17,33 @@ import {
 export const productsQuery = queryOptions({
   queryKey: ["products", "list"],
   queryFn: async (): Promise<ProductItem[]> => {
-    // In client environment, prioritize or merge with local store
-    if (typeof window !== "undefined") {
-      const local = getLocalProducts();
-      return local;
-    }
+    let serverProducts: ProductItem[] = [];
 
     try {
       const res = await getProductsServerFn();
-      if (res.ok && res.products.length > 0) {
-        return res.products;
+      if (res.ok && Array.isArray(res.products) && res.products.length > 0) {
+        serverProducts = res.products;
+      } else {
+        serverProducts = getDefaultProducts();
       }
     } catch {
-      // Fallback to defaults
+      serverProducts = getDefaultProducts();
     }
 
-    return getLocalProducts();
+    // In client environment, merge server products with client local store
+    if (typeof window !== "undefined") {
+      const local = getLocalProducts();
+      const merged = mergeProducts(serverProducts, local);
+      try {
+        window.localStorage.setItem("nexus_talent_products_v1", JSON.stringify(merged));
+      } catch {}
+      return merged;
+    }
+
+    return serverProducts;
   },
-  staleTime: 1000 * 30, // 30 seconds
+  staleTime: 1000 * 2, // 2 seconds
+  refetchOnMount: true,
 });
 
 /**
@@ -41,32 +52,64 @@ export const productsQuery = queryOptions({
 export function useProducts() {
   const queryClient = useQueryClient();
   const query = useQuery(productsQuery);
-  const [items, setItems] = useState<ProductItem[]>(() => getLocalProducts());
+  const [localItems, setLocalItems] = useState<ProductItem[]>(() => {
+    if (typeof window !== "undefined") {
+      return getLocalProducts();
+    }
+    return getDefaultProducts();
+  });
 
+  // Keep state updated when query data arrives
   useEffect(() => {
-    if (query.data) {
-      setItems(query.data);
+    if (query.data && Array.isArray(query.data)) {
+      setLocalItems(query.data);
     }
   }, [query.data]);
 
+  // Reactive listener for local updates and cross-tab storage changes
   useEffect(() => {
-    function onUpdate(event: Event) {
+    if (typeof window === "undefined") return;
+
+    function onCustomUpdate(event: Event) {
       const custom = event as CustomEvent<ProductItem[]>;
-      if (custom.detail) {
-        setItems(custom.detail);
+      if (custom.detail && Array.isArray(custom.detail)) {
+        setLocalItems(custom.detail);
         queryClient.setQueryData(["products", "list"], custom.detail);
       }
     }
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("nexus-products-updated", onUpdate);
-      return () => window.removeEventListener("nexus-products-updated", onUpdate);
+    function onStorageUpdate(e: StorageEvent) {
+      if (e.key === "nexus_talent_products_v1" || e.key === "nexus_talent_products_deleted_v1") {
+        const latest = getLocalProducts();
+        setLocalItems(latest);
+        queryClient.setQueryData(["products", "list"], latest);
+      }
     }
+
+    window.addEventListener("nexus-products-updated", onCustomUpdate);
+    window.addEventListener("storage", onStorageUpdate);
+    return () => {
+      window.removeEventListener("nexus-products-updated", onCustomUpdate);
+      window.removeEventListener("storage", onStorageUpdate);
+    };
   }, [queryClient]);
+
+  // Smartly prioritize the most up-to-date data list
+  const activeProducts = useMemo(() => {
+    if (typeof window === "undefined") {
+      return query.data ?? localItems;
+    }
+
+    // On client: if query.data is available, use merged list; otherwise fall back to localItems
+    if (query.data && Array.isArray(query.data)) {
+      return query.data;
+    }
+    return localItems.length > 0 ? localItems : getDefaultProducts();
+  }, [query.data, localItems]);
 
   return {
     ...query,
-    data: query.data ?? items,
+    data: activeProducts,
   };
 }
 
@@ -77,11 +120,11 @@ export function useSaveProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: Partial<ProductItem> & { name: string }) => {
-      // 1. Immediately save to local client store
+    mutationFn: async (input: Partial<ProductItem> & { id?: string | undefined; name: string }) => {
+      // 1. Immediately save to local client store (instant UI feedback)
       const saved = saveLocalProduct(input);
 
-      // 2. Also broadcast to server function in background
+      // 2. Broadcast to server function (persists to server storage, memory, and database)
       try {
         await saveProductServerFn({
           data: {
@@ -92,6 +135,7 @@ export function useSaveProduct() {
             category: saved.category,
             status: saved.status,
             status_label: saved.status_label,
+            link_type: saved.link_type || "website",
             website_url: saved.website_url || "",
             preview_url: saved.preview_url || "",
             tags: saved.tags,
@@ -108,7 +152,6 @@ export function useSaveProduct() {
       return saved;
     },
     onSuccess: (saved) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.setQueryData<ProductItem[]>(["products", "list"], (prev) => {
         if (!prev) return [saved];
         const index = prev.findIndex((p) => p.id === saved.id);
@@ -119,6 +162,7 @@ export function useSaveProduct() {
         }
         return [saved, ...prev];
       });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 }
@@ -131,10 +175,10 @@ export function useDeleteProduct() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      // 1. Delete from local client store
+      // 1. Immediately delete from local client store
       deleteLocalProduct(id);
 
-      // 2. Also broadcast to server
+      // 2. Broadcast to server to permanently remove
       try {
         await deleteProductServerFn({ data: { id } });
       } catch (err) {

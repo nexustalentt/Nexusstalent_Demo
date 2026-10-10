@@ -461,7 +461,7 @@ function ProductsPage() {
         </div>
       </section>
 
-      <TalkToUsModal open={isTalkModalOpen} onOpenChange={setIsTalkModalOpen} />
+      <TalkToUsModal isOpen={isTalkModalOpen} onClose={() => setIsTalkModalOpen(false)} />
     </PublicShell>
   );
 }

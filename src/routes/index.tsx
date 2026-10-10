@@ -19,11 +19,13 @@ import {
   Rocket,
   Briefcase,
   ExternalLink,
+  Download,
 } from "lucide-react";
 import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
 import { siteSettingsQuery } from "@/lib/queries";
 import { useProducts } from "@/lib/products-api";
+import { resolveProductAction } from "@/lib/products-store";
 import {
   services,
   industries,
@@ -341,17 +343,33 @@ function HomePage() {
                   </div>
 
                   <div className="mt-6 pt-3 border-t border-[#e0e0e0] flex items-center justify-between">
-                    {product.website_url ? (
-                      <a
-                        href={product.website_url}
-                        target={product.website_url.startsWith("http") ? "_blank" : undefined}
-                        rel={product.website_url.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
-                      >
-                        <span>Open App</span>
-                        <ExternalLink className="size-3" />
-                      </a>
-                    ) : (
+                    {product.website_url ? (() => {
+                      const action = resolveProductAction(product);
+                      if (action?.isDownload) {
+                        return (
+                          <a
+                            href={action.url}
+                            download={action.downloadFilename}
+                            className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
+                            title={`Download ${action.downloadFilename || "file"}`}
+                          >
+                            <span>Download</span>
+                            <Download className="size-3" />
+                          </a>
+                        );
+                      }
+                      return (
+                        <a
+                          href={action?.url || product.website_url}
+                          target={(action?.url || product.website_url).startsWith("http") ? "_blank" : undefined}
+                          rel={(action?.url || product.website_url).startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
+                        >
+                          <span>{action?.label || "Open App"}</span>
+                          <ExternalLink className="size-3" />
+                        </a>
+                      );
+                    })() : (
                       <Link
                         to="/products"
                         className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
