@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, Globe, PhoneCall, Mail } from "lucide-react";
+import { Menu, Globe, PhoneCall, Mail, ArrowUpRight } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { NexusLogo } from "@/components/brand/nexus-logo";
 
@@ -97,9 +97,12 @@ export function SiteHeader({ onOpenTalk }: { onOpenTalk?: () => void }) {
           <div className="flex items-center gap-3 shrink-0">
             <Link
               to="/contact"
-              className="inline-flex h-10 items-center justify-center rounded-none bg-[#0f62fe] px-5 text-xs sm:text-sm font-normal text-white transition-all hover:bg-[#0050e6] active:bg-[#002d9c]"
+              className="group inline-flex h-10 items-center justify-center gap-1.5 bg-[#1764f5] px-3.5 sm:px-5 text-xs sm:text-sm font-medium text-white shadow-[0_4px_14px_rgba(23,100,245,0.28)] transition-all duration-200 hover:bg-[#0f54e6] hover:shadow-[0_6px_20px_rgba(23,100,245,0.40)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1764f5] focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:transform-none cursor-pointer whitespace-nowrap"
+              style={{ borderRadius: "11px" }}
+              aria-label="Let's Connect - Contact Nexus Talent"
             >
-              Contact Us
+              <span>Let's Connect</span>
+              <ArrowUpRight className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none" aria-hidden="true" />
             </Link>
 
             <Sheet open={open} onOpenChange={setOpen}>
@@ -131,9 +134,12 @@ export function SiteHeader({ onOpenTalk }: { onOpenTalk?: () => void }) {
                     <Link
                       to="/contact"
                       onClick={() => setOpen(false)}
-                      className="flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-4 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
+                      className="group flex h-11 items-center justify-center gap-1.5 bg-[#1764f5] px-4 text-sm font-medium text-white shadow-[0_4px_14px_rgba(23,100,245,0.28)] transition-all duration-200 hover:bg-[#0f54e6] hover:shadow-[0_6px_20px_rgba(23,100,245,0.40)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1764f5] focus-visible:ring-offset-2 motion-reduce:transition-none cursor-pointer"
+                      style={{ borderRadius: "11px" }}
+                      aria-label="Let's Connect - Contact Nexus Talent"
                     >
-                      Contact Us
+                      <span>Let's Connect</span>
+                      <ArrowUpRight className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
