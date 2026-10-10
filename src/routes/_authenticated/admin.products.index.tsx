@@ -138,6 +138,17 @@ function ProductsAdminPage() {
     setTimeout(() => setSqlCopied(false), 2500);
   }
 
+  // Lock background scroll when any modal is open so mouse/touch scrolling stays inside the modal
+  useEffect(() => {
+    if (isModalOpen || isSqlModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isModalOpen, isSqlModalOpen]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
 
@@ -590,27 +601,41 @@ function ProductsAdminPage() {
 
       {/* CREATE / EDIT MODAL (Carbon Flat Style) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="relative w-full max-w-2xl border border-[#e0e0e0] bg-white p-6 md:p-8 my-8">
-            <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-6 backdrop-blur-[2px] overflow-hidden"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsModalOpen(false);
+            }
+          }}
+        >
+          <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden">
+            {/* Fixed Header */}
+            <div className="flex items-center justify-between border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4 shrink-0">
               <div>
-                <span className="font-mono text-xs uppercase tracking-wider text-[#0f62fe]">
+                <span className="font-mono text-xs uppercase tracking-wider text-[#0f62fe] font-semibold">
                   Carbon Product Editor
                 </span>
-                <h3 className="text-xl font-light text-[#161616]">
+                <h3 className="text-xl font-light text-[#161616] mt-0.5">
                   {editingProduct ? "Edit Product Details" : "Add New Product"}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 text-[#525252] hover:text-[#161616]"
+                className="p-1.5 text-[#525252] hover:bg-[#e0e0e0] hover:text-[#161616] transition-colors"
+                aria-label="Close"
               >
                 <X className="size-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="mt-6 space-y-5">
+            {/* Scrollable Form Body */}
+            <form
+              id="product-modal-form"
+              onSubmit={handleSave}
+              className="flex-1 overflow-y-auto p-6 md:p-8 space-y-5 overscroll-contain"
+            >
               {formError && (
                 <div className="border-l-2 border-[#da1e28] bg-[#fff1f1] px-4 py-3 text-sm text-[#da1e28]">
                   {formError}
@@ -804,36 +829,47 @@ function ProductsAdminPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 border-t border-[#e0e0e0] pt-5">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="border border-[#161616] px-5 py-2.5 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saveMutation.isPending}
-                  className="bg-[#0f62fe] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#0353e9] transition-colors disabled:opacity-50"
-                >
-                  {saveMutation.isPending
-                    ? "Saving…"
-                    : editingProduct
-                      ? "Update Product"
-                      : "Create Product"}
-                </button>
-              </div>
             </form>
+
+            {/* Fixed Sticky Footer */}
+            <div className="flex items-center justify-end gap-3 border-t border-[#e0e0e0] bg-white px-6 py-4 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="border border-[#161616] px-5 py-2.5 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="product-modal-form"
+                disabled={saveMutation.isPending}
+                className="bg-[#0f62fe] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#0353e9] transition-colors disabled:opacity-50"
+              >
+                {saveMutation.isPending
+                  ? "Saving…"
+                  : editingProduct
+                    ? "Update Product"
+                    : "Create Product"}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* SUPABASE SQL SCRIPT MODAL */}
       {isSqlModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="relative w-full max-w-3xl border border-[#e0e0e0] bg-white p-6 md:p-8 my-8 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-6 backdrop-blur-[2px] overflow-hidden"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsSqlModalOpen(false);
+            }
+          }}
+        >
+          <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden">
+            {/* Fixed Header */}
+            <div className="flex items-center justify-between border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4 shrink-0">
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-[#da1e28] font-semibold">
                   Database Initialization
@@ -845,13 +881,15 @@ function ProductsAdminPage() {
               <button
                 type="button"
                 onClick={() => setIsSqlModalOpen(false)}
-                className="p-1 text-[#525252] hover:text-[#161616]"
+                className="p-1.5 text-[#525252] hover:bg-[#e0e0e0] hover:text-[#161616] transition-colors"
+                aria-label="Close"
               >
                 <X className="size-5" />
               </button>
             </div>
 
-            <div className="mt-5 space-y-4 text-sm text-[#161616]">
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-4 text-sm text-[#161616] overscroll-contain">
               <div className="border border-[#0f62fe]/20 bg-[#edf5ff] p-4">
                 <h4 className="font-semibold text-xs text-[#0043ce] uppercase font-mono tracking-wider mb-2">
                   Follow these 3 quick steps to enable syncing across mobile & all devices:
@@ -899,7 +937,8 @@ function ProductsAdminPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#e0e0e0] pt-4">
+            {/* Fixed Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#e0e0e0] bg-white px-6 py-4 shrink-0">
               <span className="text-xs text-[#525252]">
                 RLS is enabled with public read access and full admin capabilities.
               </span>
