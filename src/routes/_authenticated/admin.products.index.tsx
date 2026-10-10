@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
+  Download,
   ExternalLink,
   Plus,
   Trash2,
@@ -17,7 +18,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { AdminShell, EmptyState, LoadingBlock } from "@/components/admin/admin-shell";
 import { useProducts, useSaveProduct, useDeleteProduct } from "@/lib/products-api";
-import { type ProductItem, type ProductStatus } from "@/lib/products-store";
+import { type ProductItem, type ProductStatus, resolveProductAction } from "@/lib/products-store";
 
 export const Route = createFileRoute("/_authenticated/admin/products/")({
   head: () => ({
@@ -37,8 +38,24 @@ const productFormSchema = z.object({
   category: z.string().trim().min(2, "Category is required").max(100),
   status: z.enum(["in_development", "live", "beta", "planned"]),
   status_label: z.string().trim().max(100).optional(),
-  website_url: z.string().trim().url("Must be a valid URL (e.g. https://...)").optional().or(z.literal("")),
-  preview_url: z.string().trim().url("Must be a valid URL (e.g. https://...)").optional().or(z.literal("")),
+  website_url: z
+    .string()
+    .trim()
+    .refine(
+      (val) => !val || val.startsWith("/") || /^https?:\/\//i.test(val),
+      "Must be a valid URL (https://...) or download path (/downloads/...)"
+    )
+    .optional()
+    .or(z.literal("")),
+  preview_url: z
+    .string()
+    .trim()
+    .refine(
+      (val) => !val || val.startsWith("/") || /^https?:\/\//i.test(val),
+      "Must be a valid URL (https://...) or path"
+    )
+    .optional()
+    .or(z.literal("")),
   tags: z.string().trim(),
   highlights: z.string().trim(),
   version: z.string().trim().max(60).optional(),
@@ -293,20 +310,28 @@ function ProductsAdminPage() {
                       <h3 className="text-lg font-semibold text-[#161616]">{item.name}</h3>
                       <p className="text-sm text-[#525252] leading-relaxed">{item.tagline}</p>
 
-                      {item.website_url && (
-                        <div className="pt-1 flex items-center gap-2">
-                          <Globe className="size-3.5 text-[#0f62fe]" />
-                          <a
-                            href={item.website_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-mono text-xs text-[#0f62fe] hover:underline flex items-center gap-1"
-                          >
-                            <span>{item.website_url}</span>
-                            <ExternalLink className="size-3" />
-                          </a>
-                        </div>
-                      )}
+                      {item.website_url && (() => {
+                        const action = resolveProductAction(item);
+                        return (
+                          <div className="pt-1 flex items-center gap-2">
+                            {action?.isDownload ? (
+                              <Download className="size-3.5 text-[#0f62fe]" />
+                            ) : (
+                              <Globe className="size-3.5 text-[#0f62fe]" />
+                            )}
+                            <a
+                              href={action?.url || item.website_url}
+                              download={action?.isDownload ? action.downloadFilename : undefined}
+                              target={action?.isDownload ? undefined : "_blank"}
+                              rel="noopener noreferrer"
+                              className="font-mono text-xs text-[#0f62fe] hover:underline flex items-center gap-1"
+                            >
+                              <span>{action?.isDownload ? `Download (${action.downloadFilename})` : item.website_url}</span>
+                              {action?.isDownload ? <Download className="size-3" /> : <ExternalLink className="size-3" />}
+                            </a>
+                          </div>
+                        );
+                      })()}
 
                       {/* Tech stack pills */}
                       <div className="flex flex-wrap gap-1.5 pt-2">
@@ -323,17 +348,30 @@ function ProductsAdminPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 shrink-0 md:self-center">
-                      {item.website_url && (
-                        <a
-                          href={item.website_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 border border-[#161616] bg-white px-3 py-2 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors"
-                        >
-                          <ExternalLink className="size-3.5" />
-                          <span>Visit</span>
-                        </a>
-                      )}
+                      {item.website_url && (() => {
+                        const action = resolveProductAction(item);
+                        return action?.isDownload ? (
+                          <a
+                            href={action.url}
+                            download={action.downloadFilename}
+                            className="inline-flex items-center gap-1.5 border border-[#0f62fe] bg-[#edf5ff] px-3 py-2 text-xs font-semibold text-[#0043ce] hover:bg-[#0f62fe] hover:text-white transition-colors"
+                            title={`Download ${action.downloadFilename}`}
+                          >
+                            <Download className="size-3.5" />
+                            <span>Download</span>
+                          </a>
+                        ) : (
+                          <a
+                            href={item.website_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 border border-[#161616] bg-white px-3 py-2 text-xs font-semibold text-[#161616] hover:bg-[#161616] hover:text-white transition-colors"
+                          >
+                            <ExternalLink className="size-3.5" />
+                            <span>Visit</span>
+                          </a>
+                        );
+                      })()}
 
                       <button
                         type="button"

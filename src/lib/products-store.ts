@@ -34,6 +34,87 @@ export function getDefaultProducts(): ProductItem[] {
   }));
 }
 
+export interface ProductActionInfo {
+  url: string;
+  isDownload: boolean;
+  label: string;
+  downloadFilename?: string;
+}
+
+/**
+ * Resolves whether a product action is a direct executable download or an external web link.
+ * Special handling for Screenshot Saver converts GitHub release URLs to direct .exe downloads.
+ */
+export function resolveProductAction(product: {
+  website_url?: string;
+  name?: string;
+  preview_url?: string;
+}): ProductActionInfo | null {
+  const rawUrl = product.website_url?.trim() || "";
+  if (!rawUrl) return null;
+
+  // Screenshot Saver specific download handling
+  if (
+    rawUrl.includes("jobconnect-x-e65f4f66") ||
+    rawUrl.includes("Screenshot.Saver") ||
+    rawUrl.includes("V01_S") ||
+    rawUrl === "/downloads/Screenshot.Saver.1.exe" ||
+    (product.name && /screenshot.*saver/i.test(product.name) && !rawUrl.startsWith("http://localhost"))
+  ) {
+    return {
+      url: "/downloads/Screenshot.Saver.1.exe",
+      isDownload: true,
+      label: "Download .EXE (Windows)",
+      downloadFilename: "Screenshot.Saver.1.exe",
+    };
+  }
+
+  // General binary/installer file detection (.exe, .msi, .dmg, .zip, etc.)
+  const isBinary = /\.(exe|msi|dmg|pkg|zip|tar\.gz|apk)($|\?)/i.test(rawUrl);
+  if (isBinary) {
+    const filename = decodeURIComponent(rawUrl.split("?")[0]!.split("/").pop() || "download.exe");
+    return {
+      url: rawUrl,
+      isDownload: true,
+      label: "Download .EXE",
+      downloadFilename: filename,
+    };
+  }
+
+  return {
+    url: rawUrl,
+    isDownload: false,
+    label: "Open Website / App",
+    downloadFilename: undefined,
+  };
+}
+
+/**
+ * Normalizes product URLs so private GitHub release links are redirected to local downloadable exes
+ */
+export function normalizeProduct(product: ProductItem): ProductItem {
+  let website_url = product.website_url;
+  let preview_url = product.preview_url;
+
+  if (
+    website_url &&
+    (website_url.includes("jobconnect-x-e65f4f66") ||
+      website_url.includes("V01_S") ||
+      (product.name.toLowerCase().includes("screenshot") && website_url.includes("github.com")))
+  ) {
+    if (!preview_url) {
+      preview_url = website_url;
+    }
+    website_url = "/downloads/Screenshot.Saver.1.exe";
+  }
+
+  return {
+    ...product,
+    website_url,
+    preview_url,
+  };
+}
+
 /**
  * Returns all products, merging seed products with any added/updated products in local storage.
  */
@@ -44,14 +125,21 @@ export function getLocalProducts(): ProductItem[] {
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
+    const defaults = getDefaultProducts();
     if (!raw) {
-      const defaults = getDefaultProducts();
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
       return defaults;
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      const normalized = (parsed as ProductItem[]).map(normalizeProduct);
+      // Ensure any newly added default products (like Screenshot Saver) are merged in
+      for (const d of defaults) {
+        if (!normalized.some((p) => p.id === d.id || p.name.toLowerCase() === d.name.toLowerCase())) {
+          normalized.push(d);
+        }
+      }
+      return normalized;
     }
   } catch (error) {
     console.warn("[products-store] Failed to load from localStorage:", error);
@@ -105,12 +193,14 @@ export function saveLocalProduct(product: Partial<ProductItem> & { name: string 
     updated_at: now,
   };
 
+  const normalizedProduct = normalizeProduct(fullProduct);
+
   let updatedList: ProductItem[];
   if (existingIndex >= 0) {
     updatedList = [...existing];
-    updatedList[existingIndex] = fullProduct;
+    updatedList[existingIndex] = normalizedProduct;
   } else {
-    updatedList = [fullProduct, ...existing];
+    updatedList = [normalizedProduct, ...existing];
   }
 
   if (typeof window !== "undefined") {

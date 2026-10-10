@@ -32,6 +32,7 @@ import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin.profile'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicReferralsRouteImport } from './routes/api/public/referrals'
+import { Route as ApiPublicScreenshotSaverDownloadRouteImport } from './routes/api/public/screenshot-saver-download'
 import { Route as ApiPublicZoziiDownloadRouteImport } from './routes/api/public/zozii-download'
 import { Route as AuthenticatedAdminApplicationsIndexRouteImport } from './routes/_authenticated/admin.applications.index'
 import { Route as AuthenticatedAdminApplicationsIdRouteImport } from './routes/_authenticated/admin.applications.$id'
@@ -165,6 +166,12 @@ const ApiPublicReferralsRoute = ApiPublicReferralsRouteImport.update({
   path: '/api/public/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicScreenshotSaverDownloadRoute =
+  ApiPublicScreenshotSaverDownloadRouteImport.update({
+    id: '/api/public/screenshot-saver-download',
+    path: '/api/public/screenshot-saver-download',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicZoziiDownloadRoute = ApiPublicZoziiDownloadRouteImport.update({
   id: '/api/public/zozii-download',
   path: '/api/public/zozii-download',
@@ -283,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/referrals': typeof ApiPublicReferralsRoute
+  '/api/public/screenshot-saver-download': typeof ApiPublicScreenshotSaverDownloadRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -323,6 +331,7 @@ export interface FileRoutesByTo {
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/referrals': typeof ApiPublicReferralsRoute
+  '/api/public/screenshot-saver-download': typeof ApiPublicScreenshotSaverDownloadRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -365,6 +374,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/referrals': typeof ApiPublicReferralsRoute
+  '/api/public/screenshot-saver-download': typeof ApiPublicScreenshotSaverDownloadRoute
   '/api/public/zozii-download': typeof ApiPublicZoziiDownloadRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/applications/$id': typeof AuthenticatedAdminApplicationsIdRoute
@@ -407,6 +417,7 @@ export interface FileRouteTypes {
     | '/admin/profile'
     | '/admin/settings'
     | '/api/public/referrals'
+    | '/api/public/screenshot-saver-download'
     | '/api/public/zozii-download'
     | '/admin/'
     | '/admin/applications/$id'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/admin/profile'
     | '/admin/settings'
     | '/api/public/referrals'
+    | '/api/public/screenshot-saver-download'
     | '/api/public/zozii-download'
     | '/admin'
     | '/admin/applications/$id'
@@ -488,6 +500,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/profile'
     | '/_authenticated/admin/settings'
     | '/api/public/referrals'
+    | '/api/public/screenshot-saver-download'
     | '/api/public/zozii-download'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/applications/$id'
@@ -527,6 +540,7 @@ export interface RootRouteChildren {
   CareersIndexRoute: typeof CareersIndexRoute
   ExamIndexRoute: typeof ExamIndexRoute
   ApiPublicReferralsRoute: typeof ApiPublicReferralsRoute
+  ApiPublicScreenshotSaverDownloadRoute: typeof ApiPublicScreenshotSaverDownloadRoute
   ApiPublicZoziiDownloadRoute: typeof ApiPublicZoziiDownloadRoute
   ApiPublicApplicationsIntakeRoute: typeof ApiPublicApplicationsIntakeRoute
 }
@@ -692,6 +706,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/referrals'
       fullPath: '/api/public/referrals'
       preLoaderRoute: typeof ApiPublicReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/screenshot-saver-download': {
+      id: '/api/public/screenshot-saver-download'
+      path: '/api/public/screenshot-saver-download'
+      fullPath: '/api/public/screenshot-saver-download'
+      preLoaderRoute: typeof ApiPublicScreenshotSaverDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/zozii-download': {
@@ -878,6 +899,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersIndexRoute: CareersIndexRoute,
   ExamIndexRoute: ExamIndexRoute,
   ApiPublicReferralsRoute: ApiPublicReferralsRoute,
+  ApiPublicScreenshotSaverDownloadRoute: ApiPublicScreenshotSaverDownloadRoute,
   ApiPublicZoziiDownloadRoute: ApiPublicZoziiDownloadRoute,
   ApiPublicApplicationsIntakeRoute: ApiPublicApplicationsIntakeRoute,
 }

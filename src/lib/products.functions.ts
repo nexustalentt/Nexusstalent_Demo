@@ -11,8 +11,24 @@ const productInputSchema = z.object({
   category: z.string().trim().max(100).default("Web & Mobile Apps"),
   status: z.enum(["in_development", "live", "beta", "planned"]).default("in_development"),
   status_label: z.string().trim().max(100).optional(),
-  website_url: z.string().trim().url("Must be a valid URL").optional().or(z.literal("")),
-  preview_url: z.string().trim().url("Must be a valid URL").optional().or(z.literal("")),
+  website_url: z
+    .string()
+    .trim()
+    .refine(
+      (val) => !val || val.startsWith("/") || /^https?:\/\//i.test(val),
+      "Must be a valid URL or path"
+    )
+    .optional()
+    .or(z.literal("")),
+  preview_url: z
+    .string()
+    .trim()
+    .refine(
+      (val) => !val || val.startsWith("/") || /^https?:\/\//i.test(val),
+      "Must be a valid URL or path"
+    )
+    .optional()
+    .or(z.literal("")),
   tags: z.array(z.string()).default([]),
   highlights: z.array(z.string()).default([]),
   version: z.string().trim().max(60).default("v1.0"),
