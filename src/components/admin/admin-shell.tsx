@@ -67,11 +67,19 @@ export function AdminShell({
 
   const sidebar = (
     <div className="flex h-full flex-col bg-[#161616] text-[#f4f4f4]">
-      <div className="flex h-16 items-center gap-3 border-b border-[#262626] px-6">
-        <NexusLogo size={28} className="rounded-none" />
-        <span className="font-mono text-sm font-semibold tracking-wider text-white">
-          NEXUS<span className="text-[#0f62fe]">TALENT</span>
-        </span>
+      <div className="flex h-16 items-center gap-3 border-b border-[#262626] px-5">
+        <Link to="/admin" className="flex items-center gap-2.5">
+          <NexusLogo size={30} className="rounded-none shrink-0" />
+          <div className="flex flex-col">
+            <span className="text-xs font-bold tracking-wider text-white">
+              <span className="text-[#d4af37]">NEXUS</span>{" "}
+              <span className="text-[#0f62fe]">TALENT</span>
+            </span>
+            <span className="font-mono text-[9px] text-[#8d8d8d] tracking-widest uppercase">
+              Admin Suite
+            </span>
+          </div>
+        </Link>
       </div>
       <nav className="flex-1 space-y-0.5 py-3">
         {navItems.map((item) => {

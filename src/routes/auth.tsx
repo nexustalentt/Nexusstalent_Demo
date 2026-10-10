@@ -89,10 +89,10 @@ function AuthPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f4f4f4]">
-      <header className="border-b border-[#e0e0e0] bg-white">
+      <header className="border-b border-[#262626] bg-[#161616]">
         <div className="container-page flex h-16 items-center justify-between">
           <SiteLogo />
-          <Link to="/" className="text-sm font-semibold text-[#525252] hover:text-[#0f62fe]">
+          <Link to="/" className="text-sm font-normal text-[#c6c6c6] hover:text-white transition-colors">
             Back to website
           </Link>
         </div>

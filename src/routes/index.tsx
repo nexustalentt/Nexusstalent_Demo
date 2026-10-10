@@ -124,7 +124,7 @@ function HomePage() {
             <div className="lg:col-span-7">
               <div className="eyebrow mb-6">
                 <span className="size-2 bg-[#0f62fe] mr-2 shrink-0" />
-                We consult · We build · We help businesses grow
+                Connecting Potential · Inspiring Success
               </div>
 
               <h1 className="mb-6 text-4xl font-light leading-[1.15] text-[#161616] sm:text-5xl lg:text-6xl">
@@ -155,7 +155,7 @@ function HomePage() {
               {/* Carbon Precision Service Pillars Mini Bar */}
               <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-[#e0e0e0] pt-6 text-xs text-[#525252]">
                 <span className="flex items-center gap-1.5 text-[#161616]">
-                  <Check className="size-3.5 text-[#0f62fe]" /> Talent & IT Consulting
+                  <Check className="size-3.5 text-[#d4af37]" /> Talent & IT Consulting
                 </span>
                 <span className="flex items-center gap-1.5 text-[#161616]">
                   <Check className="size-3.5 text-[#0f62fe]" /> Custom Product Engineering

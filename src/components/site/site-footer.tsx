@@ -21,21 +21,25 @@ export function SiteFooter() {
         <div className="grid gap-10 pb-12 border-b border-[#262626] lg:grid-cols-12">
           <div className="space-y-4 lg:col-span-5">
             <div className="flex items-center gap-3">
-              <NexusLogo size={32} />
-              <span className="text-base font-normal tracking-tight text-white">
-                NEXUS <span className="text-[#0f62fe]">TALENT</span>
-              </span>
+              <Link to="/" className="inline-block group" aria-label="Nexus Talent">
+                <img
+                  src="/brand/nexus-talent-logo.png"
+                  alt="Nexus Talent — Connecting Potential, Inspiring Success"
+                  className="h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+              </Link>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-[#c6c6c6] tracking-[0.16px]">
               We Consult. We Build. We Help Businesses Grow. Delivering enterprise IT staffing,
               executive search, and custom digital engineering with engineering rigor.
             </p>
             <div className="flex flex-wrap gap-2 text-xs pt-1">
-              <span className="border border-[#393939] bg-[#262626] px-3 py-1 font-normal text-white">
-                Nexus Talent: Consulting & Staffing
+              <span className="border border-[#d4af37]/40 bg-[#d4af37]/10 px-3 py-1 font-normal text-[#f3e5ab]">
+                Nexus Talent: Consulting &amp; Staffing
               </span>
               <span className="border border-[#0f62fe]/40 bg-[#0f62fe]/10 px-3 py-1 font-normal text-[#78a9ff]">
-                Nexus Digital: Web Systems & Products
+                Nexus Digital: Web Systems &amp; Products
               </span>
             </div>
           </div>

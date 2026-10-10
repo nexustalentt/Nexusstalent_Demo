@@ -74,11 +74,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nexus Talent — Consultancy & Recruitment" },
+      { title: "Nexus Talent — Connecting Potential, Inspiring Success" },
       {
         name: "description",
         content:
-          "Executive search, recruitment and business consultancy for enterprise teams that hire for the long term.",
+          "Enterprise technology consulting, talent acquisition, product development and digital experiences — Connecting Potential, Inspiring Success.",
       },
       { property: "og:site_name", content: "Nexus Talent" },
       { property: "og:type", content: "website" },
