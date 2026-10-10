@@ -5,17 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 
 const productInputSchema = z.object({
   id: z.string().optional(),
-  name: z.string().trim().min(2, "Product name must be at least 2 characters").max(120),
-  tagline: z.string().trim().min(3).max(250),
-  description: z.string().trim().max(3000).default(""),
-  category: z.string().trim().max(60).default("Web & Mobile Apps"),
+  name: z.string().trim().min(2, "Product name must be at least 2 characters").max(200),
+  tagline: z.string().trim().min(2),
+  description: z.string().trim().default(""),
+  category: z.string().trim().max(100).default("Web & Mobile Apps"),
   status: z.enum(["in_development", "live", "beta", "planned"]).default("in_development"),
-  status_label: z.string().trim().max(60).optional(),
+  status_label: z.string().trim().max(100).optional(),
   website_url: z.string().trim().url("Must be a valid URL").optional().or(z.literal("")),
   preview_url: z.string().trim().url("Must be a valid URL").optional().or(z.literal("")),
   tags: z.array(z.string()).default([]),
   highlights: z.array(z.string()).default([]),
-  version: z.string().trim().max(30).default("v1.0"),
+  version: z.string().trim().max(60).default("v1.0"),
   featured: z.boolean().default(false),
   sort_order: z.number().int().default(0),
 });

@@ -31,17 +31,17 @@ export const Route = createFileRoute("/_authenticated/admin/products/")({
 });
 
 const productFormSchema = z.object({
-  name: z.string().trim().min(2, "Product name is required").max(120),
-  tagline: z.string().trim().min(5, "Tagline should be at least 5 characters").max(250),
-  description: z.string().trim().max(3000).optional(),
-  category: z.string().trim().min(2, "Category is required").max(60),
+  name: z.string().trim().min(2, "Product name is required").max(200),
+  tagline: z.string().trim().min(2, "Tagline / summary is required"),
+  description: z.string().trim().optional(),
+  category: z.string().trim().min(2, "Category is required").max(100),
   status: z.enum(["in_development", "live", "beta", "planned"]),
-  status_label: z.string().trim().max(60).optional(),
+  status_label: z.string().trim().max(100).optional(),
   website_url: z.string().trim().url("Must be a valid URL (e.g. https://...)").optional().or(z.literal("")),
   preview_url: z.string().trim().url("Must be a valid URL (e.g. https://...)").optional().or(z.literal("")),
   tags: z.string().trim(),
   highlights: z.string().trim(),
-  version: z.string().trim().max(30).optional(),
+  version: z.string().trim().max(60).optional(),
   featured: z.boolean().default(false),
 });
 
