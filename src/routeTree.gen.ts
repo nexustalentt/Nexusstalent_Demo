@@ -45,6 +45,7 @@ import { Route as AuthenticatedAdminJobsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminJobsIdRouteImport } from './routes/_authenticated/admin.jobs.$id'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminProductsIndexRouteImport } from './routes/_authenticated/admin.products.index'
+import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin.products.new'
 import { Route as AuthenticatedAdminReferralsIndexRouteImport } from './routes/_authenticated/admin.referrals.index'
 import { Route as ApiPublicApplicationsIntakeRouteImport } from './routes/api/public/applications/intake'
 import { Route as AuthenticatedAdminExamsAttemptsAttemptIdRouteImport } from './routes/_authenticated/admin.exams.attempts.$attemptId'
@@ -243,6 +244,12 @@ const AuthenticatedAdminProductsIndexRoute =
     path: '/admin/products/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProductsNewRoute =
+  AuthenticatedAdminProductsNewRouteImport.update({
+    id: '/admin/products/new',
+    path: '/admin/products/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReferralsIndexRoute =
   AuthenticatedAdminReferralsIndexRouteImport.update({
     id: '/admin/referrals/',
@@ -299,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/admin/job-applies/$id': typeof AuthenticatedAdminJobAppliesIdRoute
   '/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
   '/admin/applications/': typeof AuthenticatedAdminApplicationsIndexRoute
   '/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
@@ -340,6 +348,7 @@ export interface FileRoutesByTo {
   '/admin/job-applies/$id': typeof AuthenticatedAdminJobAppliesIdRoute
   '/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsIndexRoute
   '/admin/exams': typeof AuthenticatedAdminExamsIndexRoute
@@ -383,6 +392,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/job-applies/$id': typeof AuthenticatedAdminJobAppliesIdRoute
   '/_authenticated/admin/jobs/$id': typeof AuthenticatedAdminJobsIdRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/applications/intake': typeof ApiPublicApplicationsIntakeRoute
   '/_authenticated/admin/applications/': typeof AuthenticatedAdminApplicationsIndexRoute
   '/_authenticated/admin/exams/': typeof AuthenticatedAdminExamsIndexRoute
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/admin/job-applies/$id'
     | '/admin/jobs/$id'
     | '/admin/jobs/new'
+    | '/admin/products/new'
     | '/api/public/applications/intake'
     | '/admin/applications/'
     | '/admin/exams/'
@@ -467,6 +478,7 @@ export interface FileRouteTypes {
     | '/admin/job-applies/$id'
     | '/admin/jobs/$id'
     | '/admin/jobs/new'
+    | '/admin/products/new'
     | '/api/public/applications/intake'
     | '/admin/applications'
     | '/admin/exams'
@@ -509,6 +521,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/job-applies/$id'
     | '/_authenticated/admin/jobs/$id'
     | '/_authenticated/admin/jobs/new'
+    | '/_authenticated/admin/products/new'
     | '/api/public/applications/intake'
     | '/_authenticated/admin/applications/'
     | '/_authenticated/admin/exams/'
@@ -799,6 +812,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/products/new': {
+      id: '/_authenticated/admin/products/new'
+      path: '/admin/products/new'
+      fullPath: '/admin/products/new'
+      preLoaderRoute: typeof AuthenticatedAdminProductsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/referrals/': {
       id: '/_authenticated/admin/referrals/'
       path: '/admin/referrals'
@@ -841,6 +861,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminJobAppliesIdRoute: typeof AuthenticatedAdminJobAppliesIdRoute
   AuthenticatedAdminJobsIdRoute: typeof AuthenticatedAdminJobsIdRoute
   AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
+  AuthenticatedAdminProductsNewRoute: typeof AuthenticatedAdminProductsNewRoute
   AuthenticatedAdminApplicationsIndexRoute: typeof AuthenticatedAdminApplicationsIndexRoute
   AuthenticatedAdminExamsIndexRoute: typeof AuthenticatedAdminExamsIndexRoute
   AuthenticatedAdminJobAppliesIndexRoute: typeof AuthenticatedAdminJobAppliesIndexRoute
@@ -862,6 +883,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminJobAppliesIdRoute: AuthenticatedAdminJobAppliesIdRoute,
   AuthenticatedAdminJobsIdRoute: AuthenticatedAdminJobsIdRoute,
   AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
+  AuthenticatedAdminProductsNewRoute: AuthenticatedAdminProductsNewRoute,
   AuthenticatedAdminApplicationsIndexRoute:
     AuthenticatedAdminApplicationsIndexRoute,
   AuthenticatedAdminExamsIndexRoute: AuthenticatedAdminExamsIndexRoute,

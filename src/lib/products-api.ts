@@ -99,7 +99,7 @@ export const productsQuery = queryOptions({
 
         if (!error && Array.isArray(dbData)) {
           // Table exists and query succeeded in Supabase!
-          serverProducts = dbData.map(normalizeProduct);
+          serverProducts = (dbData as any[]).map(normalizeProduct);
           liveFromSupabase = true;
         }
       } catch (e) {

@@ -31,6 +31,7 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
       const timer = setTimeout(() => setShowGreeting(true), 700);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, []);
 
   // Wave on load and then settle
@@ -39,6 +40,7 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
       const timer = setTimeout(() => setIsWaving(false), 3200);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isWaving]);
 
   const handleDismissGreeting = (e: React.MouseEvent) => {

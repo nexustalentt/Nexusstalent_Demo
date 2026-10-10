@@ -26,6 +26,14 @@ interface FormState {
   email: string;
 }
 
+interface ReferralErrors {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  email?: string;
+  resume?: string;
+}
+
 export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
   const [values, setValues] = useState<FormState>({
     first_name: "",
@@ -34,7 +42,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
     email: "",
   });
   const [resume, setResume] = useState<{ file: File; name: string; base64: string } | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<ReferralErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [successCode, setSuccessCode] = useState<string | null>(null);
@@ -109,7 +117,7 @@ export function ReferralModal({ open, onOpenChange, job }: ReferralModalProps) {
   }
 
   function validate(): boolean {
-    const nextErrors: Record<string, string> = {};
+    const nextErrors: ReferralErrors = {};
 
     if (!values.first_name.trim()) {
       nextErrors.first_name = "First name is required";

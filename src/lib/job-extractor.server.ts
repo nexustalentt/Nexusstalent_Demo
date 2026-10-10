@@ -1,21 +1,21 @@
 export type ExtractedJobData = {
-  title?: string;
-  department?: string;
-  location?: string;
-  employment_type?: string;
-  work_mode?: string;
-  salary?: string;
-  experience_min?: number | null;
-  experience_max?: number | null;
-  skills?: string[];
-  short_description?: string;
-  description?: string;
-  responsibilities?: string;
-  requirements?: string;
-  preferred_qualifications?: string;
-  benefits?: string;
-  google_form_url?: string;
-  company_name?: string;
+  title?: string | undefined;
+  department?: string | undefined;
+  location?: string | undefined;
+  employment_type?: string | undefined;
+  work_mode?: string | undefined;
+  salary?: string | undefined;
+  experience_min?: number | null | undefined;
+  experience_max?: number | null | undefined;
+  skills?: string[] | undefined;
+  short_description?: string | undefined;
+  description?: string | undefined;
+  responsibilities?: string | undefined;
+  requirements?: string | undefined;
+  preferred_qualifications?: string | undefined;
+  benefits?: string | undefined;
+  google_form_url?: string | undefined;
+  company_name?: string | undefined;
 };
 
 const COMMON_SKILLS = [

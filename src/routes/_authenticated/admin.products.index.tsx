@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   Download,
@@ -86,6 +86,8 @@ function ProductsAdminPage() {
   const [cloudError, setCloudError] = useState<string | null>(null);
   const [isCheckingCloud, setIsCheckingCloud] = useState(false);
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
   const [isSyncingToCloud, setIsSyncingToCloud] = useState(false);
   const [sqlCopied, setSqlCopied] = useState(false);
 
@@ -140,6 +142,7 @@ function ProductsAdminPage() {
 
   // Lock background scroll when any modal is open so mouse/touch scrolling stays inside the modal
   useEffect(() => {
+    if (typeof document === "undefined") return undefined;
     if (isModalOpen || isSqlModalOpen) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
@@ -147,10 +150,8 @@ function ProductsAdminPage() {
         document.body.style.overflow = originalOverflow;
       };
     }
+    return undefined;
   }, [isModalOpen, isSqlModalOpen]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
 
   // Form states
   const [name, setName] = useState("");
@@ -326,14 +327,13 @@ function ProductsAdminPage() {
               Setup Cloud Sync (SQL)
             </button>
           )}
-          <button
-            type="button"
-            onClick={handleOpenCreate}
+          <Link
+            to="/admin/products/new"
             className="inline-flex items-center gap-2 rounded-none bg-[#0f62fe] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0353e9]"
           >
             <Plus className="size-4" />
             Add Product
-          </button>
+          </Link>
         </div>
       }
     >
@@ -602,45 +602,50 @@ function ProductsAdminPage() {
       {/* CREATE / EDIT MODAL (Carbon Flat Style) */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-6 backdrop-blur-[2px] overflow-hidden"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/65 p-3 sm:p-6 backdrop-blur-[2px]"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setIsModalOpen(false);
             }
           }}
         >
-          <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden">
-            {/* Fixed Header */}
-            <div className="flex items-center justify-between border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4 shrink-0">
-              <div>
-                <span className="font-mono text-xs uppercase tracking-wider text-[#0f62fe] font-semibold">
-                  Carbon Product Editor
-                </span>
-                <h3 className="text-xl font-light text-[#161616] mt-0.5">
-                  {editingProduct ? "Edit Product Details" : "Add New Product"}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-[#525252] hover:bg-[#e0e0e0] hover:text-[#161616] transition-colors"
-                aria-label="Close"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-
-            {/* Scrollable Form Body */}
-            <form
-              id="product-modal-form"
-              onSubmit={handleSave}
-              className="flex-1 overflow-y-auto p-6 md:p-8 space-y-5 overscroll-contain"
+          <div className="flex min-h-full items-center justify-center p-0 sm:p-4">
+            <div
+              className="relative w-full max-w-2xl max-h-[88vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden my-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              {formError && (
-                <div className="border-l-2 border-[#da1e28] bg-[#fff1f1] px-4 py-3 text-sm text-[#da1e28]">
-                  {formError}
+              {/* Fixed Header */}
+              <div className="flex items-center justify-between border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4 shrink-0">
+                <div>
+                  <span className="font-mono text-xs uppercase tracking-wider text-[#0f62fe] font-semibold">
+                    Carbon Product Editor
+                  </span>
+                  <h3 className="text-xl font-light text-[#161616] mt-0.5">
+                    {editingProduct ? "Edit Product Details" : "Add New Product"}
+                  </h3>
                 </div>
-              )}
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-1.5 text-[#525252] hover:bg-[#e0e0e0] hover:text-[#161616] transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+
+              {/* Scrollable Form Body */}
+              <form
+                id="product-modal-form"
+                onSubmit={handleSave}
+                className="flex-1 overflow-y-auto p-6 md:p-8 space-y-5"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
+                {formError && (
+                  <div className="border-l-2 border-[#da1e28] bg-[#fff1f1] px-4 py-3 text-sm text-[#da1e28]">
+                    {formError}
+                  </div>
+                )}
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
@@ -855,19 +860,24 @@ function ProductsAdminPage() {
             </div>
           </div>
         </div>
+      </div>
       )}
 
       {/* SUPABASE SQL SCRIPT MODAL */}
       {isSqlModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-6 backdrop-blur-[2px] overflow-hidden"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/65 p-3 sm:p-6 backdrop-blur-[2px]"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setIsSqlModalOpen(false);
             }
           }}
         >
-          <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden">
+          <div className="flex min-h-full items-center justify-center p-0 sm:p-4">
+            <div
+              className="relative w-full max-w-3xl max-h-[88vh] flex flex-col border border-[#e0e0e0] bg-white shadow-2xl overflow-hidden my-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* Fixed Header */}
             <div className="flex items-center justify-between border-b border-[#e0e0e0] bg-[#f4f4f4] px-6 py-4 shrink-0">
               <div>
@@ -967,6 +977,7 @@ function ProductsAdminPage() {
             </div>
           </div>
         </div>
+      </div>
       )}
     </AdminShell>
   );

@@ -683,8 +683,9 @@ function HomePage() {
                     <img
                       src={client.logo}
                       onError={(e) => {
-                        if (clientLogoFallbacks[client.name]) {
-                          e.currentTarget.src = clientLogoFallbacks[client.name];
+                        const fallback = clientLogoFallbacks[client.name];
+                        if (fallback) {
+                          e.currentTarget.src = fallback;
                         }
                       }}
                       alt={`${client.name} logo`}
