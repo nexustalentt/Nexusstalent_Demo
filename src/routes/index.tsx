@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
-  Download,
   Globe,
   Layout,
   Smartphone,
@@ -23,9 +22,7 @@ import {
 } from "lucide-react";
 import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
-import { JobCard } from "@/components/site/job-card";
-import { DigitalShowcase } from "@/components/site/digital-showcase";
-import { activeJobsQuery, siteSettingsQuery } from "@/lib/queries";
+import { siteSettingsQuery } from "@/lib/queries";
 import { useProducts } from "@/lib/products-api";
 import {
   services,
@@ -34,7 +31,6 @@ import {
   hiringProcess,
   clients,
   digitalServices,
-  builtProducts,
   targetAudiences,
   digitalProcessSteps,
 } from "@/lib/content";
@@ -61,7 +57,6 @@ export const Route = createFileRoute("/")({
   }),
   loader: async ({ context }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(activeJobsQuery),
       context.queryClient.ensureQueryData(siteSettingsQuery),
     ]);
   },
@@ -110,13 +105,8 @@ const clientLogoFallbacks: Record<string, string> = {
 };
 
 function HomePage() {
-  const { data: jobs } = useSuspenseQuery(activeJobsQuery);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const { data: products = [] } = useProducts();
-  const latestJobs = (jobs ?? []).slice(0, 6);
-
-  const zoziiDownloadUrl = "/api/public/zozii-download";
-  const zoziiVersion = settings?.zozii_version?.trim() || "v1.09.01";
 
   const stats = [
     { value: settings?.years_experience ?? "15", label: "Years of Experience" },
@@ -273,71 +263,6 @@ function HomePage() {
               </div>
             ))}
           </dl>
-        </div>
-      </section>
-
-      {/* SECTION 3: HAVE A BUSINESS? WE'LL HELP YOU GO DIGITAL (CANVAS) */}
-      <section className="py-24 bg-[#ffffff]">
-        <div className="container-page">
-          <div className="border border-[#e0e0e0] bg-[#f4f4f4] p-8 md:p-12">
-            <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-              <div className="space-y-6 lg:col-span-6">
-                <div className="eyebrow bg-[#ffffff]">Go digital with Nexus</div>
-                <h2 className="text-3xl font-light text-[#161616] sm:text-4xl md:text-5xl">
-                  Have a Business? We'll Help You Go Digital.
-                </h2>
-                <p className="text-base leading-relaxed text-[#525252] tracking-[0.16px]">
-                  Whether you're starting a new business or already running one, we help you build a
-                  professional online presence. From websites and landing pages to digital solutions
-                  and ongoing support, we create technology that helps your business reach more
-                  customers and grow.
-                </p>
-
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <Link
-                    to="/products"
-                    className="inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
-                  >
-                    View Our Products
-                  </Link>
-                  <Link
-                    to="/contact"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.dispatchEvent(new CustomEvent("open-talk-modal"));
-                    }}
-                    className="inline-flex h-11 items-center justify-center rounded-none border border-[#161616] bg-[#ffffff] px-6 text-sm font-normal text-[#161616] transition-colors hover:bg-[#f4f4f4]"
-                  >
-                    Talk to Us
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#e0e0e0] text-xs text-[#525252]">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-[#24a148] shrink-0" />
-                    <span>Mobile-first & SEO optimized</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-[#24a148] shrink-0" />
-                    <span>Launch in 7–14 business days</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-[#24a148] shrink-0" />
-                    <span>Transparent, clear milestones</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-[#24a148] shrink-0" />
-                    <span>Full maintenance & support</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Digital Showcase Preview */}
-              <div className="lg:col-span-6">
-                <DigitalShowcase />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -698,44 +623,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 11: CAREERS PREVIEW (CANVAS) */}
-      <section className="border-b border-[#e0e0e0] bg-[#ffffff] py-24">
-        <div className="container-page">
-          <div className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-2xl">
-              <div className="eyebrow mb-6">Careers</div>
-              <h2 className="text-3xl font-light text-[#161616] md:text-4xl">
-                Explore Career Opportunities
-              </h2>
-              <p className="mt-4 text-sm text-[#525252] tracking-[0.16px]">
-                Current openings across our client engagements. Apply directly — no account needed.
-              </p>
-            </div>
-            <Link
-              to="/careers"
-              className="text-sm text-[#0f62fe] underline-offset-8 hover:underline"
-            >
-              View All Open Positions →
-            </Link>
-          </div>
-
-          {latestJobs.length ? (
-            <div className="grid gap-4">
-              {latestJobs.map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-none border border-dashed border-[#e0e0e0] bg-[#f4f4f4] p-12 text-center">
-              <p className="font-normal text-[#161616]">No active jobs available right now.</p>
-              <p className="mt-2 text-sm text-[#525252]">
-                New opportunities are published regularly — or contact us directly.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* SECTION 12: HIRING PROCESS (SURFACE-1 BAND) */}
       <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-24">
         <div className="container-page">
@@ -799,49 +686,6 @@ function HomePage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 14: ZOZII PRODUCT TEASER (SURFACE-1 BAND) */}
-      <section className="border-y border-[#e0e0e0] bg-[#f4f4f4] py-24">
-        <div className="container-page">
-          <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-10 md:p-14">
-            <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
-              <div className="max-w-2xl">
-                <div className="eyebrow mb-6">Desktop companion</div>
-                <h2 className="text-3xl font-light text-[#161616] md:text-4xl">
-                  Meet Zozii — invisible AI meeting assistant
-                </h2>
-                <p className="mt-4 text-sm leading-relaxed text-[#525252] tracking-[0.16px]">
-                  A lightweight desktop companion for Nexus Talent workflows. Listen to meetings,
-                  ask questions, and receive instant streaming answers invisible to screen shares.
-                </p>
-                <p className="mt-2 text-xs font-mono text-[#8c8c8c]">
-                  Windows executable (.exe){zoziiVersion ? ` · ${zoziiVersion}` : ""}
-                </p>
-              </div>
-              <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-                <a
-                  href="https://zozii-iota.vercel.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
-                >
-                  Explore Zozii <ArrowRight className="size-4" aria-hidden="true" />
-                </a>
-                <a
-                  href={zoziiDownloadUrl}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-none border border-[#161616] bg-[#161616] px-6 text-sm font-normal text-white transition-colors hover:bg-[#262626]"
-                >
-                  <Download className="size-4" aria-hidden="true" />
-                  Download
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </section>
