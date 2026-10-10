@@ -6,6 +6,7 @@ import {
   deleteLocalProduct,
   mergeProducts,
   getDefaultProducts,
+  normalizeProduct,
   type ProductItem,
 } from "./products-store";
 import {
@@ -13,34 +14,49 @@ import {
   saveProductServerFn,
   deleteProductServerFn,
 } from "./products.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const productsQuery = queryOptions({
   queryKey: ["products", "list"],
   queryFn: async (): Promise<ProductItem[]> => {
     let serverProducts: ProductItem[] = [];
 
+    // 1. Try server function
     try {
       const res = await getProductsServerFn();
       if (res.ok && Array.isArray(res.products) && res.products.length > 0) {
         serverProducts = res.products;
-      } else {
-        serverProducts = getDefaultProducts();
       }
     } catch {
-      serverProducts = getDefaultProducts();
+      // Server function error
     }
 
-    // In client environment, merge server products with client local store
+    // 2. In client environment (mobile browser, desktop, tablet):
     if (typeof window !== "undefined") {
+      // If server didn't provide live data, fetch directly from Supabase via client
+      try {
+        const { data: dbData, error } = await supabase
+          .from("products" as any)
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (!error && Array.isArray(dbData) && dbData.length > 0) {
+          serverProducts = dbData.map(normalizeProduct);
+        }
+      } catch (e) {
+        console.warn("[products-api] Client Supabase query note:", e);
+      }
+
       const local = getLocalProducts();
-      const merged = mergeProducts(serverProducts, local);
+      const base = serverProducts.length > 0 ? serverProducts : getDefaultProducts();
+      const merged = mergeProducts(base, local);
       try {
         window.localStorage.setItem("nexus_talent_products_v1", JSON.stringify(merged));
       } catch {}
       return merged;
     }
 
-    return serverProducts;
+    return serverProducts.length > 0 ? serverProducts : getDefaultProducts();
   },
   staleTime: 1000 * 2, // 2 seconds
   refetchOnMount: true,
@@ -100,7 +116,6 @@ export function useProducts() {
       return query.data ?? localItems;
     }
 
-    // On client: if query.data is available, use merged list; otherwise fall back to localItems
     if (query.data && Array.isArray(query.data)) {
       return query.data;
     }
@@ -124,7 +139,39 @@ export function useSaveProduct() {
       // 1. Immediately save to local client store (instant UI feedback)
       const saved = saveLocalProduct(input);
 
-      // 2. Broadcast to server function (persists to server storage, memory, and database)
+      const dbPayload = {
+        id: saved.id,
+        name: saved.name,
+        tagline: saved.tagline,
+        description: saved.description || "",
+        category: saved.category,
+        status: saved.status,
+        status_label: saved.status_label || null,
+        link_type: saved.link_type || "website",
+        website_url: saved.website_url || null,
+        preview_url: saved.preview_url || null,
+        tags: saved.tags,
+        highlights: saved.highlights || [],
+        version: saved.version || "v1.0",
+        featured: saved.featured || false,
+        sort_order: saved.sort_order || 0,
+        updated_at: new Date().toISOString(),
+      };
+
+      // 2. Direct client upsert to Supabase (uses current authenticated staff session!)
+      try {
+        const { error: sbError } = await supabase
+          .from("products" as any)
+          .upsert(dbPayload);
+
+        if (sbError) {
+          console.warn("[products-api] Client Supabase upsert note:", sbError.message);
+        }
+      } catch (err) {
+        console.warn("[products-api] Client Supabase upsert error:", err);
+      }
+
+      // 3. Broadcast to server function (persists to server storage, memory, and database)
       try {
         await saveProductServerFn({
           data: {
@@ -178,7 +225,21 @@ export function useDeleteProduct() {
       // 1. Immediately delete from local client store
       deleteLocalProduct(id);
 
-      // 2. Broadcast to server to permanently remove
+      // 2. Direct client delete from Supabase (uses current authenticated staff session)
+      try {
+        const { error: sbError } = await supabase
+          .from("products" as any)
+          .delete()
+          .eq("id", id);
+
+        if (sbError) {
+          console.warn("[products-api] Client Supabase delete note:", sbError.message);
+        }
+      } catch (err) {
+        console.warn("[products-api] Client Supabase delete error:", err);
+      }
+
+      // 3. Broadcast to server to permanently remove
       try {
         await deleteProductServerFn({ data: { id } });
       } catch (err) {
