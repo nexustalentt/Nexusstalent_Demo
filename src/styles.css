@@ -230,3 +230,29 @@
 @utility animate-fade-up {
   animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+@keyframes assistant-wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20%, 60% {
+    transform: rotate(14deg);
+  }
+  40%, 80% {
+    transform: rotate(-6deg);
+  }
+}
+
+.animate-assistant-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: assistant-wave 1.8s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-assistant-wave,
+  .animate-fade-up {
+    animation: none !important;
+  }
+}
+

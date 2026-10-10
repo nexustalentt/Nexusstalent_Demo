@@ -433,23 +433,5 @@ export function TalkToUsModal({ isOpen, onClose }: TalkToUsModalProps) {
   );
 }
 
-export function FloatingTalkButton({ onOpen, isOpen }: { onOpen: () => void; isOpen?: boolean }) {
-  return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
-      <button
-        type="button"
-        onClick={onOpen}
-        aria-label="Talk to Us"
-        className={`group flex h-11 items-center gap-2.5 rounded-none px-4 text-xs font-normal tracking-[0.16px] text-white transition-colors cursor-pointer ${
-          isOpen
-            ? "bg-[#161616] border border-[#0f62fe]"
-            : "bg-[#0f62fe] hover:bg-[#0050e6] active:bg-[#002d9c]"
-        }`}
-      >
-        <span className="size-2 bg-[#24a148]" />
-        <MessageSquare className="size-3.5" />
-        <span>Talk to Us</span>
-      </button>
-    </div>
-  );
-}
+export { FloatingSupportWidget, FloatingTalkButton } from "./floating-support-widget";
+

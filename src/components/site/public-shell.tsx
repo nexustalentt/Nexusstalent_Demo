@@ -1,7 +1,8 @@
 import { type ReactNode, useState, useEffect } from "react";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
-import { TalkToUsModal, FloatingTalkButton } from "./talk-to-us-modal";
+import { TalkToUsModal } from "./talk-to-us-modal";
+import { FloatingSupportWidget } from "./floating-support-widget";
 
 export function PublicShell({ children }: { children: ReactNode }) {
   const [talkOpen, setTalkOpen] = useState(false);
@@ -17,8 +18,8 @@ export function PublicShell({ children }: { children: ReactNode }) {
       <SiteHeader onOpenTalk={() => setTalkOpen(true)} />
       <main className="flex-1">{children}</main>
       <SiteFooter />
-      {/* Floating Talk to Us button & Modal */}
-      <FloatingTalkButton onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
+      {/* Nexus Talent Floating Support Widget & Modal */}
+      <FloatingSupportWidget onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
       <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />
     </div>
   );
