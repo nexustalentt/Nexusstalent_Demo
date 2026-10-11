@@ -180,21 +180,32 @@ function HomePage() {
                 From launching custom mobile &amp; web applications to helping small businesses go online, we don't just advise—we architect and launch the digital solutions that scale your business.
               </p>
 
-              {/* CTA Buttons */}
+              {/* CTA Buttons (Liquid Fill + Magnetic Lift) */}
               <div className="flex flex-wrap gap-3.5 items-center">
                 <Link
                   to="/contact"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 px-7 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 active:bg-blue-800"
+                  className="btn-liquid-primary inline-flex h-11 items-center justify-center px-7 text-sm font-semibold"
                 >
-                  Work With Us
+                  <span className="btn-content-wrap">Work With Us</span>
                 </Link>
                 <Link
                   to="/products"
-                  className="group inline-flex h-11 items-center justify-center rounded-full border-2 border-cyan-400/80 bg-white/80 px-6 text-sm font-semibold text-slate-800 backdrop-blur-sm transition-all duration-200 hover:border-cyan-500 hover:bg-cyan-50/50 hover:text-cyan-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+                  className="btn-liquid-secondary group inline-flex h-11 items-center justify-center px-6 text-sm font-semibold"
                 >
-                  <span>Explore Products &amp; Builds</span>
-                  <span className="ml-1.5 inline-block text-cyan-500 font-bold transition-transform duration-200 group-hover:translate-x-1">
-                    →
+                  <span className="btn-content-wrap">
+                    <span>Explore Products &amp; Builds</span>
+                    <svg
+                      className="btn-arrow-icon size-4"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M3.333 8h9.334M8.667 4l4 4-4 4" />
+                    </svg>
                   </span>
                 </Link>
               </div>

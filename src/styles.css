@@ -256,3 +256,174 @@
   }
 }
 
+/* ==========================================================================
+   Liquid Fill + Magnetic Lift Buttons
+   ========================================================================== */
+
+.btn-liquid-primary,
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.28);
+  transition:
+    transform 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform, box-shadow;
+}
+
+/* Primary Button: Liquid fill animating upward from the bottom */
+.btn-liquid-primary::before,
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, #1e3a8a, #1d4ed8);
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  z-index: 1;
+}
+
+/* Primary Button: Diagonal glare / white shine sweep */
+.btn-liquid-primary::after,
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  transform: rotate(28deg) translateX(-150%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.btn-liquid-primary:hover,
+.btn-primary:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 14px 28px -4px rgba(37, 99, 235, 0.45),
+    0 6px 14px -2px rgba(37, 99, 235, 0.25);
+}
+
+.btn-liquid-primary:hover::before,
+.btn-primary:hover::before {
+  transform: translateY(0);
+}
+
+.btn-liquid-primary:hover::after,
+.btn-primary:hover::after {
+  transform: rotate(28deg) translateX(450%);
+  transition: transform 0.8s ease-in-out;
+}
+
+.btn-liquid-primary:active,
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+/* Secondary Button: Liquid Fill from Left + Teal Glow + Animated SVG Arrow */
+.btn-liquid-secondary,
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 2px solid #22d3ee;
+  color: #0f172a;
+  box-shadow: 0 2px 8px 0 rgba(6, 182, 212, 0.12);
+  transition:
+    transform 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    color 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform, box-shadow;
+}
+
+/* Secondary Button: Solid teal liquid fill sliding from the left */
+.btn-liquid-secondary::before,
+.btn-secondary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  z-index: 1;
+}
+
+.btn-liquid-secondary:hover,
+.btn-secondary:hover {
+  transform: translateY(-4px);
+  border-color: #0891b2;
+  color: #ffffff;
+  box-shadow:
+    0 14px 28px -4px rgba(6, 182, 212, 0.4),
+    0 6px 14px -2px rgba(6, 182, 212, 0.2);
+}
+
+.btn-liquid-secondary:hover::before,
+.btn-secondary:hover::before {
+  transform: translateX(0);
+}
+
+.btn-liquid-secondary:active,
+.btn-secondary:active {
+  transform: translateY(-1px);
+}
+
+/* Secondary Button Arrow Micro-movement & Color Transition */
+.btn-liquid-secondary .btn-arrow-icon,
+.btn-secondary .btn-arrow-icon {
+  color: #06b6d4;
+  transition:
+    transform 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    color 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.btn-liquid-secondary:hover .btn-arrow-icon,
+.btn-secondary:hover .btn-arrow-icon {
+  transform: translateX(4px);
+  color: #ffffff;
+}
+
+/* Ensure text and icons remain above animated pseudo-elements */
+.btn-content-wrap {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  transition: color 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-liquid-primary,
+  .btn-primary,
+  .btn-liquid-secondary,
+  .btn-secondary,
+  .btn-liquid-primary::before,
+  .btn-primary::before,
+  .btn-liquid-primary::after,
+  .btn-primary::after,
+  .btn-liquid-secondary::before,
+  .btn-secondary::before,
+  .btn-arrow-icon {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
