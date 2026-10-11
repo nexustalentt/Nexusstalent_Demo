@@ -20,6 +20,7 @@ import {
   Briefcase,
   ExternalLink,
   Download,
+  Users,
 } from "lucide-react";
 import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
@@ -119,104 +120,107 @@ function HomePage() {
 
   return (
     <PublicShell>
-      {/* SECTION 1: HERO (DYNAMIC AMBIENT BACKDROP WITH HIGH-END MODERN TECH AESTHETIC) */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 bg-[#fafafa]">
-        {/* Subtle digital dot grid */}
+      {/* SECTION 1: HERO (EXACT REPLICA: PREMIUM GLASSMORPHIC MODERN TECH AESTHETIC) */}
+      <section className="relative overflow-hidden pt-12 pb-20 md:pt-16 md:pb-28 bg-[#f8fafc]">
+        {/* Faint digital dot-grid pattern */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(#0f62fe_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_35%,#000_60%,transparent_100%)]"
+          className="pointer-events-none absolute inset-0 opacity-45 [background-image:radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_85%_70%_at_50%_35%,#000_70%,transparent_100%)]"
           aria-hidden="true"
         />
 
-        {/* Ambient luminous glows */}
+        {/* Ambient mesh gradient glows (purple, deep blue, cyan) */}
         <div
-          className="pointer-events-none absolute -top-32 right-[-5%] h-[520px] w-[520px] rounded-full bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-purple-500/15 blur-3xl"
+          className="pointer-events-none absolute top-4 left-[5%] h-[500px] w-[550px] rounded-full bg-gradient-to-r from-purple-500/15 via-blue-600/15 to-cyan-400/15 blur-3xl"
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute top-1/4 -left-28 h-[440px] w-[440px] rounded-full bg-gradient-to-tr from-cyan-400/15 via-blue-500/10 to-transparent blur-3xl"
+          className="pointer-events-none absolute -top-24 right-[-5%] h-[580px] w-[580px] rounded-full bg-gradient-to-br from-blue-600/20 via-cyan-400/15 to-purple-500/15 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 left-1/4 h-[400px] w-[650px] rounded-full bg-gradient-to-t from-cyan-400/10 via-blue-500/10 to-transparent blur-3xl"
+          aria-hidden="true"
+        />
+
+        {/* Decorative ambient glowing particles */}
+        <div
+          className="pointer-events-none absolute top-36 left-[48%] size-2.5 rounded-full bg-cyan-400/60 blur-[0.5px] hidden lg:block"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute top-56 left-[45%] size-3 rounded-full bg-purple-500/50 blur-[0.5px] hidden lg:block"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute top-44 left-[54%] size-2 rounded-full bg-blue-500/50 blur-[0.5px] hidden lg:block"
           aria-hidden="true"
         />
 
         <div className="container-page relative z-10">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            {/* Left Column: Headline, Copy & CTAs */}
             <div className="lg:col-span-7">
-              {/* Modern Translucent Pill Badge */}
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-50/60 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16px] text-[#0f62fe] backdrop-blur-md shadow-xs">
-                <span className="relative flex size-2 shrink-0">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0f62fe] opacity-75" />
-                  <span className="relative inline-flex size-2 rounded-full bg-[#0f62fe]" />
-                </span>
-                <span>Connecting Potential · Inspiring Success</span>
+              {/* Glowing Pill Badge */}
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/75 px-4 py-1.5 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur-md">
+                <span className="size-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+                <span>Connecting Potential - Inspiring Success</span>
               </div>
 
-              <h1 className="mb-6 text-4xl font-light leading-[1.15] text-[#161616] sm:text-5xl lg:text-6xl tracking-tight">
-                We Don't Just Consult.{" "}
-                <span className="relative inline-block font-normal">
-                  <span className="bg-gradient-to-r from-blue-600 via-[#0f62fe] to-cyan-400 bg-clip-text text-transparent">
-                    We Build.
-                  </span>
-                  {/* Subtle luminous drop glow */}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 select-none bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent opacity-25 blur-[12px]"
-                  >
-                    We Build.
-                  </span>
+              {/* Main Headline */}
+              <h1 className="mb-6 text-4xl font-extrabold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl text-slate-900">
+                <span className="block">We Don't Just Consult.</span>
+                <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                  We Build Apps, Softwares &amp; Websites.
                 </span>
+                <span className="inline-block animate-pulse font-normal text-cyan-400 ml-1">|</span>
               </h1>
 
-              <p className="mb-8 max-w-xl text-lg leading-relaxed text-[#525252] tracking-[0.16px]">
-                From technology consulting and talent solutions to building products, websites, and
-                digital experiences, we help businesses turn ideas into real solutions and grow in
-                the digital world.
+              {/* Sub-headline Paragraph */}
+              <p className="mb-8 max-w-xl text-base sm:text-lg leading-relaxed text-slate-600">
+                From launching custom mobile &amp; web applications to helping small businesses go online, we don't just advise—we architect and launch the digital solutions that scale your business.
               </p>
 
-              <div className="flex flex-wrap gap-3">
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-3.5 items-center">
                 <Link
                   to="/contact"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#0f62fe] to-[#2563eb] px-7 text-sm font-medium text-white shadow-md shadow-blue-500/20 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:translate-y-0 active:bg-[#002d9c]"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 px-7 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 active:bg-blue-800"
                 >
                   Work With Us
                 </Link>
                 <Link
                   to="/products"
-                  className="group inline-flex h-11 items-center justify-center rounded-full border border-blue-400/50 bg-white/70 px-6 text-sm font-medium text-slate-900 backdrop-blur-sm transition-all duration-200 hover:border-blue-600 hover:bg-blue-50/50 hover:text-blue-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+                  className="group inline-flex h-11 items-center justify-center rounded-full border-2 border-cyan-400/80 bg-white/80 px-6 text-sm font-semibold text-slate-800 backdrop-blur-sm transition-all duration-200 hover:border-cyan-500 hover:bg-cyan-50/50 hover:text-cyan-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
                 >
                   <span>Explore Products &amp; Builds</span>
-                  <span className="ml-1.5 inline-block transition-transform duration-200 group-hover:translate-x-1 group-hover:text-blue-600">
+                  <span className="ml-1.5 inline-block text-cyan-500 font-bold transition-transform duration-200 group-hover:translate-x-1">
                     →
                   </span>
                 </Link>
               </div>
 
-              {/* Trust & Service Pillar Capsule Badges */}
-              <div className="mt-10 flex flex-wrap items-center gap-2.5 border-t border-slate-200/80 pt-6 text-xs">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-amber-400/50">
-                  <span className="flex size-4 items-center justify-center rounded-full bg-amber-50 text-[#d4af37]">
-                    <Check className="size-3 stroke-[2.5]" />
-                  </span>
-                  <span>Talent &amp; IT Consulting</span>
+              {/* Bottom Tag Badges */}
+              <div className="mt-8 flex flex-wrap items-center gap-2.5 text-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/80 px-4 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-300">
+                  <Check className="size-3.5 text-blue-600 stroke-[2.5]" />
+                  <span>custom app engineering</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-400/50">
-                  <span className="flex size-4 items-center justify-center rounded-full bg-blue-50 text-[#0f62fe]">
-                    <Check className="size-3 stroke-[2.5]" />
-                  </span>
-                  <span>Custom Product Engineering</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/80 px-4 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-300">
+                  <Check className="size-3.5 text-blue-600 stroke-[2.5]" />
+                  <span>small business launchpad</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-400/50">
-                  <span className="flex size-4 items-center justify-center rounded-full bg-blue-50 text-[#0f62fe]">
-                    <Check className="size-3 stroke-[2.5]" />
-                  </span>
-                  <span>Small Business Web Systems</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/80 px-4 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-300">
+                  <Check className="size-3.5 text-blue-600 stroke-[2.5]" />
+                  <span>scale-up digital systems</span>
                 </span>
               </div>
             </div>
 
-            {/* Hero Visual Tile */}
+            {/* Right Column: Hero Visual Tile */}
             <div className="relative lg:col-span-5">
               {/* Ambient radial glow behind image */}
               <div
-                className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-tr from-blue-500/15 via-indigo-400/10 to-purple-400/15 blur-2xl opacity-75"
+                className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-tr from-blue-500/20 via-indigo-400/15 to-cyan-400/20 blur-2xl opacity-75"
                 aria-hidden="true"
               />
 
@@ -232,33 +236,55 @@ function HomePage() {
                   className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm ring-1 ring-slate-900/5"
                 />
 
-                {/* Overlaid Glassmorphic Stat Tile */}
-                <div className="absolute -bottom-5 -left-4 hidden sm:block rounded-2xl border border-white/60 bg-white/75 p-4 shadow-xl backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl font-semibold tracking-tight text-[#0f62fe]">
-                      {settings?.enterprise_clients ?? "500+"}
-                    </div>
-                    <div className="text-[11px] font-medium uppercase tracking-[0.16px] text-[#525252] leading-tight">
-                      Enterprise
-                      <br />
-                      Clients
-                    </div>
-                  </div>
-                </div>
-
                 {/* Overlaid Glassmorphic Nexus Digital Tile */}
-                <div className="absolute -top-4 -right-4 hidden sm:block rounded-2xl border border-white/60 bg-white/75 p-3.5 shadow-xl backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
+                <div className="absolute -top-3 -right-3 z-20 rounded-2xl border border-white/70 bg-white/80 p-3.5 shadow-xl backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-2.5">
                     <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0f62fe] to-[#2563eb] text-white shadow-sm shadow-blue-500/25">
                       <Globe className="size-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-[#161616]">Nexus Digital</div>
-                      <div className="text-[10px] font-medium text-[#525252]">Websites & Systems</div>
+                      <div className="text-xs font-semibold text-slate-900">Nexus Digital</div>
+                      <div className="text-[10px] font-medium text-slate-500">Websites &amp; Systems</div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Three Glassmorphic Feature Cards */}
+          <div className="mt-12 lg:-mt-8 relative z-20 grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Card 1: Custom Apps & Softwares */}
+            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-cyan-200/70">
+              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-cyan-400/50 bg-cyan-500/10 text-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                <Layout className="size-5 stroke-[2.2]" />
+              </div>
+              <h3 className="mb-1 text-sm font-bold text-slate-900">Custom Apps &amp; Softwares</h3>
+              <p className="text-xs leading-relaxed text-slate-600">
+                High-performance web, mobile, and AI systems tailored to your needs.
+              </p>
+            </div>
+
+            {/* Card 2: Small Business Launchpad */}
+            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-emerald-200/70">
+              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-emerald-400/50 bg-emerald-500/10 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                <Store className="size-5 stroke-[2.2]" />
+              </div>
+              <h3 className="mb-1 text-sm font-bold text-slate-900">Small Business Launchpad</h3>
+              <p className="text-xs leading-relaxed text-slate-600">
+                Getting local brands online with high-converting websites &amp; storefronts.
+              </p>
+            </div>
+
+            {/* Card 3: Elite Tech Talent */}
+            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-purple-200/70">
+              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-purple-400/50 bg-purple-500/10 text-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                <Users className="size-5 stroke-[2.2]" />
+              </div>
+              <h3 className="mb-1 text-sm font-bold text-slate-900">Elite Tech Talent</h3>
+              <p className="text-xs leading-relaxed text-slate-600">
+                Deploying top-tier engineers and specialists to accelerate your vision.
+              </p>
             </div>
           </div>
         </div>
