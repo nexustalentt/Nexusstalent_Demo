@@ -24,9 +24,9 @@ function PrivacyPage() {
   return (
     <PublicShell>
       <PageHero eyebrow="Legal Specification" title="Privacy Policy" subtitle="Last updated August 2026 · Version 1.4" />
-      <section className="border-t border-[#e0e0e0] bg-[#f4f4f4] py-16">
+      <section className="bg-slate-50/50 py-16">
         <div className="container-page max-w-3xl">
-          <div className="border border-[#e0e0e0] bg-white p-8 md:p-12 space-y-10 text-[#525252]">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-8 md:p-12 space-y-10 text-slate-600 shadow-sm">
             <div className="border-b border-[#e0e0e0] pb-8">
               <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#0f62fe]">Section 01</span>
               <h2 className="mt-1 text-xl font-normal text-[#161616]">Information we collect</h2>

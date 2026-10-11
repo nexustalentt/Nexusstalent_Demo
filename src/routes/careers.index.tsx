@@ -97,22 +97,29 @@ function CareersPage() {
   }
 
   const selectClass =
-    "w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-3 py-2.5 text-xs text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
+    "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-800 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
 
   return (
     <PublicShell>
       <PageHero
-        eyebrow="Careers"
-        title="Find Your Next Opportunity"
+        eyebrow="Open Positions"
+        title={
+          <>
+            Find Your Next{" "}
+            <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              Opportunity
+            </span>
+          </>
+        }
         subtitle="Explore current opportunities across our enterprise client engagements."
       />
 
-      <section className="bg-[#ffffff] py-16">
+      <section className="bg-white py-16">
         <div className="container-page">
-          <div className="mb-10 rounded-none border border-[#e0e0e0] bg-[#ffffff] p-5">
+          <div className="mb-10 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-6 shadow-sm backdrop-blur-sm">
             <div className="grid gap-4 lg:grid-cols-3">
-              <label className="flex items-center gap-3 rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 lg:col-span-3">
-                <Search className="size-4 shrink-0 text-[#8c8c8c]" aria-hidden="true" />
+              <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 lg:col-span-3 transition-colors focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                <Search className="size-4 shrink-0 text-slate-400" aria-hidden="true" />
                 <span className="sr-only">Search jobs</span>
                 <input
                   type="search"
@@ -120,7 +127,7 @@ function CareersPage() {
                   maxLength={100}
                   onChange={(event) => setTerm(event.target.value)}
                   placeholder="Search job title, skills or keywords"
-                  className="w-full bg-transparent py-3 text-sm text-[#161616] outline-none placeholder:text-[#8c8c8c]"
+                  className="w-full bg-transparent py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400"
                 />
               </label>
 

@@ -26,20 +26,28 @@ function IndustriesPage() {
   return (
     <PublicShell>
       <PageHero
-        eyebrow="Industries"
-        title="Sector knowledge that shortens every search"
+        eyebrow="Target Sectors"
+        title={
+          <>
+            Sector knowledge that{" "}
+            <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              shortens every search
+            </span>
+          </>
+        }
         subtitle="Screening is executed by consultants who know the domain, the tooling and the regulatory context."
       />
 
-      <section className="py-20 bg-[#ffffff]">
+      <section className="py-20 bg-white">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map((industry) => (
             <article
               key={industry.name}
-              className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-8 transition-colors hover:border-[#0f62fe]"
+              className="group rounded-2xl border border-slate-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:border-blue-400 hover:shadow-md hover:-translate-y-1"
             >
-              <h2 className="text-lg font-normal text-[#161616]">{industry.name}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-[#525252]">{industry.note}</p>
+              <div className="mb-4 size-2 rounded-full bg-blue-500 group-hover:scale-125 transition-transform" />
+              <h2 className="text-lg font-bold text-slate-900">{industry.name}</h2>
+              <p className="mt-2.5 text-sm leading-relaxed text-slate-600">{industry.note}</p>
             </article>
           ))}
         </div>
@@ -47,9 +55,23 @@ function IndustriesPage() {
         <div className="container-page mt-16 text-center">
           <Link
             to="/careers"
-            className="inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
+            className="btn-liquid-primary inline-flex h-11 items-center justify-center px-8 text-sm font-semibold"
           >
-            Explore Opportunities →
+            <span className="btn-content-wrap">
+              <span>Explore Opportunities</span>
+              <svg
+                className="btn-arrow-icon size-4"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3.333 8h9.334M8.667 4l4 4-4 4" />
+              </svg>
+            </span>
           </Link>
         </div>
       </section>

@@ -26,15 +26,22 @@ function AboutPage() {
   return (
     <PublicShell>
       <PageHero
-        eyebrow="About us"
-        title="A consultancy partner for organizations that cannot afford a mis-hire"
+        eyebrow="About Us"
+        title={
+          <>
+            A consultancy partner for organizations that{" "}
+            <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              cannot afford a mis-hire
+            </span>
+          </>
+        }
         subtitle="We provide professional consultancy, staffing, recruitment and digital solutions to enterprises across India and global delivery hubs."
       />
 
-      <section className="py-20 bg-[#ffffff]">
+      <section className="py-20 bg-white">
         <div className="container-page grid gap-16 lg:grid-cols-[1.2fr_1fr]">
-          <div className="space-y-6 text-[#525252] leading-relaxed tracking-[0.16px]">
-            <h2 className="text-2xl font-light text-[#161616] md:text-3xl">Who We Are</h2>
+          <div className="space-y-6 text-slate-600 leading-relaxed tracking-[0.16px]">
+            <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">Who We Are</h2>
             <p>
               Nexus Talent was founded by consultants who spent their careers inside large delivery
               organizations. We understood the cost of a slow shortlist, a wrong hire, and a vendor
@@ -46,7 +53,7 @@ function AboutPage() {
               insurance. Our teams handle permanent recruitment, contract staffing, staff
               augmentation and fully managed workforce engagements.
             </p>
-            <h2 className="pt-6 text-2xl font-light text-[#161616] md:text-3xl">How We Work</h2>
+            <h2 className="pt-6 text-2xl font-bold text-slate-900 md:text-3xl">How We Work</h2>
             <p>
               Each engagement gets a named consultant, a written requirement brief and a structured
               assessment scorecard. Candidates get straight answers and a single, simple application
@@ -54,23 +61,23 @@ function AboutPage() {
             </p>
           </div>
 
-          <aside className="h-fit rounded-none border border-[#e0e0e0] bg-[#f4f4f4] p-8">
-            <h3 className="text-xs uppercase tracking-[0.16px] text-[#525252]">
+          <aside className="h-fit rounded-2xl border border-slate-200/80 bg-slate-50/70 p-8 shadow-sm backdrop-blur-sm">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               What sets us apart
             </h3>
             <ul className="mt-6 space-y-5">
               {whyChooseUs.map((item) => (
-                <li key={item.title} className="border-b border-[#e0e0e0] pb-4 last:border-b-0">
-                  <p className="text-sm font-medium text-[#161616]">{item.title}</p>
-                  <p className="mt-1 text-xs text-[#525252] leading-relaxed">{item.description}</p>
+                <li key={item.title} className="border-b border-slate-200/70 pb-4 last:border-b-0">
+                  <p className="text-sm font-semibold text-slate-900">{item.title}</p>
+                  <p className="mt-1 text-xs text-slate-600 leading-relaxed">{item.description}</p>
                 </li>
               ))}
             </ul>
             <Link
               to="/contact"
-              className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
+              className="btn-liquid-primary mt-8 inline-flex h-11 items-center justify-center px-6 text-sm font-semibold"
             >
-              Talk to Us
+              <span className="btn-content-wrap">Talk to Us</span>
             </Link>
           </aside>
         </div>

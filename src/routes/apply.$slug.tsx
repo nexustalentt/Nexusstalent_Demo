@@ -419,19 +419,35 @@ function ApplyPage() {
 
   return (
     <PublicShell>
-      <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-12">
-        <div className="container-page">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-[#f8fafc] py-14">
+        {/* Faint digital dot-grid pattern */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-45 [background-image:radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_85%_70%_at_50%_35%,#000_70%,transparent_100%)]"
+          aria-hidden="true"
+        />
+
+        {/* Ambient mesh gradient glows */}
+        <div
+          className="pointer-events-none absolute -top-10 left-[5%] h-[350px] w-[400px] rounded-full bg-gradient-to-r from-purple-500/15 via-blue-600/15 to-cyan-400/15 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -top-20 right-[5%] h-[380px] w-[450px] rounded-full bg-gradient-to-br from-blue-600/15 via-cyan-400/12 to-purple-500/12 blur-3xl"
+          aria-hidden="true"
+        />
+
+        <div className="container-page relative z-10">
           <Link
             to="/careers/$slug"
             params={{ slug }}
-            className="inline-flex items-center gap-2 text-xs text-[#525252] hover:text-[#0f62fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-xs backdrop-blur-sm transition-colors hover:text-blue-600"
           >
             <ArrowLeft className="size-3.5" aria-hidden="true" /> Back to job details
           </Link>
-          <h1 className="mt-4 text-3xl font-light text-[#161616] md:text-4xl">
+          <h1 className="mt-5 text-3xl font-extrabold text-slate-900 md:text-4xl">
             Apply — {job.title}
           </h1>
-          <p className="mt-2 text-sm text-[#525252]">
+          <p className="mt-2 text-sm text-slate-600">
             {[job.location, job.employment_type, job.work_mode].filter(Boolean).join(" · ")}
           </p>
         </div>
@@ -874,10 +890,12 @@ function ApplyPage() {
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex h-11 items-center gap-2 rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white hover:bg-[#0050e6] disabled:opacity-60 cursor-pointer"
+              className="btn-liquid-primary inline-flex h-11 items-center justify-center px-8 text-sm font-semibold disabled:opacity-60 cursor-pointer"
             >
-              {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-              {pending ? "Submitting…" : "Submit Application"}
+              <span className="btn-content-wrap">
+                {pending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+                <span>{pending ? "Submitting…" : "Submit Application"}</span>
+              </span>
             </button>
           </div>
         </form>

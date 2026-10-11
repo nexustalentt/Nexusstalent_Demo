@@ -76,8 +76,8 @@ function ContactPage() {
   }
 
   const fieldClass =
-    "mt-1.5 w-full rounded-none border-0 border-b border-[#e0e0e0] bg-[#f4f4f4] px-4 py-2.5 text-sm text-[#161616] outline-none transition-colors focus:border-b-2 focus:border-b-[#0f62fe]";
-  const labelClass = "text-xs font-normal uppercase tracking-[0.16px] text-[#525252]";
+    "mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500";
+  const labelClass = "text-xs font-semibold uppercase tracking-wider text-slate-600";
 
   const details = [
     { label: "Email", value: settings?.company_email },
@@ -90,19 +90,26 @@ function ContactPage() {
   return (
     <PublicShell>
       <PageHero
-        eyebrow="Contact us"
-        title="Talk to a consultant, not a call centre"
+        eyebrow="Get In Touch"
+        title={
+          <>
+            Talk to a consultant,{" "}
+            <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              not a call centre
+            </span>
+          </>
+        }
         subtitle="Share your hiring requirement or consulting need and we will respond within one business day."
       />
 
-      <section className="py-20 bg-[#ffffff]">
+      <section className="py-20 bg-white">
         <div className="container-page grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <form
             onSubmit={handleSubmit}
             noValidate
-            className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-8 sm:p-10"
+            className="rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-sm"
           >
-            <h2 className="text-xl font-normal text-[#161616]">Send an inquiry</h2>
+            <h2 className="text-xl font-bold text-slate-900">Send an inquiry</h2>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               <div>
                 <label className={labelClass} htmlFor="name">
@@ -110,7 +117,7 @@ function ContactPage() {
                 </label>
                 <input id="name" name="name" maxLength={100} className={fieldClass} />
                 {errors["name"] ? (
-                  <p className="mt-1 text-xs text-[#da1e28]">{errors["name"]}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors["name"]}</p>
                 ) : null}
               </div>
               <div>
@@ -125,7 +132,7 @@ function ContactPage() {
                   className={fieldClass}
                 />
                 {errors["email"] ? (
-                  <p className="mt-1 text-xs text-[#da1e28]">{errors["email"]}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors["email"]}</p>
                 ) : null}
               </div>
               <div>
@@ -152,30 +159,32 @@ function ContactPage() {
                   className={fieldClass}
                 />
                 {errors["message"] ? (
-                  <p className="mt-1 text-xs text-[#da1e28]">{errors["message"]}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors["message"]}</p>
                 ) : null}
               </div>
             </div>
             <button
               type="submit"
               disabled={pending}
-              className="mt-8 inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-8 text-sm font-normal text-white transition-colors hover:bg-[#0050e6] disabled:opacity-60 cursor-pointer"
+              className="btn-liquid-primary mt-8 inline-flex h-11 items-center justify-center px-8 text-sm font-semibold disabled:opacity-60 cursor-pointer"
             >
-              {pending ? "Sending…" : "Send Inquiry"}
+              <span className="btn-content-wrap">
+                {pending ? "Sending…" : "Send Inquiry"}
+              </span>
             </button>
           </form>
 
-          <aside className="h-fit rounded-none border border-[#e0e0e0] bg-[#f4f4f4] p-8">
-            <h2 className="text-xs uppercase tracking-[0.16px] text-[#525252]">
+          <aside className="h-fit rounded-2xl border border-slate-200/80 bg-slate-50/70 p-8 shadow-sm backdrop-blur-sm">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Reach us directly
             </h2>
             <dl className="mt-6 space-y-5">
               {details.map((detail) => (
-                <div key={detail.label} className="border-b border-[#e0e0e0] pb-4 last:border-b-0">
-                  <dt className="text-[11px] uppercase tracking-[0.16px] text-[#8c8c8c]">
+                <div key={detail.label} className="border-b border-slate-200/70 pb-4 last:border-b-0">
+                  <dt className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
                     {detail.label}
                   </dt>
-                  <dd className="mt-1 text-sm font-normal text-[#161616]">{detail.value}</dd>
+                  <dd className="mt-1 text-sm font-semibold text-slate-900">{detail.value}</dd>
                 </div>
               ))}
             </dl>

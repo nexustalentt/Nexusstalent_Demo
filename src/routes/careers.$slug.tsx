@@ -113,54 +113,61 @@ function JobDetailPage() {
   ].filter((fact) => Boolean(fact.value));
 
   const applyPanel = (
-    <div className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6">
-      <h2 className="text-base font-normal text-[#161616]">Apply for this role</h2>
+    <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+      <h2 className="text-base font-bold text-slate-900">Apply for this role</h2>
       {canApply ? (
         <>
-          <p className="mt-2 text-xs text-[#525252] leading-relaxed">
+          <p className="mt-2 text-xs text-slate-600 leading-relaxed">
             Applications take a few minutes. No account or registration required.
           </p>
           {internalApply ? (
             <Link
               to="/apply/$slug"
               params={{ slug }}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
+              className="btn-liquid-primary mt-5 inline-flex h-11 w-full items-center justify-center px-6 text-sm font-semibold"
             >
-              Apply Now
+              <span className="btn-content-wrap">
+                <span>Apply Now</span>
+              </span>
             </Link>
           ) : (
             <a
               href={job.google_form_url!}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6]"
+              className="btn-liquid-primary mt-5 inline-flex h-11 w-full items-center justify-center px-6 text-sm font-semibold"
             >
-              Apply Now <ExternalLink className="size-4" aria-hidden="true" />
+              <span className="btn-content-wrap">
+                <span>Apply Now</span>
+                <ExternalLink className="size-4" aria-hidden="true" />
+              </span>
             </a>
           )}
           <button
             type="button"
             onClick={() => setReferralOpen(true)}
-            className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-none border border-[#161616] bg-transparent px-6 text-sm font-normal text-[#161616] transition-colors hover:bg-[#f4f4f4] cursor-pointer"
+            className="btn-liquid-secondary mt-3 inline-flex h-11 w-full items-center justify-center px-6 text-sm font-semibold cursor-pointer"
           >
-            <UserPlus className="size-4" aria-hidden="true" />
-            Refer Someone
+            <span className="btn-content-wrap">
+              <UserPlus className="size-4" aria-hidden="true" />
+              <span>Refer Someone</span>
+            </span>
           </button>
         </>
       ) : (
-        <div className="mt-3 rounded-none border border-dashed border-[#e0e0e0] bg-[#f4f4f4] p-4">
-          <p className="text-sm font-normal text-[#161616]">
+        <div className="mt-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm font-medium text-slate-900">
             Applications are currently unavailable for this position.
           </p>
-          <p className="mt-2 text-xs text-[#525252]">
+          <p className="mt-2 text-xs text-slate-600">
             Write to our recruitment team and we will notify you when it reopens.
           </p>
-          <Link to="/contact" className="mt-4 inline-flex text-xs text-[#0f62fe] hover:underline">
+          <Link to="/contact" className="mt-4 inline-flex text-xs font-semibold text-blue-600 hover:underline">
             Contact our team →
           </Link>
         </div>
       )}
-      <p className="mt-5 text-xs text-[#8c8c8c]">
+      <p className="mt-5 text-xs text-slate-400">
         Last updated {formatDate(job.updated_at)}
       </p>
     </div>
@@ -168,19 +175,35 @@ function JobDetailPage() {
 
   return (
     <PublicShell>
-      <section className="border-b border-[#e0e0e0] bg-[#f4f4f4] py-14">
-        <div className="container-page">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-[#f8fafc] py-14 md:py-16">
+        {/* Faint digital dot-grid pattern */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-45 [background-image:radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_85%_70%_at_50%_35%,#000_70%,transparent_100%)]"
+          aria-hidden="true"
+        />
+
+        {/* Ambient mesh gradient glows */}
+        <div
+          className="pointer-events-none absolute -top-10 left-[5%] h-[350px] w-[400px] rounded-full bg-gradient-to-r from-purple-500/15 via-blue-600/15 to-cyan-400/15 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -top-20 right-[5%] h-[380px] w-[450px] rounded-full bg-gradient-to-br from-blue-600/15 via-cyan-400/12 to-purple-500/12 blur-3xl"
+          aria-hidden="true"
+        />
+
+        <div className="container-page relative z-10">
           <Link
             to="/careers"
-            className="inline-flex items-center gap-2 text-xs text-[#525252] transition-colors hover:text-[#0f62fe]"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3.5 py-1 text-xs font-semibold text-slate-700 shadow-xs backdrop-blur-sm transition-colors hover:text-blue-600"
           >
             <ArrowLeft className="size-3.5" aria-hidden="true" /> All Openings
           </Link>
-          <h1 className="mt-4 max-w-3xl text-3xl font-light leading-tight text-[#161616] md:text-5xl">
+          <h1 className="mt-5 max-w-3xl text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
             {job.title}
           </h1>
           {job.short_description ? (
-            <p className="mt-3 max-w-2xl text-base text-[#525252] tracking-[0.16px]">
+            <p className="mt-3 max-w-2xl text-base text-slate-600 tracking-[0.16px]">
               {job.short_description}
             </p>
           ) : null}
@@ -189,7 +212,7 @@ function JobDetailPage() {
               {job.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="rounded-none border border-[#e0e0e0] bg-[#ffffff] px-2.5 py-1 text-xs text-[#525252]"
+                  className="rounded-full border border-slate-200/80 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-xs backdrop-blur-sm"
                 >
                   {skill}
                 </span>
@@ -199,10 +222,10 @@ function JobDetailPage() {
         </div>
       </section>
 
-      <section className="py-16 bg-[#ffffff]">
+      <section className="py-16 bg-white">
         <div className="container-page grid gap-12 lg:grid-cols-[1fr_20rem]">
           <div className="space-y-10">
-            <dl className="grid grid-cols-2 gap-4 rounded-none border border-[#e0e0e0] bg-[#f4f4f4] p-6 sm:grid-cols-3">
+            <dl className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-6 sm:grid-cols-3 shadow-xs">
               {facts.map((fact) => (
                 <div key={fact.label} className="border-b border-[#e0e0e0] pb-2 last:border-b-0 sm:border-b-0">
                   <dt className="text-[11px] uppercase tracking-[0.16px] text-[#8c8c8c]">

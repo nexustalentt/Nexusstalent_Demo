@@ -75,41 +75,69 @@ function ProductsPage() {
   return (
     <PublicShell>
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden border-b border-[#e0e0e0] bg-white pt-16 pb-20 md:pt-24 md:pb-28">
-        <div className="container-page">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-[#f8fafc] pt-16 pb-20 md:pt-24 md:pb-28">
+        {/* Faint digital dot-grid pattern */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-45 [background-image:radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_85%_70%_at_50%_35%,#000_70%,transparent_100%)]"
+          aria-hidden="true"
+        />
+
+        {/* Ambient mesh gradient glows (purple, deep blue, cyan) */}
+        <div
+          className="pointer-events-none absolute top-4 left-[5%] h-[450px] w-[500px] rounded-full bg-gradient-to-r from-purple-500/15 via-blue-600/15 to-cyan-400/15 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -top-20 right-[-5%] h-[500px] w-[520px] rounded-full bg-gradient-to-br from-blue-600/15 via-cyan-400/12 to-purple-500/12 blur-3xl"
+          aria-hidden="true"
+        />
+
+        {/* Ambient glowing particles */}
+        <div
+          className="pointer-events-none absolute top-28 right-[30%] size-2 rounded-full bg-cyan-400/60 blur-[0.5px] hidden lg:block"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute top-44 right-[22%] size-2.5 rounded-full bg-purple-500/40 blur-[0.5px] hidden lg:block"
+          aria-hidden="true"
+        />
+
+        <div className="container-page relative z-10">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 border border-[#e0e0e0] bg-[#f4f4f4] px-3 py-1 font-mono text-xs font-semibold text-[#525252]">
-              <span className="size-1.5 bg-[#0f62fe]" />
-              ENGINEERING LABS · ACTIVE PRODUCT BUILDS
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/75 px-4 py-1.5 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur-md">
+              <span className="size-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+              <span>ENGINEERING LABS · ACTIVE PRODUCT BUILDS</span>
             </div>
 
-            <h1 className="text-4xl font-light tracking-tight text-[#161616] sm:text-5xl lg:text-6xl">
-              What we are <span className="font-normal text-[#0f62fe]">currently working on</span> & shipping
+            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl leading-[1.12]">
+              What we are{" "}
+              <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                currently working on
+              </span>{" "}
+              &amp; shipping
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#525252]">
+            <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600">
               From next-generation e-commerce mobile shopping apps to invisible desktop AI meeting
               co-pilots, explore the platforms Nexus Talent engineers are building, iterating, and
               deploying into production.
             </p>
 
             {/* Quick Metrics Bar */}
-            <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-[#e0e0e0] pt-6 font-mono text-xs text-[#525252]">
-              <div className="flex items-center gap-2">
-                <span className="size-2 bg-[#0f62fe] animate-pulse" />
-                <span className="font-semibold text-[#161616]">{currentlyWorkingOnCount}</span>
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-xs">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-blue-50/80 px-4 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm">
+                <span className="size-2 rounded-full bg-blue-600 animate-pulse" />
+                <span className="font-bold text-slate-900">{currentlyWorkingOnCount}</span>
                 <span>Active Builds In Progress</span>
               </div>
-              <span className="text-[#e0e0e0]">|</span>
-              <div className="flex items-center gap-2">
-                <span className="size-2 bg-[#24a148]" />
-                <span className="font-semibold text-[#161616]">{liveCount}</span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50/80 px-4 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm">
+                <span className="size-2 rounded-full bg-emerald-500" />
+                <span className="font-bold text-slate-900">{liveCount}</span>
                 <span>Live in Production</span>
               </div>
-              <span className="text-[#e0e0e0]">|</span>
-              <div className="flex items-center gap-2">
-                <Globe className="size-3.5 text-[#0f62fe]" />
-                <span>Web, Mobile & Win32 Runtimes</span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-4 py-1.5 font-medium text-slate-700 shadow-xs backdrop-blur-sm">
+                <Globe className="size-3.5 text-blue-600" />
+                <span>Web, Mobile &amp; Win32 Runtimes</span>
               </div>
             </div>
           </div>
@@ -117,28 +145,28 @@ function ProductsPage() {
       </section>
 
       {/* FILTER TABS & PRODUCT CATALOG */}
-      <section className="py-16 bg-[#f4f4f4] border-b border-[#e0e0e0]">
+      <section className="py-16 bg-white border-b border-slate-200/70">
         <div className="container-page">
           {/* Header & Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
             <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-[#0f62fe] font-semibold">
+              <p className="text-xs uppercase tracking-wider text-blue-600 font-bold">
                 Product Catalog
               </p>
-              <h2 className="text-2xl font-light text-[#161616] mt-1">
+              <h2 className="text-2xl font-bold text-slate-900 mt-1">
                 Explore our software builds
               </h2>
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap items-center gap-1 border border-[#e0e0e0] bg-white p-1">
+            <div className="flex flex-wrap items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50/60 p-1.5 shadow-xs">
               <button
                 type="button"
                 onClick={() => setSelectedFilter("all")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   selectedFilter === "all"
-                    ? "bg-[#0f62fe] text-white"
-                    : "text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
                 All ({products.length})
@@ -146,48 +174,48 @@ function ProductsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedFilter("in_development")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
                   selectedFilter === "in_development"
-                    ? "bg-[#0f62fe] text-white"
-                    : "text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
-                <span className="size-1.5 bg-[#0f62fe] animate-pulse" />
+                <span className="size-1.5 rounded-full bg-blue-400 animate-pulse" />
                 Working On ({currentlyWorkingOnCount})
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedFilter("live")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
                   selectedFilter === "live"
-                    ? "bg-[#0f62fe] text-white"
-                    : "text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
-                <span className="size-1.5 bg-[#24a148]" />
+                <span className="size-1.5 rounded-full bg-emerald-400" />
                 Live ({liveCount})
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedFilter("ecommerce")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   selectedFilter === "ecommerce"
-                    ? "bg-[#0f62fe] text-white"
-                    : "text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
-                Shopping & Commerce
+                Shopping &amp; Commerce
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedFilter("ai")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   selectedFilter === "ai"
-                    ? "bg-[#0f62fe] text-white"
-                    : "text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 }`}
               >
-                Desktop & AI
+                Desktop &amp; AI
               </button>
             </div>
           </div>
@@ -214,38 +242,38 @@ function ProductsPage() {
                 return (
                   <article
                     key={product.id}
-                    className="border border-[#e0e0e0] bg-white p-6 md:p-8 flex flex-col justify-between transition-colors hover:border-[#0f62fe] group"
+                    className="rounded-2xl border border-slate-200/80 bg-white p-6 md:p-8 flex flex-col justify-between shadow-sm transition-all duration-300 hover:border-blue-400 hover:shadow-md group"
                   >
                     <div>
                       {/* Top Meta Bar */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e0e0e0] pb-3 mb-5">
-                        <span className="font-mono text-xs uppercase tracking-wider font-semibold text-[#0f62fe]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-5">
+                        <span className="text-xs uppercase tracking-wider font-bold text-blue-600">
                           {product.category}
                         </span>
 
                         <div className="flex items-center gap-2">
                           {isWorkingOn && (
-                            <span className="inline-flex items-center gap-1.5 border border-[#0f62fe] bg-[#edf5ff] px-2 py-0.5 font-mono text-[11px] font-semibold text-[#0043ce]">
-                              <span className="size-1.5 bg-[#0f62fe] animate-pulse" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/80 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                              <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
                               {product.status_label || "Currently Working On"}
                             </span>
                           )}
 
                           {isLive && (
-                            <span className="inline-flex items-center gap-1.5 border border-[#24a148] bg-[#defbe6] px-2 py-0.5 font-mono text-[11px] font-semibold text-[#0e6027]">
-                              <span className="size-1.5 bg-[#24a148]" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50/80 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+                              <span className="size-1.5 rounded-full bg-emerald-500" />
                               {product.status_label || "Live in Production"}
                             </span>
                           )}
 
                           {!isWorkingOn && !isLive && (
-                            <span className="border border-[#8d8d8d] bg-[#f4f4f4] px-2 py-0.5 font-mono text-[11px] text-[#161616]">
+                            <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] text-slate-600">
                               {product.status_label || product.status.toUpperCase()}
                             </span>
                           )}
 
                           {product.version && (
-                            <span className="font-mono text-xs text-[#8d8d8d]">
+                            <span className="text-xs text-slate-400">
                               {product.version}
                             </span>
                           )}
@@ -253,29 +281,29 @@ function ProductsPage() {
                       </div>
 
                       {/* Title & Tagline */}
-                      <h3 className="text-xl font-normal text-[#161616] group-hover:text-[#0f62fe] transition-colors">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                         {product.name}
                       </h3>
 
-                      <p className="mt-2 text-sm text-[#525252] leading-relaxed">
+                      <p className="mt-2 text-sm text-slate-600 leading-relaxed">
                         {product.tagline}
                       </p>
 
                       {product.description && (
-                        <p className="mt-3 text-xs text-[#525252] leading-relaxed line-clamp-3">
+                        <p className="mt-3 text-xs text-slate-500 leading-relaxed line-clamp-3">
                           {product.description}
                         </p>
                       )}
 
                       {/* Highlights */}
                       {product.highlights && product.highlights.length > 0 && (
-                        <div className="mt-5 space-y-1.5 border-t border-[#e0e0e0] pt-4">
-                          <p className="font-mono text-[11px] uppercase tracking-wider font-semibold text-[#161616] mb-2">
+                        <div className="mt-5 space-y-1.5 border-t border-slate-100 pt-4">
+                          <p className="text-[11px] uppercase tracking-wider font-semibold text-slate-800 mb-2">
                             Key Architectural Highlights
                           </p>
                           {product.highlights.slice(0, 3).map((highlight) => (
-                            <div key={highlight} className="flex items-start gap-2 text-xs text-[#525252]">
-                              <CheckCircle2 className="size-3.5 text-[#24a148] shrink-0 mt-0.5" />
+                            <div key={highlight} className="flex items-start gap-2 text-xs text-slate-600">
+                              <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0 mt-0.5" />
                               <span>{highlight}</span>
                             </div>
                           ))}
@@ -284,13 +312,13 @@ function ProductsPage() {
                     </div>
 
                     {/* Bottom Area: Tech Stack & Actions */}
-                    <div className="mt-6 pt-5 border-t border-[#e0e0e0]">
+                    <div className="mt-6 pt-5 border-t border-slate-100">
                       {/* Tech Pills */}
                       <div className="flex flex-wrap gap-1.5 mb-5">
                         {product.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="border border-[#e0e0e0] bg-[#f4f4f4] px-2 py-0.5 font-mono text-[11px] text-[#161616]"
+                            className="rounded-full border border-slate-200/80 bg-slate-50/70 px-2.5 py-0.5 text-[11px] font-medium text-slate-600"
                           >
                             {tag}
                           </span>
@@ -307,11 +335,13 @@ function ProductsPage() {
                               <a
                                 href={action.url}
                                 download={action.downloadFilename}
-                                className="inline-flex items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0353e9]"
+                                className="btn-liquid-primary inline-flex h-9 items-center justify-center px-4 text-xs font-semibold"
                                 title={`Download ${action.downloadFilename || "executable"}`}
                               >
-                                <Download className="size-3.5" />
-                                <span>{action.label}</span>
+                                <span className="btn-content-wrap">
+                                  <Download className="size-3.5" />
+                                  <span>{action.label}</span>
+                                </span>
                               </a>
                             );
                           }
@@ -320,10 +350,12 @@ function ProductsPage() {
                               href={action.url}
                               target={action.url.startsWith("http") ? "_blank" : undefined}
                               rel={action.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                              className="inline-flex items-center justify-center gap-2 rounded-none bg-[#0f62fe] px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0353e9]"
+                              className="btn-liquid-primary inline-flex h-9 items-center justify-center px-4 text-xs font-semibold"
                             >
-                              <span>{action.label}</span>
-                              <ExternalLink className="size-3.5" />
+                              <span className="btn-content-wrap">
+                                <span>{action.label}</span>
+                                <ExternalLink className="size-3.5" />
+                              </span>
                             </a>
                           );
                         })()}
@@ -331,10 +363,23 @@ function ProductsPage() {
                         {product.id === "prod-zozii-ai-02" && (
                           <Link
                             to="/zozii"
-                            className="inline-flex items-center justify-center gap-1.5 rounded-none border border-[#0f62fe] px-4 py-2.5 text-xs font-semibold text-[#0f62fe] hover:bg-[#edf5ff] transition-colors"
+                            className="btn-liquid-secondary inline-flex h-9 items-center justify-center px-4 text-xs font-semibold"
                           >
-                            <span>View Zozii Specs</span>
-                            <ArrowRight className="size-3.5" />
+                            <span className="btn-content-wrap">
+                              <span>View Zozii Specs</span>
+                              <svg
+                                className="btn-arrow-icon size-3.5"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                aria-hidden="true"
+                              >
+                                <path d="M3.333 8h9.334M8.667 4l4 4-4 4" />
+                              </svg>
+                            </span>
                           </Link>
                         )}
                       </div>
