@@ -172,7 +172,6 @@ function HomePage() {
                 <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
                   We Build Apps, Softwares &amp; Websites.
                 </span>
-                <span className="inline-block animate-pulse font-normal text-cyan-400 ml-1">|</span>
               </h1>
 
               {/* Sub-headline Paragraph */}
