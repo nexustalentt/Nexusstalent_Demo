@@ -13,7 +13,11 @@ const INITIAL_GREETING: ChatMessage = {
   text: "Hi there! 👋 I'm Nexi, the Nexus Talent assistant. Need help with our products, numbers, or services?",
 };
 
-export function NexiChatWidget() {
+export interface NexiChatWidgetProps {
+  hideFab?: boolean;
+}
+
+export function NexiChatWidget({ hideFab = false }: NexiChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_GREETING]);
   const [inputValue, setInputValue] = useState("");
@@ -110,50 +114,52 @@ export function NexiChatWidget() {
   return (
     <div className="nexi-widget-container" id="nexiWidgetContainer">
       {/* 64px Circular Floating Action Button */}
-      <button
-        type="button"
-        id="nexiToggleBtn"
-        className={`nexi-fab ${isOpen ? "nexi-active" : ""}`}
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-label={isOpen ? "Close Nexi AI Chat" : "Chat with Nexi AI Assistant"}
-      >
-        {/* Pulsing Green Online Status Dot */}
-        <span className="nexi-fab-status-dot" aria-hidden="true">
-          <span className="nexi-fab-status-ping" />
-          <span className="nexi-fab-status-core" />
-        </span>
-
-        {/* Chat Icon */}
-        <svg
-          className="nexi-fab-icon nexi-icon-chat"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {!hideFab && (
+        <button
+          type="button"
+          id="nexiToggleBtn"
+          className={`nexi-fab ${isOpen ? "nexi-active" : ""}`}
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-label={isOpen ? "Close Nexi AI Chat" : "Chat with Nexi AI Assistant"}
         >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
+          {/* Pulsing Green Online Status Dot */}
+          <span className="nexi-fab-status-dot" aria-hidden="true">
+            <span className="nexi-fab-status-ping" />
+            <span className="nexi-fab-status-core" />
+          </span>
 
-        {/* Close Icon (Visible when open) */}
-        <svg
-          className="nexi-fab-icon nexi-icon-close"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
+          {/* Chat Icon */}
+          <svg
+            className="nexi-fab-icon nexi-icon-chat"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+
+          {/* Close Icon (Visible when open) */}
+          <svg
+            className="nexi-fab-icon nexi-icon-close"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      )}
 
       {/* Dark Theme Chat Window */}
       <div

@@ -81,7 +81,7 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
   return (
     <aside
       aria-label="Nexus Talent Support Widget"
-      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom,1.25rem))] right-[max(1.25rem,env(safe-area-inset-right,1.25rem))] z-40 select-none pointer-events-auto"
+      className="fixed bottom-6 right-6 z-40 select-none pointer-events-auto"
     >
       {/* Clickable Single Container Wrapping Avatar & Speech Bubble */}
       <div
@@ -139,23 +139,98 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
         {/* Assistant Avatar with Waving Character & Green Online Indicator */}
         <div className="relative shrink-0">
           <div
-            className="relative size-14 sm:size-16 bg-gradient-to-b from-[#edf5ff] via-[#d0e2ff] to-[#a6c8ff] border-2 border-white shadow-[0_6px_22px_rgba(15,98,254,0.30)] group-hover:shadow-[0_8px_28px_rgba(15,98,254,0.45)] flex items-end justify-center overflow-hidden transition-all duration-300"
-            style={{ borderRadius: "9999px" }}
+            className="relative w-14 h-14 bg-gradient-to-b from-[#edf5ff] via-[#d0e2ff] to-[#a6c8ff] border-2 border-white shadow-[0_6px_22px_rgba(15,98,254,0.30)] group-hover:shadow-[0_8px_28px_rgba(15,98,254,0.45)] flex items-end justify-center overflow-hidden transition-all duration-300 rounded-full"
           >
-            {/* Illustrated Female Support Assistant Waving */}
-            <picture>
-              <source srcSet="/images/support-assistant-avatar.webp" type="image/webp" />
-              <img
-                src="/images/support-assistant-avatar.png"
-                alt="Nexus Talent Support Specialist"
-                width={64}
-                height={64}
-                loading="eager"
-                className={`w-full h-full object-cover object-top transition-transform duration-300 ${
-                  isWaving ? "animate-assistant-wave" : "group-hover:rotate-2"
-                }`}
+            {/* Modern, Flat-Vector Cute Waving Teddy Bear SVG */}
+            <svg
+              viewBox="0 0 100 100"
+              className="w-full h-full select-none"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label="Cute Waving Teddy Bear"
+            >
+              {/* Left Ear */}
+              <g id="teddy-left-ear">
+                <circle cx="30" cy="28" r="11" fill="#8D5524" />
+                <circle cx="30" cy="28" r="6.5" fill="#E0A96D" />
+              </g>
+
+              {/* Right Ear */}
+              <g id="teddy-right-ear">
+                <circle cx="70" cy="28" r="11" fill="#8D5524" />
+                <circle cx="70" cy="28" r="6.5" fill="#E0A96D" />
+              </g>
+
+              {/* Body / Torso */}
+              <path
+                d="M 27 68 C 24 80 23 92 23 100 L 77 100 C 77 92 76 80 73 68 Z"
+                fill="#8D5524"
               />
-            </picture>
+              {/* Tummy Patch */}
+              <ellipse cx="50" cy="85" rx="16.5" ry="16.5" fill="#F8DEC0" />
+
+              {/* Left Arm (Resting on side) */}
+              <path
+                d="M 28 68 C 23 74 22 83 25 88 C 28 92 34 91 35 85 C 36 80 35 73 31 68 Z"
+                fill="#8D5524"
+              />
+              {/* Left Paw Pad */}
+              <ellipse cx="29" cy="85" rx="3.5" ry="3.5" fill="#F8DEC0" />
+
+              {/* Head Base */}
+              <ellipse cx="50" cy="48" rx="23.5" ry="21.5" fill="#9C5E2D" />
+
+              {/* Rosy Cheeks */}
+              <ellipse cx="33" cy="51" rx="4.5" ry="2.8" fill="#FCA5A5" opacity="0.65" />
+              <ellipse cx="67" cy="51" rx="4.5" ry="2.8" fill="#FCA5A5" opacity="0.65" />
+
+              {/* Eyes with Sparkle Highlights */}
+              <g id="teddy-eyes">
+                {/* Left Eye */}
+                <circle cx="39.5" cy="44" r="3.6" fill="#231409" />
+                <circle cx="38.3" cy="42.7" r="1.3" fill="#FFFFFF" />
+                <circle cx="40.8" cy="45.1" r="0.6" fill="#FFFFFF" opacity="0.8" />
+
+                {/* Right Eye */}
+                <circle cx="60.5" cy="44" r="3.6" fill="#231409" />
+                <circle cx="59.3" cy="42.7" r="1.3" fill="#FFFFFF" />
+                <circle cx="61.8" cy="45.1" r="0.6" fill="#FFFFFF" opacity="0.8" />
+              </g>
+
+              {/* Muzzle / Snout */}
+              <ellipse cx="50" cy="54" rx="12.5" ry="9.5" fill="#F8DEC0" />
+
+              {/* Nose */}
+              <ellipse cx="50" cy="49.5" rx="4.5" ry="3.2" fill="#2E180B" />
+              <ellipse cx="48.8" cy="48.6" rx="1.2" ry="0.8" fill="#FFFFFF" opacity="0.6" />
+
+              {/* Mouth / Smile */}
+              <path
+                d="M 46.5 54.5 Q 50 57.5 50 52.8 Q 50 57.5 53.5 54.5"
+                fill="none"
+                stroke="#2E180B"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+
+              {/* Waving Right Arm / Paw */}
+              <g
+                className="animate-[wave_1.5s_infinite_ease-in-out_alternate]"
+                style={{ transformOrigin: "67px 65px" }}
+              >
+                {/* Arm extending up and to the right */}
+                <path
+                  d="M 65 65 C 68 57 73 49 76 41 C 78 37 83 34 86 36 C 89 39 88 44 85 49 C 81 56 76 63 71 69 Z"
+                  fill="#8D5524"
+                />
+                {/* Main Paw Pad */}
+                <ellipse cx="82" cy="42" rx="3.6" ry="3.8" transform="rotate(-25 82 42)" fill="#F8DEC0" />
+                {/* Toe Beans */}
+                <circle cx="81.5" cy="36" r="1.1" fill="#F8DEC0" />
+                <circle cx="84.5" cy="37.2" r="1.1" fill="#F8DEC0" />
+                <circle cx="86.8" cy="40.2" r="1.1" fill="#F8DEC0" />
+              </g>
+            </svg>
           </div>
 
           {/* Green Online Status Dot with subtle pulse */}
@@ -165,8 +240,7 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
           >
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#24a148] opacity-75" />
             <span
-              className="relative inline-flex size-3.5 bg-[#24a148] border-2 border-white"
-              style={{ borderRadius: "9999px" }}
+              className="relative inline-flex size-3.5 bg-[#24a148] border-2 border-white rounded-full"
             />
           </span>
         </div>

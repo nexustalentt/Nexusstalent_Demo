@@ -41,14 +41,11 @@ export function PublicShell({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
       <SiteFooter />
 
-      {/* =========================================================================
-          [LEGACY FLOATING SUPPORT TRIGGER - SAFELY COMMENTED OUT]
-          Uncomment if you wish to restore the previous floating support trigger:
-          <FloatingSupportWidget onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
-         ========================================================================= */}
+      {/* Chat Support Widget with Animated Waving Teddy Bear */}
+      <FloatingSupportWidget onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
 
-      {/* New Custom-Built Nexi AI Chat Agent */}
-      <NexiChatWidget />
+      {/* Nexi AI Chat Agent (triggered directly by the support widget) */}
+      <NexiChatWidget hideFab={true} />
 
       {/* Legacy Inquiry Modal preserved without disruption */}
       <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />

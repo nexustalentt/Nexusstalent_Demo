@@ -243,6 +243,15 @@
   }
 }
 
+@keyframes wave {
+  0% {
+    transform: rotate(-14deg);
+  }
+  100% {
+    transform: rotate(18deg);
+  }
+}
+
 .animate-assistant-wave {
   display: inline-block;
   transform-origin: 70% 70%;
