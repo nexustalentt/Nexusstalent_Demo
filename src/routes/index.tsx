@@ -160,24 +160,32 @@ function HomePage() {
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             {/* Left Column: Headline, Copy & CTAs */}
             <div className="lg:col-span-7">
-              {/* Glowing Pill Badge */}
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/75 px-4 py-1.5 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur-md">
+              {/* Introductory Label Badge */}
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/75 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-blue-700 shadow-sm backdrop-blur-md">
                 <span className="size-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
-                <span>Connecting Potential - Inspiring Success</span>
+                <span>DIGITAL SOLUTIONS · BUILT AROUND YOU</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="mb-6 text-4xl font-extrabold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl text-slate-900">
-                <span className="block">We Don't Just Consult.</span>
-                <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
-                  We Build Apps, Softwares &amp; Websites.
+              <h1 className="mb-6 text-4xl font-extrabold leading-[1.14] tracking-tight sm:text-5xl lg:text-6xl text-slate-900">
+                <span>We Turn Ideas Into </span>
+                <span className="relative inline-block font-extrabold">
+                  <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                    Digital Reality.
+                  </span>
+                  {/* Subtle luminous accent glow */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 select-none bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent opacity-25 blur-[12px]"
+                  >
+                    Digital Reality.
+                  </span>
                 </span>
-                <span className="inline-block animate-pulse font-normal text-cyan-400 ml-1">|</span>
               </h1>
 
-              {/* Sub-headline Paragraph */}
+              {/* Sub-headline Description */}
               <p className="mb-8 max-w-xl text-base sm:text-lg leading-relaxed text-slate-600">
-                From launching custom mobile &amp; web applications to helping small businesses go online, we don't just advise—we architect and launch the digital solutions that scale your business.
+                From custom web and mobile applications to powerful websites for growing businesses, we turn your vision into digital experiences designed to stand out, work smarter, and scale with your ambition.
               </p>
 
               {/* CTA Buttons (Liquid Fill + Magnetic Lift) */}
@@ -186,14 +194,14 @@ function HomePage() {
                   to="/contact"
                   className="btn-liquid-primary inline-flex h-11 items-center justify-center px-7 text-sm font-semibold"
                 >
-                  <span className="btn-content-wrap">Work With Us</span>
+                  <span className="btn-content-wrap">Let’s Build Something</span>
                 </Link>
                 <Link
-                  to="/products"
+                  to="/services"
                   className="btn-liquid-secondary group inline-flex h-11 items-center justify-center px-6 text-sm font-semibold"
                 >
                   <span className="btn-content-wrap">
-                    <span>Explore Products &amp; Builds</span>
+                    <span>Explore Our Services</span>
                     <svg
                       className="btn-arrow-icon size-4"
                       viewBox="0 0 16 16"
@@ -204,7 +212,7 @@ function HomePage() {
                       strokeLinejoin="round"
                       aria-hidden="true"
                     >
-                      <path d="M3.333 8h9.334M8.667 4l4 4-4 4" />
+                      <path d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5" />
                     </svg>
                   </span>
                 </Link>
