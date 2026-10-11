@@ -20,6 +20,59 @@ function getProductsFilePath(): string | null {
   return null;
 }
 
+function getDeletedIdsFilePath(): string | null {
+  try {
+    const cwd = process.cwd();
+    return path.resolve(cwd, "src", "data", "deleted-products.json");
+  } catch {
+    return null;
+  }
+}
+
+export function readDeletedIdsFromFile(): Set<string> {
+  const filePath = getDeletedIdsFilePath();
+  if (filePath && fs.existsSync(filePath)) {
+    try {
+      const raw = fs.readFileSync(filePath, "utf-8");
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        return new Set(list.map(String));
+      }
+    } catch (e) {
+      console.warn("[products.server] Failed to read deleted-products.json:", e);
+    }
+  }
+  return new Set();
+}
+
+export function writeDeletedIdToFile(newId: string): void {
+  if (!newId || newId === "undefined") return;
+  const filePath = getDeletedIdsFilePath();
+  if (filePath) {
+    try {
+      const existing = readDeletedIdsFromFile();
+      existing.add(newId);
+      fs.writeFileSync(filePath, JSON.stringify(Array.from(existing), null, 2), "utf-8");
+    } catch (e) {
+      console.warn("[products.server] Failed to write deleted-products.json:", e);
+    }
+  }
+}
+
+export function removeDeletedIdFromFile(id: string): void {
+  const filePath = getDeletedIdsFilePath();
+  if (filePath && fs.existsSync(filePath)) {
+    try {
+      const existing = readDeletedIdsFromFile();
+      if (existing.delete(id)) {
+        fs.writeFileSync(filePath, JSON.stringify(Array.from(existing), null, 2), "utf-8");
+      }
+    } catch (e) {
+      console.warn("[products.server] Failed to update deleted-products.json:", e);
+    }
+  }
+}
+
 /**
  * Loads products from disk (src/data/products.json) or falls back to bundled default products.
  */
@@ -59,6 +112,11 @@ export function writeServerProductsToFile(products: ProductItem[]): boolean {
  * Gets all products on the server: tries Supabase first, falls back to disk file / memory cache.
  */
 export async function getProductsServer(): Promise<ProductItem[]> {
+  const deletedSet = readDeletedIdsFromFile();
+  for (const id of serverDeletedIds) {
+    deletedSet.add(id);
+  }
+
   // 1. Try Supabase if configured
   try {
     const { data, error } = await supabase
@@ -68,7 +126,7 @@ export async function getProductsServer(): Promise<ProductItem[]> {
 
     if (!error && Array.isArray(data) && data.length > 0) {
       const items = (data as unknown as ProductItem[])
-        .filter((p) => !serverDeletedIds.has(p.id))
+        .filter((p) => !deletedSet.has(p.id))
         .map(normalizeProduct);
       serverProductsCache = items;
       return items;
@@ -82,7 +140,7 @@ export async function getProductsServer(): Promise<ProductItem[]> {
     serverProductsCache = readServerProductsFromFile();
   }
 
-  return serverProductsCache.filter((p) => !serverDeletedIds.has(p.id));
+  return serverProductsCache.filter((p) => !deletedSet.has(p.id));
 }
 
 /**
@@ -93,6 +151,7 @@ export async function saveProductServer(productRecord: ProductItem): Promise<Pro
 
   // Unmark if previously deleted
   serverDeletedIds.delete(normalized.id);
+  removeDeletedIdFromFile(normalized.id);
 
   // 1. Update in-memory & file storage
   const current = serverProductsCache ?? readServerProductsFromFile();
@@ -138,7 +197,10 @@ export async function saveProductServer(productRecord: ProductItem): Promise<Pro
  * Deletes a product on the server (updating disk, memory, and Supabase).
  */
 export async function deleteProductServer(id: string): Promise<boolean> {
+  if (!id || id === "undefined") return false;
+
   serverDeletedIds.add(id);
+  writeDeletedIdToFile(id);
 
   const current = serverProductsCache ?? readServerProductsFromFile();
   const updatedList = current.filter((p) => p.id !== id);

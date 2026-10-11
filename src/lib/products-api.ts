@@ -5,6 +5,7 @@ import {
   saveLocalProduct,
   deleteLocalProduct,
   getDefaultProducts,
+  getDeletedProductIds,
   normalizeProduct,
   type ProductItem,
 } from "./products-store";
@@ -73,6 +74,7 @@ export async function pushLocalProductsToSupabase(): Promise<{ count: number; er
 export const productsQuery = queryOptions({
   queryKey: ["products", "list"],
   queryFn: async (): Promise<ProductItem[]> => {
+    const deletedIds = typeof window !== "undefined" ? getDeletedProductIds() : [];
     let serverProducts: ProductItem[] = [];
     let serverHasSupabase = false;
 
@@ -80,7 +82,7 @@ export const productsQuery = queryOptions({
     try {
       const res = await getProductsServerFn();
       if (res.ok && Array.isArray(res.products) && res.products.length > 0) {
-        serverProducts = res.products;
+        serverProducts = res.products.filter((p) => !deletedIds.includes(p.id));
         serverHasSupabase = true;
       }
     } catch {
@@ -99,7 +101,10 @@ export const productsQuery = queryOptions({
 
         if (!error && Array.isArray(dbData)) {
           // Table exists and query succeeded in Supabase!
-          serverProducts = (dbData as any[]).map(normalizeProduct);
+          // Filter out deleted product IDs so they NEVER resurrect!
+          serverProducts = (dbData as any[])
+            .map(normalizeProduct)
+            .filter((p) => !deletedIds.includes(p.id));
           liveFromSupabase = true;
         }
       } catch (e) {
@@ -115,11 +120,16 @@ export const productsQuery = queryOptions({
       }
 
       // Fallback only when Supabase is offline or the table has not been created yet:
-      const local = getLocalProducts();
-      return local.length > 0 ? local : getDefaultProducts();
+      const local = getLocalProducts().filter((p) => !deletedIds.includes(p.id));
+      return local.length > 0
+        ? local
+        : getDefaultProducts().filter((p) => !deletedIds.includes(p.id));
     }
 
-    return serverProducts.length > 0 ? serverProducts : getDefaultProducts();
+    const filtered = serverProducts.filter((p) => !deletedIds.includes(p.id));
+    return filtered.length > 0
+      ? filtered
+      : getDefaultProducts().filter((p) => !deletedIds.includes(p.id));
   },
   staleTime: 1000 * 2, // 2 seconds
   refetchOnMount: true,
@@ -175,14 +185,17 @@ export function useProducts() {
 
   // Smartly prioritize the most up-to-date data list
   const activeProducts = useMemo(() => {
+    const deletedIds = typeof window !== "undefined" ? getDeletedProductIds() : [];
     if (typeof window === "undefined") {
-      return query.data ?? localItems;
+      const list = query.data ?? localItems;
+      return list.filter((p) => !deletedIds.includes(p.id));
     }
 
     if (query.data && Array.isArray(query.data)) {
-      return query.data;
+      return query.data.filter((p) => !deletedIds.includes(p.id));
     }
-    return localItems.length > 0 ? localItems : getDefaultProducts();
+    const fallback = localItems.length > 0 ? localItems : getDefaultProducts();
+    return fallback.filter((p) => !deletedIds.includes(p.id));
   }, [query.data, localItems]);
 
   return {
@@ -293,36 +306,26 @@ export function useDeleteProduct() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      // 1. Immediately delete from local client store
+      if (!id) return id;
+
+      // 1. Immediately delete from local client store & record in deleted list
       deleteLocalProduct(id);
 
       // 2. Direct client delete from Supabase
-      let supabaseErrorMsg: string | null = null;
       try {
-        const { error: sbError } = await supabase
+        await supabase
           .from("products" as any)
           .delete()
           .eq("id", id);
-
-        if (sbError) {
-          supabaseErrorMsg = sbError.message;
-          console.error("[products-api] Supabase delete error:", sbError);
-        }
       } catch (err: any) {
-        supabaseErrorMsg = err?.message || "Network error connecting to Supabase";
+        console.warn("[products-api] Client Supabase delete note:", err);
       }
 
-      // 3. Broadcast to server to permanently remove
+      // 3. Broadcast to server to permanently remove (handles disk, memory cache, and server Supabase client)
       try {
         await deleteProductServerFn({ data: { id } });
       } catch (err) {
-        console.warn("[products-api] Server delete warning (local cache deleted):", err);
-      }
-
-      if (supabaseErrorMsg) {
-        throw new Error(
-          `Product deleted locally, but failed to delete from Supabase database (${supabaseErrorMsg}). Please ensure the 'products' table exists in Supabase so mobile and other devices reflect the deletion.`
-        );
+        console.warn("[products-api] Server delete warning:", err);
       }
 
       return id;

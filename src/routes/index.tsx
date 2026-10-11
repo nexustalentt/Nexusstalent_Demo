@@ -262,37 +262,37 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Three Glassmorphic Feature Cards */}
+          {/* Three Feature Cards with 3D Lift + Animated Gradient Border */}
           <div className="mt-12 lg:-mt-8 relative z-20 grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Card 1: Custom Apps & Softwares */}
-            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-cyan-200/70">
-              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-cyan-400/50 bg-cyan-500/10 text-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+            <div className="feature-card card-blue">
+              <div className="feature-card-icon mb-3.5 flex size-11 items-center justify-center rounded-xl border border-blue-400/50 bg-blue-500/10 text-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                 <Layout className="size-5 stroke-[2.2]" />
               </div>
-              <h3 className="mb-1 text-sm font-bold text-slate-900">Custom Apps &amp; Softwares</h3>
-              <p className="text-xs leading-relaxed text-slate-600">
+              <h3 className="feature-card-title mb-1 text-sm font-bold text-slate-900">Custom Apps &amp; Softwares</h3>
+              <p className="feature-card-desc text-xs leading-relaxed text-slate-600">
                 High-performance web, mobile, and AI systems tailored to your needs.
               </p>
             </div>
 
             {/* Card 2: Small Business Launchpad */}
-            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-emerald-200/70">
-              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-emerald-400/50 bg-emerald-500/10 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            <div className="feature-card card-green">
+              <div className="feature-card-icon mb-3.5 flex size-11 items-center justify-center rounded-xl border border-emerald-400/50 bg-emerald-500/10 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                 <Store className="size-5 stroke-[2.2]" />
               </div>
-              <h3 className="mb-1 text-sm font-bold text-slate-900">Small Business Launchpad</h3>
-              <p className="text-xs leading-relaxed text-slate-600">
+              <h3 className="feature-card-title mb-1 text-sm font-bold text-slate-900">Small Business Launchpad</h3>
+              <p className="feature-card-desc text-xs leading-relaxed text-slate-600">
                 Getting local brands online with high-converting websites &amp; storefronts.
               </p>
             </div>
 
             {/* Card 3: Elite Tech Talent */}
-            <div className="rounded-2xl border border-white/60 bg-white/55 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-purple-200/70">
-              <div className="mb-3.5 flex size-11 items-center justify-center rounded-xl border border-purple-400/50 bg-purple-500/10 text-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+            <div className="feature-card card-purple">
+              <div className="feature-card-icon mb-3.5 flex size-11 items-center justify-center rounded-xl border border-purple-400/50 bg-purple-500/10 text-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                 <Users className="size-5 stroke-[2.2]" />
               </div>
-              <h3 className="mb-1 text-sm font-bold text-slate-900">Elite Tech Talent</h3>
-              <p className="text-xs leading-relaxed text-slate-600">
+              <h3 className="feature-card-title mb-1 text-sm font-bold text-slate-900">Elite Tech Talent</h3>
+              <p className="feature-card-desc text-xs leading-relaxed text-slate-600">
                 Deploying top-tier engineers and specialists to accelerate your vision.
               </p>
             </div>

@@ -94,13 +94,32 @@ export const saveProductServerFn = createServerFn({ method: "POST" })
   });
 
 export const deleteProductServerFn = createServerFn({ method: "POST" })
-  .validator((data: { id: string }) => ({ id: String(data.id) }))
+  .validator((input: unknown) => {
+    let targetId = "";
+    if (typeof input === "string") {
+      targetId = input;
+    } else if (typeof input === "object" && input !== null) {
+      if ("id" in input && typeof (input as any).id === "string") {
+        targetId = (input as any).id;
+      } else if (
+        "data" in input &&
+        typeof (input as any).data === "object" &&
+        (input as any).data !== null &&
+        "id" in (input as any).data
+      ) {
+        targetId = String((input as any).data.id);
+      }
+    }
+    return { id: String(targetId || "") };
+  })
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    try {
-      const { deleteProductServer } = await import("./products.server");
-      await deleteProductServer(data.id);
-    } catch (e) {
-      console.warn("[products.functions] Server delete error:", e);
+    if (data.id && data.id !== "undefined") {
+      try {
+        const { deleteProductServer } = await import("./products.server");
+        await deleteProductServer(data.id);
+      } catch (e) {
+        console.warn("[products.functions] Server delete error:", e);
+      }
     }
 
     return { ok: true };
