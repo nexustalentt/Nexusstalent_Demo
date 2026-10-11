@@ -3,23 +3,54 @@ import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { TalkToUsModal } from "./talk-to-us-modal";
 import { FloatingSupportWidget } from "./floating-support-widget";
+import { NexiChatWidget } from "./nexi-chat-widget";
 
 export function PublicShell({ children }: { children: ReactNode }) {
   const [talkOpen, setTalkOpen] = useState(false);
 
   useEffect(() => {
-    const handleOpen = () => setTalkOpen(true);
+    const handleOpen = () => {
+      /* [OLD CONTEXTUAL CHAIN/MODAL BEHAVIOR - SAFELY PRESERVED / COMMENTED OUT]
+      setTalkOpen(true);
+      */
+
+      // NEW BEHAVIOR: Route to Nexi AI Agent
+      if (typeof window !== "undefined") {
+        if (typeof (window as any).openNexiChat === "function") {
+          (window as any).openNexiChat();
+        } else {
+          setTalkOpen(true);
+        }
+      }
+    };
     window.addEventListener("open-talk-modal", handleOpen);
     return () => window.removeEventListener("open-talk-modal", handleOpen);
   }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-[#ffffff] text-[#161616] relative selection:bg-[#0f62fe]/15 selection:text-[#161616]">
-      <SiteHeader onOpenTalk={() => setTalkOpen(true)} />
+      <SiteHeader
+        onOpenTalk={() => {
+          if (typeof window !== "undefined" && typeof (window as any).openNexiChat === "function") {
+            (window as any).openNexiChat();
+          } else {
+            setTalkOpen(true);
+          }
+        }}
+      />
       <main className="flex-1">{children}</main>
       <SiteFooter />
-      {/* Nexus Talent Floating Support Widget & Modal */}
-      <FloatingSupportWidget onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
+
+      {/* =========================================================================
+          [LEGACY FLOATING SUPPORT TRIGGER - SAFELY COMMENTED OUT]
+          Uncomment if you wish to restore the previous floating support trigger:
+          <FloatingSupportWidget onOpen={() => setTalkOpen((prev) => !prev)} isOpen={talkOpen} />
+         ========================================================================= */}
+
+      {/* New Custom-Built Nexi AI Chat Agent */}
+      <NexiChatWidget />
+
+      {/* Legacy Inquiry Modal preserved without disruption */}
       <TalkToUsModal isOpen={talkOpen} onClose={() => setTalkOpen(false)} />
     </div>
   );

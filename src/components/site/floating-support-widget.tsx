@@ -51,7 +51,27 @@ export function FloatingSupportWidget({ onOpen, isOpen }: FloatingSupportWidgetP
   };
 
   const handleTrigger = () => {
-    onOpen();
+    /* =========================================================================
+       [LEGACY SUPPORT TRIGGER - SAFELY COMMENTED OUT]
+       The previous behavior triggered the legacy contextual inquiry modal:
+       onOpen();
+       Uncomment the line above if you ever need to restore the legacy modal.
+       ========================================================================= */
+
+    // NEW BEHAVIOR: Safely route click to custom-built Nexi AI Agent
+    if (typeof window !== "undefined") {
+      if (typeof (window as any).toggleNexiChat === "function") {
+        (window as any).toggleNexiChat();
+      } else {
+        const chatWin = document.getElementById("nexiChatWindow");
+        if (chatWin) {
+          chatWin.classList.toggle("nexi-active");
+        } else {
+          // Fallback if Nexi is not mounted to ensure button never fails
+          onOpen();
+        }
+      }
+    }
   };
 
   if (isOpen) {
