@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -21,12 +22,14 @@ import {
   ExternalLink,
   Download,
   Users,
+  Brain,
+  Camera,
 } from "lucide-react";
 import heroImage from "@/assets/hero-office.jpg";
 import { PublicShell } from "@/components/site/public-shell";
 import { siteSettingsQuery } from "@/lib/queries";
 import { useProducts } from "@/lib/products-api";
-import { resolveProductAction } from "@/lib/products-store";
+import { resolveProductAction, getDefaultProducts } from "@/lib/products-store";
 import {
   services,
   industries,
@@ -107,16 +110,134 @@ const clientLogoFallbacks: Record<string, string> = {
   "Mercedes-Benz": "/logos/mercedes-benz.svg",
 };
 
+function parseStatValue(raw: string) {
+  const clean = raw.trim();
+  const hasPlus = clean.includes("+");
+  const numStr = clean.replace(/[^0-9]/g, "");
+  const num = parseInt(numStr, 10) || 0;
+  return {
+    target: num,
+    suffix: hasPlus ? "+" : "",
+    hasCommas: num >= 1000,
+  };
+}
+
+function AnimatedStatValue({
+  value,
+  isTriggered,
+}: {
+  value: string;
+  isTriggered: boolean;
+}) {
+  const { target, suffix, hasCommas } = parseStatValue(value);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!isTriggered) return;
+
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setCurrent(target);
+      return;
+    }
+
+    let startTime: number | null = null;
+    const duration = 1800;
+
+    let frameId: number;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const val = Math.floor(easeProgress * target);
+
+      setCurrent(val);
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      } else {
+        setCurrent(target);
+      }
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [isTriggered, target]);
+
+  const displayNum = hasCommas ? current.toLocaleString() : current.toString();
+
+  return (
+    <span>
+      {isTriggered ? displayNum : 0}
+      {suffix}
+    </span>
+  );
+}
+
 function HomePage() {
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const { data: products = [] } = useProducts();
 
-  const stats = [
-    { value: settings?.years_experience ?? "15", label: "Years of Experience" },
-    { value: settings?.professionals_placed ?? "12,000+", label: "Professionals Placed" },
-    { value: settings?.enterprise_clients ?? "500+", label: "Enterprise Clients" },
-    { value: settings?.successful_projects ?? "1,200+", label: "Successful Projects" },
-  ];
+  const statsSectionRef = useRef<HTMLElement | null>(null);
+  const [statsVisible, setStatsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = statsSectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setStatsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setStatsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const statProfessionals = {
+    value: settings?.professionals_placed ?? "12,000+",
+    label: "Professionals Placed",
+  };
+  const statExperience = {
+    value: settings?.years_experience ?? "15",
+    label: "Years of Experience",
+  };
+  const statClients = {
+    value: settings?.enterprise_clients ?? "500+",
+    label: "Enterprise Clients",
+  };
+  const statProjects = {
+    value: settings?.successful_projects ?? "1,200+",
+    label: "Successful Projects",
+  };
+
+  const defaultList = getDefaultProducts();
+  const zoziiProduct =
+    products.find((p) => p.id === "prod-zozii-ai-02" || p.name.toLowerCase().includes("zozii")) ||
+    defaultList.find((p) => p.id === "prod-zozii-ai-02") ||
+    defaultList[1] ||
+    defaultList[0]!;
+
+  const screenshotProduct =
+    products.find(
+      (p) => p.id === "prod-screenshot-saver-05" || p.name.toLowerCase().includes("screenshot"),
+    ) ||
+    defaultList.find((p) => p.id === "prod-screenshot-saver-05") ||
+    defaultList[4] ||
+    defaultList[0]!;
 
   return (
     <PublicShell>
@@ -300,10 +421,15 @@ function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 2: STATS & CREDIBILITY (CARBON SURFACE-1 ALTERNATE BAND) */}
-      <section className="border-y border-[#e0e0e0] bg-[#f4f4f4] py-20">
+      {/* SECTION 2: STATS & CREDIBILITY (BENTO GRID REDESIGN) */}
+      <section
+        ref={statsSectionRef}
+        className={`about-stats-section border-y border-[#e0e0e0] bg-[#f4f4f4] py-20 ${
+          statsVisible ? "is-revealed" : ""
+        }`}
+      >
         <div className="container-page grid gap-16 lg:grid-cols-2 lg:items-center">
-          <div>
+          <div className="about-reveal-left">
             <div className="eyebrow mb-6">Who we are</div>
             <h2 className="text-3xl font-light text-[#161616] md:text-4xl">
               A modern technology and talent partner built around delivery
@@ -323,44 +449,75 @@ function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4 text-sm">
               <Link
                 to="/about"
-                className="inline-flex items-center gap-1.5 text-[#0f62fe] hover:underline"
+                className="about-link inline-flex items-center gap-1.5 text-[#0f62fe] hover:underline"
               >
-                More about us <ArrowRight className="size-4" aria-hidden="true" />
+                More about us <ArrowRight className="about-link-arrow size-4" aria-hidden="true" />
               </Link>
               <span className="text-[#8c8c8c]">·</span>
               <Link
                 to="/products"
-                className="inline-flex items-center gap-1.5 text-[#161616] hover:text-[#0f62fe]"
+                className="about-link inline-flex items-center gap-1.5 text-[#161616] hover:text-[#0f62fe]"
               >
-                Explore active product builds <ArrowRight className="size-4" aria-hidden="true" />
+                Explore active product builds <ArrowRight className="about-link-arrow size-4" aria-hidden="true" />
               </Link>
             </div>
           </div>
 
-          <dl className="grid grid-cols-2 gap-4">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 md:p-8"
-              >
-                <dt className="text-xs uppercase tracking-[0.16px] text-[#525252]">{stat.label}</dt>
-                <dd className="mt-3 text-3xl font-light text-[#161616] md:text-4xl">{stat.value}</dd>
+          <div className="relative">
+            {/* Subtle soft gradient background blob (blue/purple) behind right stats */}
+            <div className="about-stats-blob" aria-hidden="true" />
+
+            <dl className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {/* Card 1: 12,000+ Professionals Placed (Full Width Card) */}
+              <div className="about-stat-reveal bento-stat-card card-blue p-6 sm:col-span-3 sm:p-8">
+                <dt className="bento-stat-label order-2">{statProfessionals.label}</dt>
+                <dd className="bento-stat-value order-1 text-4xl sm:text-5xl">
+                  <AnimatedStatValue value={statProfessionals.value} isTriggered={statsVisible} />
+                </dd>
+                <Users className="bento-watermark-icon size-24 sm:size-28" aria-hidden="true" />
               </div>
-            ))}
-          </dl>
+
+              {/* Card 2: Years of Experience */}
+              <div className="about-stat-reveal bento-stat-card card-green p-6 sm:col-span-1 sm:p-7">
+                <dt className="bento-stat-label order-2">{statExperience.label}</dt>
+                <dd className="bento-stat-value order-1 text-3xl sm:text-4xl">
+                  <AnimatedStatValue value={statExperience.value} isTriggered={statsVisible} />
+                </dd>
+                <Briefcase className="bento-watermark-icon size-16 sm:size-20" aria-hidden="true" />
+              </div>
+
+              {/* Card 3: Enterprise Clients */}
+              <div className="about-stat-reveal bento-stat-card card-purple p-6 sm:col-span-1 sm:p-7">
+                <dt className="bento-stat-label order-2">{statClients.label}</dt>
+                <dd className="bento-stat-value order-1 text-3xl sm:text-4xl">
+                  <AnimatedStatValue value={statClients.value} isTriggered={statsVisible} />
+                </dd>
+                <Globe className="bento-watermark-icon size-16 sm:size-20" aria-hidden="true" />
+              </div>
+
+              {/* Card 4: Successful Projects */}
+              <div className="about-stat-reveal bento-stat-card card-orange p-6 sm:col-span-1 sm:p-7">
+                <dt className="bento-stat-label order-2">{statProjects.label}</dt>
+                <dd className="bento-stat-value order-1 text-3xl sm:text-4xl">
+                  <AnimatedStatValue value={statProjects.value} isTriggered={statsVisible} />
+                </dd>
+                <CheckCircle2 className="bento-watermark-icon size-16 sm:size-20" aria-hidden="true" />
+              </div>
+            </dl>
+          </div>
         </div>
       </section>
 
-      {/* SECTION 4: PRODUCT SHOWCASE (SURFACE-1 BAND) */}
-      <section className="border-t border-[#e0e0e0] bg-[#f4f4f4] py-24">
-        <div className="container-page">
+      {/* SECTION 4: PRODUCT SHOWCASE (ASYMMETRIC REDESIGN) */}
+      <section className="product-showcase-section border-t border-[#e0e0e0] bg-[#f4f4f4] py-24">
+        <div className="container-page relative z-10">
           <div className="mb-14 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <div className="max-w-2xl">
-              <div className="eyebrow mb-6">Product engineering</div>
-              <h2 className="text-3xl font-light text-[#161616] md:text-4xl">
+              <div className="eyebrow mb-4">Product engineering</div>
+              <h2 className="text-3xl font-light text-[#161616] md:text-4xl tracking-tight leading-snug">
                 What We Are Currently Working On &amp; Shipping
               </h2>
-              <p className="mt-4 text-sm text-[#525252] tracking-[0.16px]">
+              <p className="mt-4 text-sm text-[#525252] tracking-[0.16px] leading-relaxed">
                 We turn ideas into real digital platforms. From shopping applications and e-commerce
                 storefronts to desktop AI co-pilots and clinical portals, we actively engineer products
                 that solve real problems.
@@ -368,110 +525,161 @@ function HomePage() {
             </div>
             <Link
               to="/products"
-              className="inline-flex items-center gap-1.5 text-sm text-[#0f62fe] hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm text-[#0f62fe] font-medium hover:underline"
             >
               Explore all product builds ({products.length}) <ArrowRight className="size-4" />
             </Link>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.slice(0, 4).map((product) => {
-              const isWorkingOn = product.status === "in_development";
-              const isLive = product.status === "live";
+          {/* Subtle soft gradient background blob (blue/cyan) behind the right side */}
+          <div className="product-showcase-blob" aria-hidden="true" />
 
-              return (
-                <div
-                  key={product.id}
-                  className="group flex flex-col justify-between rounded-none border border-[#e0e0e0] bg-[#ffffff] p-6 transition-colors hover:border-[#0f62fe]"
-                >
-                  <div>
-                    <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-3 mb-4">
-                      <span className="font-mono text-[10px] uppercase font-semibold text-[#0f62fe]">
-                        {product.category}
-                      </span>
-                      {isWorkingOn ? (
-                        <span className="inline-flex items-center gap-1 border border-[#0f62fe] bg-[#edf5ff] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#0043ce]">
-                          <span className="size-1 bg-[#0f62fe] animate-pulse" />
-                          IN SPRINT
-                        </span>
-                      ) : isLive ? (
-                        <span className="inline-flex items-center gap-1 border border-[#24a148] bg-[#defbe6] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#0e6027]">
-                          <span className="size-1 bg-[#24a148]" />
-                          LIVE
-                        </span>
-                      ) : (
-                        <span className="border border-[#8d8d8d] bg-[#f4f4f4] px-1.5 py-0.5 font-mono text-[9px] text-[#161616]">
-                          {product.version || "BETA"}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-base font-medium text-[#161616] group-hover:text-[#0f62fe] transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="mt-2 text-xs text-[#525252] leading-relaxed line-clamp-3">
-                      {product.tagline}
-                    </p>
-
-                    <div className="mt-4 flex flex-wrap gap-1">
-                      {product.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="border border-[#e0e0e0] bg-[#f4f4f4] px-1.5 py-0.5 font-mono text-[10px] text-[#525252]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-3 border-t border-[#e0e0e0] flex items-center justify-between">
-                    {product.website_url ? (() => {
-                      const action = resolveProductAction(product);
-                      if (action?.isDownload) {
-                        return (
-                          <a
-                            href={action.url}
-                            download={action.downloadFilename}
-                            className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
-                            title={`Download ${action.downloadFilename || "file"}`}
-                          >
-                            <span>Download</span>
-                            <Download className="size-3" />
-                          </a>
-                        );
-                      }
-                      return (
-                        <a
-                          href={action?.url || product.website_url}
-                          target={(action?.url || product.website_url).startsWith("http") ? "_blank" : undefined}
-                          rel={(action?.url || product.website_url).startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
-                        >
-                          <span>{action?.label || "Open App"}</span>
-                          <ExternalLink className="size-3" />
-                        </a>
-                      );
-                    })() : (
-                      <Link
-                        to="/products"
-                        className="inline-flex items-center gap-1 text-xs text-[#0f62fe] font-semibold hover:underline"
-                      >
-                        <span>Details</span>
-                        <ArrowRight className="size-3" />
-                      </Link>
-                    )}
-
-                    <Link
-                      to="/products"
-                      className="text-[11px] text-[#8d8d8d] hover:text-[#161616]"
-                    >
-                      All products →
-                    </Link>
-                  </div>
+          {/* Asymmetric Card Grid: Card 1 (60% / col-span-3) & Card 2 (40% / col-span-2) */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-5 relative z-10">
+            {/* CARD 1: Zozii Desktop AI Assistant (Spans 60% -> lg:col-span-3) */}
+            <div className="product-card group relative flex flex-col justify-between p-7 md:p-8 lg:col-span-3">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] uppercase font-semibold text-[#0f62fe] tracking-wider">
+                    {zoziiProduct.category || "DESKTOP AI & WIN32"}
+                  </span>
+                  <span className="product-badge-live">
+                    <span className="live-pulse-dot" />
+                    LIVE
+                  </span>
                 </div>
-              );
-            })}
+
+                {/* Dynamic Separator Line (blue line slides across on hover) */}
+                <div className="product-separator" />
+
+                <h3 className="product-card-title text-xl font-semibold">
+                  {zoziiProduct.name}
+                </h3>
+                <p className="mt-3 text-xs leading-relaxed text-[#525252] line-clamp-3">
+                  {zoziiProduct.tagline}
+                </p>
+
+                {/* Tech Stack Pills */}
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {zoziiProduct.tags.map((tag) => (
+                    <span key={tag} className="product-tech-pill">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex items-center justify-between border-t border-[#f1f5f9] pt-4 relative z-10">
+                {zoziiProduct.website_url ? (() => {
+                  const action = resolveProductAction(zoziiProduct);
+                  return (
+                    <a
+                      href={action?.url || zoziiProduct.website_url}
+                      target={(action?.url || zoziiProduct.website_url).startsWith("http") ? "_blank" : undefined}
+                      rel={(action?.url || zoziiProduct.website_url).startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="product-card-action"
+                    >
+                      <span>{action?.label || "Open App"}</span>
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                  );
+                })() : (
+                  <Link to="/products" className="product-card-action">
+                    <span>Details</span>
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                )}
+
+                <Link
+                  to="/products"
+                  className="text-xs text-slate-400 hover:text-slate-700 transition-colors"
+                >
+                  All products →
+                </Link>
+              </div>
+
+              {/* Watermark SVG Icon (AI Brain) */}
+              <Brain className="product-watermark-icon size-28 md:size-32" aria-hidden="true" />
+            </div>
+
+            {/* CARD 2: Screenshot Saver (Spans 40% -> lg:col-span-2) */}
+            <div className="product-card group relative flex flex-col justify-between p-7 md:p-8 lg:col-span-2">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] uppercase font-semibold text-[#0f62fe] tracking-wider">
+                    {screenshotProduct.category || "DESKTOP TOOLS & WINDOWS"}
+                  </span>
+                  <span className="product-badge-live">
+                    <span className="live-pulse-dot" />
+                    LIVE
+                  </span>
+                </div>
+
+                {/* Dynamic Separator Line (blue line slides across on hover) */}
+                <div className="product-separator" />
+
+                <h3 className="product-card-title text-xl font-semibold">
+                  {screenshotProduct.name}
+                </h3>
+                <p className="mt-3 text-xs leading-relaxed text-[#525252] line-clamp-3">
+                  {screenshotProduct.tagline}
+                </p>
+
+                {/* Tech Stack Pills */}
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {screenshotProduct.tags.map((tag) => (
+                    <span key={tag} className="product-tech-pill">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex items-center justify-between border-t border-[#f1f5f9] pt-4 relative z-10">
+                {screenshotProduct.website_url ? (() => {
+                  const action = resolveProductAction(screenshotProduct);
+                  if (action?.isDownload) {
+                    return (
+                      <a
+                        href={action.url}
+                        download={action.downloadFilename || "Screenshot.Saver.1.exe"}
+                        className="product-card-action"
+                        title={`Download ${action.downloadFilename || "file"}`}
+                      >
+                        <span>Download</span>
+                        <Download className="size-3.5" />
+                      </a>
+                    );
+                  }
+                  return (
+                    <a
+                      href={action?.url || screenshotProduct.website_url}
+                      target={(action?.url || screenshotProduct.website_url).startsWith("http") ? "_blank" : undefined}
+                      rel={(action?.url || screenshotProduct.website_url).startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="product-card-action"
+                    >
+                      <span>{action?.label || "Open App"}</span>
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                  );
+                })() : (
+                  <Link to="/products" className="product-card-action">
+                    <span>Download</span>
+                    <Download className="size-3.5" />
+                  </Link>
+                )}
+
+                <Link
+                  to="/products"
+                  className="text-xs text-slate-400 hover:text-slate-700 transition-colors"
+                >
+                  All products →
+                </Link>
+              </div>
+
+              {/* Watermark SVG Icon (Camera) */}
+              <Camera className="product-watermark-icon size-24 md:size-28" aria-hidden="true" />
+            </div>
           </div>
         </div>
       </section>

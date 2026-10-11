@@ -594,3 +594,457 @@
   }
 }
 
+/* ==========================================================================
+   ABOUT US / BENTO STATS SECTION REDESIGN
+   ========================================================================== */
+
+.about-stats-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle soft gradient background blob (blue/purple) behind right stats */
+.about-stats-blob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 520px;
+  height: 420px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.18) 0%,
+    rgba(139, 92, 246, 0.16) 45%,
+    rgba(245, 158, 11, 0.05) 70%,
+    transparent 85%
+  );
+  filter: blur(55px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Bento Stat Cards Base */
+.bento-stat-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  transition:
+    transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Theme Colors per Card */
+.bento-stat-card.card-blue {
+  --card-color: #3b82f6;
+  --card-shadow: rgba(59, 130, 246, 0.24);
+}
+
+.bento-stat-card.card-green {
+  --card-color: #10b981;
+  --card-shadow: rgba(16, 185, 129, 0.24);
+}
+
+.bento-stat-card.card-purple {
+  --card-color: #8b5cf6;
+  --card-shadow: rgba(139, 92, 246, 0.24);
+}
+
+.bento-stat-card.card-orange {
+  --card-color: #f59e0b;
+  --card-shadow: rgba(245, 158, 11, 0.24);
+}
+
+/* Subtle colored top border that animates in from the left (scaleX) on hover */
+.bento-stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--card-color);
+  transform: scaleX(0.22);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  z-index: 2;
+}
+
+.bento-stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Hover: Lift up (translateY(-6px)) and shadow becomes larger & colored */
+.bento-stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px -8px var(--card-shadow), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border-color: rgba(226, 232, 240, 0.8);
+}
+
+/* Large numbers with gradient text effect (dark to card theme color) */
+.bento-stat-value {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #0f172a 20%, var(--card-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Stat Card Label */
+.bento-stat-label {
+  position: relative;
+  z-index: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  margin-top: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.bento-stat-card:hover .bento-stat-label {
+  color: #334155;
+}
+
+/* Subtle, large SVG icon watermark in the bottom right corner */
+.bento-watermark-icon {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  color: var(--card-color);
+  opacity: 0.06;
+  transform: scale(0.92) rotate(-6deg);
+  transition:
+    opacity 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bento-stat-card:hover .bento-watermark-icon {
+  opacity: 0.16;
+  transform: scale(1.08) rotate(0deg);
+}
+
+/* Scroll reveal: Text on the left */
+.about-reveal-left {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-stats-section.is-revealed .about-reveal-left {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll reveal: Stat cards on the right with stagger delay */
+.about-stat-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.about-stats-section.is-revealed .about-stat-reveal:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s, 0.1s, 0s;
+}
+
+.about-stats-section.is-revealed .about-stat-reveal:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.2s, 0.2s, 0s;
+}
+
+.about-stats-section.is-revealed .about-stat-reveal:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s, 0.3s, 0s;
+}
+
+.about-stats-section.is-revealed .about-stat-reveal:nth-child(4) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s, 0.4s, 0s;
+}
+
+/* Once revealed, hover translateY(-6px) responds immediately */
+.about-stats-section.is-revealed .bento-stat-card:hover {
+  transform: translateY(-6px);
+  transition-delay: 0s;
+}
+
+/* Link arrow slide animation */
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: color 0.3s ease;
+}
+
+.about-link .about-link-arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.about-link:hover .about-link-arrow {
+  transform: translateX(4px);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .about-reveal-left,
+  .about-stat-reveal,
+  .bento-stat-card,
+  .bento-stat-card::before,
+  .bento-watermark-icon,
+  .about-link .about-link-arrow {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ==========================================================================
+   PRODUCT SHOWCASE / PRODUCT ENGINEERING REDESIGN
+   ========================================================================== */
+
+.product-showcase-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle, soft gradient background blob (blue/cyan) behind the right side */
+.product-showcase-blob {
+  position: absolute;
+  top: 35%;
+  right: -5%;
+  width: 550px;
+  height: 450px;
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.16) 0%,
+    rgba(6, 182, 212, 0.13) 40%,
+    rgba(59, 130, 246, 0.03) 70%,
+    transparent 85%
+  );
+  filter: blur(60px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Product Card Base */
+.product-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  transition:
+    transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hover: Lift up (translateY(-8px)) and shadow becomes slightly larger & blue glow */
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 38px -10px rgba(59, 130, 246, 0.22), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+/* Card Title: changes color to blue on hover */
+.product-card-title {
+  color: #161616;
+  transition: color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.product-card:hover .product-card-title {
+  color: #0f62fe;
+}
+
+/* The "LIVE" Badge & Pulsing Green Dot */
+.product-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.live-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  position: relative;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: live-pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes live-pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Dynamic Separator Line: blue colored line slides from left to right on hover */
+.product-separator {
+  position: relative;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 0.75rem 0 1.25rem;
+  overflow: hidden;
+}
+
+.product-separator::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #0f62fe 0%, #06b6d4 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.product-card:hover .product-separator::after {
+  transform: translateX(0);
+}
+
+/* Modern "Tech Stack" Pills */
+.product-tech-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: #eff6ff;
+  color: #1e40af;
+  border-radius: 50px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(191, 219, 254, 0.6);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+  cursor: default;
+}
+
+.product-tech-pill:hover {
+  background-color: #0f62fe;
+  color: #ffffff;
+  border-color: #0f62fe;
+  transform: translateY(-1px);
+}
+
+/* Action Button ("Open Website / App" & "Download") */
+.product-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #0f62fe;
+  background-color: rgba(15, 98, 254, 0.08);
+  border: 1px solid rgba(15, 98, 254, 0.2);
+  transition:
+    background-color 0.35s cubic-bezier(0.19, 1, 0.22, 1),
+    color 0.35s cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 0.35s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.35s cubic-bezier(0.19, 1, 0.22, 1),
+    transform 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Transforms into solid blue button on hover */
+.product-card:hover .product-card-action,
+.product-card-action:hover {
+  background-color: #0f62fe !important;
+  color: #ffffff !important;
+  border-color: #0f62fe !important;
+  box-shadow: 0 4px 14px rgba(15, 98, 254, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Subtle, large SVG icon watermark in bottom right corner */
+.product-watermark-icon {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  color: #0f62fe;
+  opacity: 0.05;
+  transform: scale(0.92) rotate(-6deg);
+  transition:
+    opacity 0.45s cubic-bezier(0.19, 1, 0.22, 1),
+    transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.product-card:hover .product-watermark-icon {
+  opacity: 0.15;
+  transform: scale(1.08) rotate(0deg);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .product-card,
+  .product-separator::after,
+  .product-tech-pill,
+  .product-card-action,
+  .product-watermark-icon,
+  .live-pulse-dot {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+
+
