@@ -119,18 +119,50 @@ function HomePage() {
 
   return (
     <PublicShell>
-      {/* SECTION 1: HERO (CARBON WHITE CANVAS WITH LIGHT DISPLAY HEADLINE) */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 bg-[#ffffff]">
-        <div className="container-page">
+      {/* SECTION 1: HERO (DYNAMIC AMBIENT BACKDROP WITH HIGH-END MODERN TECH AESTHETIC) */}
+      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 bg-[#fafafa]">
+        {/* Subtle digital dot grid */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(#0f62fe_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_35%,#000_60%,transparent_100%)]"
+          aria-hidden="true"
+        />
+
+        {/* Ambient luminous glows */}
+        <div
+          className="pointer-events-none absolute -top-32 right-[-5%] h-[520px] w-[520px] rounded-full bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-purple-500/15 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute top-1/4 -left-28 h-[440px] w-[440px] rounded-full bg-gradient-to-tr from-cyan-400/15 via-blue-500/10 to-transparent blur-3xl"
+          aria-hidden="true"
+        />
+
+        <div className="container-page relative z-10">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
-              <div className="eyebrow mb-6">
-                <span className="size-2 bg-[#0f62fe] mr-2 shrink-0" />
-                Connecting Potential · Inspiring Success
+              {/* Modern Translucent Pill Badge */}
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-50/60 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16px] text-[#0f62fe] backdrop-blur-md shadow-xs">
+                <span className="relative flex size-2 shrink-0">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0f62fe] opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-[#0f62fe]" />
+                </span>
+                <span>Connecting Potential · Inspiring Success</span>
               </div>
 
-              <h1 className="mb-6 text-4xl font-light leading-[1.15] text-[#161616] sm:text-5xl lg:text-6xl">
-                We Don't Just Consult. <span className="text-[#0f62fe]">We Build.</span>
+              <h1 className="mb-6 text-4xl font-light leading-[1.15] text-[#161616] sm:text-5xl lg:text-6xl tracking-tight">
+                We Don't Just Consult.{" "}
+                <span className="relative inline-block font-normal">
+                  <span className="bg-gradient-to-r from-blue-600 via-[#0f62fe] to-cyan-400 bg-clip-text text-transparent">
+                    We Build.
+                  </span>
+                  {/* Subtle luminous drop glow */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 select-none bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent opacity-25 blur-[12px]"
+                  >
+                    We Build.
+                  </span>
+                </span>
               </h1>
 
               <p className="mb-8 max-w-xl text-lg leading-relaxed text-[#525252] tracking-[0.16px]">
@@ -142,38 +174,53 @@ function HomePage() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/contact"
-                  className="inline-flex h-11 items-center justify-center rounded-none bg-[#0f62fe] px-6 text-sm font-normal text-white transition-colors hover:bg-[#0050e6] active:bg-[#002d9c]"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#0f62fe] to-[#2563eb] px-7 text-sm font-medium text-white shadow-md shadow-blue-500/20 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:translate-y-0 active:bg-[#002d9c]"
                 >
                   Work With Us
                 </Link>
                 <Link
                   to="/products"
-                  className="inline-flex h-11 items-center justify-center rounded-none bg-[#161616] px-6 text-sm font-normal text-white transition-colors hover:bg-[#262626]"
+                  className="group inline-flex h-11 items-center justify-center rounded-full border border-blue-400/50 bg-white/70 px-6 text-sm font-medium text-slate-900 backdrop-blur-sm transition-all duration-200 hover:border-blue-600 hover:bg-blue-50/50 hover:text-blue-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  Explore Products & Builds →
+                  <span>Explore Products &amp; Builds</span>
+                  <span className="ml-1.5 inline-block transition-transform duration-200 group-hover:translate-x-1 group-hover:text-blue-600">
+                    →
+                  </span>
                 </Link>
               </div>
 
-              {/* Carbon Precision Service Pillars Mini Bar */}
-              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-[#e0e0e0] pt-6 text-xs text-[#525252]">
-                <span className="flex items-center gap-1.5 text-[#161616]">
-                  <Check className="size-3.5 text-[#d4af37]" /> Talent & IT Consulting
+              {/* Trust & Service Pillar Capsule Badges */}
+              <div className="mt-10 flex flex-wrap items-center gap-2.5 border-t border-slate-200/80 pt-6 text-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-amber-400/50">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-amber-50 text-[#d4af37]">
+                    <Check className="size-3 stroke-[2.5]" />
+                  </span>
+                  <span>Talent &amp; IT Consulting</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-[#161616]">
-                  <Check className="size-3.5 text-[#0f62fe]" /> Custom Product Engineering
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-400/50">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-blue-50 text-[#0f62fe]">
+                    <Check className="size-3 stroke-[2.5]" />
+                  </span>
+                  <span>Custom Product Engineering</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-[#161616]">
-                  <Check className="size-3.5 text-[#0f62fe]" /> Small Business Web Systems
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3.5 py-1.5 font-medium text-slate-800 shadow-xs backdrop-blur-sm transition-colors hover:border-blue-400/50">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-blue-50 text-[#0f62fe]">
+                    <Check className="size-3 stroke-[2.5]" />
+                  </span>
+                  <span>Small Business Web Systems</span>
                 </span>
               </div>
             </div>
 
             {/* Hero Visual Tile */}
             <div className="relative lg:col-span-5">
-              {/* Soft Blue Backdrop Wash per Carbon spec */}
-              <div className="absolute -inset-4 bg-gradient-to-tr from-[#edf5ff] via-transparent to-transparent opacity-80" />
+              {/* Ambient radial glow behind image */}
+              <div
+                className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-tr from-blue-500/15 via-indigo-400/10 to-purple-400/15 blur-2xl opacity-75"
+                aria-hidden="true"
+              />
 
-              <div className="relative border border-[#e0e0e0] bg-[#ffffff] p-2">
+              <div className="relative rounded-3xl border border-white/60 bg-white/40 p-2 shadow-2xl backdrop-blur-sm">
                 <img
                   src={heroImage || "/images/hero-office.jpg"}
                   onError={(e) => {
@@ -182,16 +229,16 @@ function HomePage() {
                   alt="Nexus Talent consultants and engineers collaborating in a modern office"
                   width={1200}
                   height={800}
-                  className="aspect-[4/3] w-full rounded-none object-cover border border-[#e0e0e0]"
+                  className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm ring-1 ring-slate-900/5"
                 />
 
-                {/* Overlaid Flat Stat Tile */}
-                <div className="absolute -bottom-4 -left-4 border border-[#e0e0e0] bg-[#ffffff] p-5 hidden sm:block">
+                {/* Overlaid Glassmorphic Stat Tile */}
+                <div className="absolute -bottom-5 -left-4 hidden sm:block rounded-2xl border border-white/60 bg-white/75 p-4 shadow-xl backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-3">
-                    <div className="text-3xl font-light text-[#0f62fe]">
+                    <div className="text-3xl font-semibold tracking-tight text-[#0f62fe]">
                       {settings?.enterprise_clients ?? "500+"}
                     </div>
-                    <div className="text-xs uppercase tracking-[0.16px] text-[#525252] leading-tight">
+                    <div className="text-[11px] font-medium uppercase tracking-[0.16px] text-[#525252] leading-tight">
                       Enterprise
                       <br />
                       Clients
@@ -199,15 +246,15 @@ function HomePage() {
                   </div>
                 </div>
 
-                {/* Overlaid Flat Nexus Digital Tile */}
-                <div className="absolute -top-4 -right-4 border border-[#e0e0e0] bg-[#ffffff] p-4 hidden sm:block">
+                {/* Overlaid Glassmorphic Nexus Digital Tile */}
+                <div className="absolute -top-4 -right-4 hidden sm:block rounded-2xl border border-white/60 bg-white/75 p-3.5 shadow-xl backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex size-8 items-center justify-center bg-[#0f62fe] text-white">
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0f62fe] to-[#2563eb] text-white shadow-sm shadow-blue-500/25">
                       <Globe className="size-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-normal text-[#161616]">Nexus Digital</div>
-                      <div className="text-[10px] text-[#525252]">Websites & Systems</div>
+                      <div className="text-xs font-semibold text-[#161616]">Nexus Digital</div>
+                      <div className="text-[10px] font-medium text-[#525252]">Websites & Systems</div>
                     </div>
                   </div>
                 </div>
