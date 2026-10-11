@@ -395,7 +395,7 @@
 
 .btn-liquid-secondary:hover .btn-arrow-icon,
 .btn-secondary:hover .btn-arrow-icon {
-  transform: translate(2.5px, -2.5px);
+  transform: translateX(4px);
   color: #ffffff;
 }
 
